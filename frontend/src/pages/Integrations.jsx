@@ -4,8 +4,8 @@ import { base44 } from "@/api/base44Client";
 import PageHeader from "@/components/PageHeader";
 import { Card, CardBody, EmptyState, ErrorState, KpiCard } from "@/components/ui-primitives";
 import StatusBadge from "@/components/StatusBadge";
-import { SAAS_STATUS, HEALTH, COMPATIBILITY, fmtDate } from "@/lib/adminHelpers";
-import { Plug, Activity, Boxes, RefreshCw, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
+import { SAAS_STATUS, HEALTH, fmtDate } from "@/lib/adminHelpers";
+import { Plug, Boxes, RefreshCw, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Integrations() {

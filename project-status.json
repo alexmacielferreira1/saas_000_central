@@ -4,75 +4,75 @@
   "milestones": {
     "M0": {
       "name": "bootstrap",
-      "status": "failed",
+      "status": "blocked",
       "checks": {
         "backend_lint": {
           "status": "passed",
-          "updated_at": "2026-09-19T17:24:52.889530+00:00",
+          "updated_at": "2026-09-19T19:52:21.100645+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/backend_lint.log"
         },
         "backend_format": {
           "status": "passed",
-          "updated_at": "2026-09-19T17:24:53.188323+00:00",
+          "updated_at": "2026-09-19T19:52:21.355025+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/backend_format.log"
         },
         "unit_tests": {
           "status": "passed",
-          "updated_at": "2026-09-19T17:24:53.489166+00:00",
+          "updated_at": "2026-09-19T19:52:21.648921+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/unit_tests.log"
         },
         "migration": {
           "status": "passed",
-          "updated_at": "2026-09-19T17:24:56.706942+00:00",
+          "updated_at": "2026-09-19T19:52:24.280289+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/migration.log"
         },
         "database_integration": {
           "status": "passed",
-          "updated_at": "2026-09-19T17:24:58.811688+00:00",
+          "updated_at": "2026-09-19T19:52:26.172467+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/database_integration.log"
         },
         "dependency_consistency": {
           "status": "passed",
-          "updated_at": "2026-09-19T17:25:01.063078+00:00",
+          "updated_at": "2026-09-19T19:52:28.166798+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/dependency_consistency.log"
         },
         "frontend_build": {
           "status": "passed",
-          "updated_at": "2026-09-19T17:25:02.518254+00:00",
+          "updated_at": "2026-09-19T19:52:29.363286+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_build.log"
         },
         "frontend_lint": {
-          "status": "failed",
-          "updated_at": "2026-09-19T17:25:07.950184+00:00",
-          "notes": "Exit 1; evidence: .runtime/checks/frontend_lint.log"
+          "status": "passed",
+          "updated_at": "2026-09-19T19:52:33.992312+00:00",
+          "notes": "Exit 0; evidence: .runtime/checks/frontend_lint.log"
         },
         "frontend_typecheck": {
-          "status": "failed",
-          "updated_at": "2026-09-19T17:25:34.132396+00:00",
-          "notes": "Exit 2; evidence: .runtime/checks/frontend_typecheck.log"
+          "status": "passed",
+          "updated_at": "2026-09-19T19:52:40.957545+00:00",
+          "notes": "Exit 0; evidence: .runtime/checks/frontend_typecheck.log"
         },
         "http_smoke": {
           "status": "passed",
-          "updated_at": "2026-09-19T17:25:40.210121+00:00",
+          "updated_at": "2026-09-19T19:52:46.107320+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/http_smoke.log"
         },
         "original_frontend_integrity": {
           "status": "passed",
-          "updated_at": "2026-09-19T17:25:41.271321+00:00",
-          "notes": "147 original files; 0 changed or missing. "
+          "updated_at": "2026-09-19T19:52:46.940256+00:00",
+          "notes": "147 original files; 25 approved typed corrections; 0 unapproved changes or missing. "
         },
         "frontend_functional_validation": {
           "status": "blocked",
-          "updated_at": "2026-09-19T17:25:41.271321+00:00",
+          "updated_at": "2026-09-19T19:52:46.940256+00:00",
           "notes": "Original export requires Base44 configuration; frontend not validated in browser. See docs/BASE44_MIGRATION_MAP.md. HTTP/build alone is insufficient."
         },
         "git_clean_at_check": {
           "status": "pending",
-          "updated_at": "2026-09-19T17:25:41.271321+00:00",
+          "updated_at": "2026-09-19T19:52:46.940256+00:00",
           "notes": "Snapshot before writing this report. Verify and commit reviewed work separately."
         }
       },
-      "updated_at": "2026-09-19T17:25:41.271321+00:00",
+      "updated_at": "2026-09-19T19:52:46.940256+00:00",
       "notes": "Partial M0; unresolved gates. Do not advance to M1."
     },
     "M1": {

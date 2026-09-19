@@ -11,7 +11,7 @@ import { buildProblems, PROBLEM_TYPE, SEVERITY_LABEL } from "@/lib/problems";
 import Highlight from "@/components/Highlight";
 import {
   Boxes, Users, User, AlertTriangle, Settings2, TerminalSquare, ScrollText,
-  LayoutDashboard, Activity, BookOpen, Search, CornerDownLeft, ArrowRight, Zap,
+  LayoutDashboard, Activity, BookOpen, Search, CornerDownLeft, Zap,
 } from "lucide-react";
 
 // Static navigation shortcuts (always available, before the index loads).

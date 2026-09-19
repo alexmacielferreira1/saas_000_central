@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 // Best-effort, UI-originated audit write. Actor resolved from the current session.
 // Never throws — audit must not block the primary action.
 export async function writeAudit({
-  action, saas, tenant, entity, entityId, before, after, reason,
+  action, saas, tenant = "", entity, entityId, before = "", after = "", reason,
   result = "success", origin = "ui",
 }) {
   try {

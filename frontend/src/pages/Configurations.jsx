@@ -6,7 +6,6 @@ import PageHeader from "@/components/PageHeader";
 import { Card, CardBody, EmptyState, ErrorState } from "@/components/ui-primitives";
 import { Settings2, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { fmtDate } from "@/lib/adminHelpers";
 import NewConfigurationDialog from "@/components/configurations/NewConfigurationDialog";
 import { usePermissions } from "@/hooks/usePermissions";
 

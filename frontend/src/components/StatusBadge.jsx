@@ -11,7 +11,7 @@ const DOT_CLASS = {
   violet: "bg-violet-500",
 };
 
-export default function StatusBadge({ map, value, className }) {
+export default function StatusBadge({ map, value, className = "" }) {
   const { label, tone } = pick(map, value);
   return (
     <span

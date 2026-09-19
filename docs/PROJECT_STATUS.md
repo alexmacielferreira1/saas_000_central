@@ -1,8 +1,8 @@
 # Estado do projeto
 
-Marco atual: **M0 — failed**.
+Marco atual: **M0 — blocked**.
 
-Verificado em 2026-09-19T17:25:41.271321+00:00.
+Verificado em 2026-09-19T19:52:46.940256+00:00.
 
 | Verificação | Estado | Evidência |
 |---|---|---|
@@ -13,10 +13,10 @@ Verificado em 2026-09-19T17:25:41.271321+00:00.
 | database_integration | passed | Exit 0; evidence: .runtime/checks/database_integration.log |
 | dependency_consistency | passed | Exit 0; evidence: .runtime/checks/dependency_consistency.log |
 | frontend_build | passed | Exit 0; evidence: .runtime/checks/frontend_build.log |
-| frontend_lint | failed | Exit 1; evidence: .runtime/checks/frontend_lint.log |
-| frontend_typecheck | failed | Exit 2; evidence: .runtime/checks/frontend_typecheck.log |
+| frontend_lint | passed | Exit 0; evidence: .runtime/checks/frontend_lint.log |
+| frontend_typecheck | passed | Exit 0; evidence: .runtime/checks/frontend_typecheck.log |
 | http_smoke | passed | Exit 0; evidence: .runtime/checks/http_smoke.log |
-| original_frontend_integrity | passed | 147 original files; 0 changed or missing.  |
+| original_frontend_integrity | passed | 147 original files; 25 approved typed corrections; 0 unapproved changes or missing.  |
 | frontend_functional_validation | blocked | Original export requires Base44 configuration; frontend not validated in browser. See docs/BASE44_MIGRATION_MAP.md. HTTP/build alone is insufficient. |
 | git_clean_at_check | pending | Snapshot before writing this report. Verify and commit reviewed work separately. |
 

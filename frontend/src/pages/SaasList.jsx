@@ -5,7 +5,7 @@ import { useOrgId } from "@/lib/TenantContext";
 import PageHeader from "@/components/PageHeader";
 import { Card, EmptyState, ErrorState } from "@/components/ui-primitives";
 import StatusBadge from "@/components/StatusBadge";
-import { SAAS_STATUS, HEALTH, COMPATIBILITY, fmtDate } from "@/lib/adminHelpers";
+import { SAAS_STATUS, HEALTH, COMPATIBILITY } from "@/lib/adminHelpers";
 import { Boxes, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import NewSaasDialog from "@/components/saas/NewSaasDialog";

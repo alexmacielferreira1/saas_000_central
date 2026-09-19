@@ -123,7 +123,7 @@ export function buildProblems({ incidents = [], commands = [], saas = [], config
   problems.sort(
     (a, b) =>
       (SEVERITY_RANK[b.severity] || 0) - (SEVERITY_RANK[a.severity] || 0) ||
-      new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+      new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
   );
   return problems;
 }

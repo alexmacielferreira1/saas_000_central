@@ -4,7 +4,7 @@ Este documento aplica o padrão global `../../_documentacao/standards/17-TESTING
 
 ## Baseline atual
 
-M0 possui 22 casos executados e aprovados na última suíte completa. Eles cobrem liveness, versão, correlação, IDs inválidos, contrato de erros, disponibilidade do banco, cabeçalhos HTTP, referência pública de erro, cálculo dos gates e banco PostgreSQL real. O build do frontend passou; lint possui 16 erros e typecheck possui 322 apontamentos. A validação funcional está bloqueada pela configuração Base44 ausente.
+M0 possui 23 casos executados e aprovados na última suíte completa. Eles cobrem liveness, versão, correlação, IDs inválidos, contrato de erros, disponibilidade do banco, cabeçalhos HTTP, referência pública de erro, cálculo dos gates, integridade auditada do frontend e banco PostgreSQL real. Build, lint e typecheck do frontend passaram. A validação funcional continua bloqueada pela configuração Base44 ausente.
 
 ## Cobertura planejada
 

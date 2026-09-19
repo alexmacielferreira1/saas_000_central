@@ -2,7 +2,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { AlertCircle, RefreshCw } from "lucide-react";
 
-export function Card({ className, children, ...props }) {
+export function Card({ className = "", children = null, ...props }) {
   return (
     <div className={cn("rounded-xl border border-slate-200 bg-white shadow-sm", className)} {...props}>
       {children}
@@ -10,11 +10,11 @@ export function Card({ className, children, ...props }) {
   );
 }
 
-export function CardBody({ className, children }) {
+export function CardBody({ className = "", children = null }) {
   return <div className={cn("p-5", className)}>{children}</div>;
 }
 
-export function EmptyState({ icon: Icon, title, description }) {
+export function EmptyState({ icon: Icon, title, description = null }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
       {Icon && (
@@ -48,7 +48,7 @@ export function ErrorState({ title = "Falha ao carregar", description = "Tente n
   );
 }
 
-export function KpiCard({ label, value, sub, icon: Icon, tone = "indigo", onClick }) {
+export function KpiCard({ label, value, sub = null, icon: Icon, tone = "indigo", onClick = undefined }) {
   const toneMap = {
     indigo: "bg-indigo-50 text-indigo-600",
     emerald: "bg-emerald-50 text-emerald-600",

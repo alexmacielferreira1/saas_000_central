@@ -5,7 +5,7 @@ import PageHeader from "@/components/PageHeader";
 import { Card, CardBody, KpiCard, ErrorState } from "@/components/ui-primitives";
 import StatusBadge from "@/components/StatusBadge";
 import { SAAS_STATUS, HEALTH, OP_STATUS, fmtDate } from "@/lib/adminHelpers";
-import { LayoutDashboard, Boxes, Users, TerminalSquare, AlertTriangle, Activity, ArrowRight } from "lucide-react";
+import { LayoutDashboard, Boxes, TerminalSquare, AlertTriangle, Activity, ArrowRight } from "lucide-react";
 import MonthlyIncidentsChart from "@/components/incidents/MonthlyIncidentsChart";
 
 export default function Home() {

@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import { ACTIONS, runAction } from "@/lib/quickActions";
+import { runAction } from "@/lib/quickActions";
 import { usePermissions } from "@/hooks/usePermissions";
 
 export default function QuickActionsMenu() {

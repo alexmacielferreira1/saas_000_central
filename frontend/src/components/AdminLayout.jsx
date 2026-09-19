@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Boxes, Users, Settings2, ScrollText, TerminalSquare,
-  AlertTriangle, Plug, Search, Menu, X, ShieldCheck, LogOut,
+  AlertTriangle, Plug, Search, Menu, ShieldCheck, LogOut,
   Activity, BookOpen,
 } from "lucide-react";
 import CommandPalette from "@/components/CommandPalette";
