@@ -1,0 +1,66 @@
+{
+  "name": "Incident",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization (tenant)",
+      "default": "default"
+    },
+    "saas": {
+      "type": "string",
+      "title": "SaaS"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "medium",
+      "title": "Severidade"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "investigating",
+        "resolved",
+        "monitoring"
+      ],
+      "default": "open",
+      "title": "Status"
+    },
+    "title": {
+      "type": "string",
+      "title": "T\u00edtulo"
+    },
+    "description": {
+      "type": "string",
+      "title": "Descri\u00e7\u00e3o"
+    },
+    "resolution": {
+      "type": "string",
+      "title": "Resolu\u00e7\u00e3o"
+    },
+    "opened_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Aberto em"
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Resolvido em"
+    },
+    "linear_issue_id": {
+      "type": "string",
+      "title": "Linear issue ID"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

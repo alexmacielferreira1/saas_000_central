@@ -1,0 +1,590 @@
+[
+  {
+    "path": "tailwind.config.js",
+    "sha256": "6c342077c8a18ed6ce5742a69d871ebed3d0af6101d133e8b7bfec4a7f02a9b3"
+  },
+  {
+    "path": "index.html",
+    "sha256": "93b3b0fc202164d5e2acb0ac9bb761a6fb4cf5ada024aa872c1801087c5b254b"
+  },
+  {
+    "path": "README.md",
+    "sha256": "5c6fe0381c205771a272950c6c2b1742affb307d6d634160e7677448b23ae60d"
+  },
+  {
+    "path": "jsconfig.json",
+    "sha256": "e73e9adf0fcd9194c496670efb5251825685314475c9548c3ec4d74056ccc75b"
+  },
+  {
+    "path": ".npmrc",
+    "sha256": "08478c8b81520503d3a3e34e430f88ebc0a4e4cc93078f94ae3ea96d348210cb"
+  },
+  {
+    "path": "vite.config.js",
+    "sha256": "d92e1eb3037080aa2a643aa3e7fd23b26ba946db9b78ce17e31e2dfc0bb1a586"
+  },
+  {
+    "path": "eslint.config.js",
+    "sha256": "b0ac68c36cb81cba5bbdd537620b03762164ba276e338fdba73981318f011e60"
+  },
+  {
+    "path": "package-lock.json",
+    "sha256": "e4e7e32aa00f957921982078a7ed565ab4655d07f926045b516142e2ab643eeb"
+  },
+  {
+    "path": "components.json",
+    "sha256": "73e1334afce0f20f01500532e3b63a7cc36238d8a05addef40c476fadf9dc349"
+  },
+  {
+    "path": "CLAUDE.md",
+    "sha256": "4c9691fea1d31f325645a9d86163cb92ff0097d7cd04cae4ab7d7aff05fa97cd"
+  },
+  {
+    "path": "AGENTS.md",
+    "sha256": "e2c30f526e2bf4cc7bf0e53d396ca8306269a19040a5b5b90a2e5c6ceb9b93be"
+  },
+  {
+    "path": "package.json",
+    "sha256": "78410957c760074be6844b2f3774493cd57c42d83b62c481a3a0d3782e338790"
+  },
+  {
+    "path": ".gitignore",
+    "sha256": "b36d13652aad88703a8f230b884fd93c01fbbb7d7e0d4a7752ae214bb5b6cb2d"
+  },
+  {
+    "path": "postcss.config.js",
+    "sha256": "190c877db466995bf1482f4a16abd06e04a89ede3119341e2a86ff96e1737b27"
+  },
+  {
+    "path": "base44/config.jsonc",
+    "sha256": "751ec845087502d92437a4e254fc407e82b324dbc366cc1eac7723335c8fe6ce"
+  },
+  {
+    "path": "base44/functions/resolveLinearIssueForIncident/entry.ts",
+    "sha256": "d8993f6c8b6bde0915c6ddce4b7b95723daac7a6bbc342b838710acba57bd049"
+  },
+  {
+    "path": "base44/functions/aiResolve/entry.ts",
+    "sha256": "1bd04ee53c45e58c32c578aedc2e213e5202069bdc946c9e6e9c932e5523ff02"
+  },
+  {
+    "path": "base44/functions/aiAssist/entry.ts",
+    "sha256": "4f0183d2374c6fb9b204d857f59fbf4a7c5e2f7d24fa723c75279cb2c6ea204e"
+  },
+  {
+    "path": "base44/functions/createLinearIssueFromIncident/entry.ts",
+    "sha256": "3491633c6368e1a4017e61f1d4812c385fa9c246324bbc70eb166a2256d3c290"
+  },
+  {
+    "path": "base44/connectors/linear.jsonc",
+    "sha256": "baa6cd190360cebcdb9501b68826c2140fc57b6512987556fcd1daceb29d6431"
+  },
+  {
+    "path": "base44/entities/AdminCommand.jsonc",
+    "sha256": "f0c6637de33134e3f536c97ac613e78de0637e8015a7c82d8f79c760c898b0c9"
+  },
+  {
+    "path": "base44/entities/ProductUser.jsonc",
+    "sha256": "6ab940077dfeaa1de38b946c9d0212f3053649cf67ff235f7cd41d6a0cf0470b"
+  },
+  {
+    "path": "base44/entities/User.jsonc",
+    "sha256": "2ac180af8d0fc086024e367dcdb05cc1ba15d3301ea7cd34579fcee71f16bf53"
+  },
+  {
+    "path": "base44/entities/Configuration.jsonc",
+    "sha256": "da0688a5378db1adc1fb065181f39479d864c7241a47064caaed27c127cb3837"
+  },
+  {
+    "path": "base44/entities/Manager.jsonc",
+    "sha256": "a83386e45d17576728815fb70e23e05610ca89d0eb9544290a526fc3075a8a4a"
+  },
+  {
+    "path": "base44/entities/Incident.jsonc",
+    "sha256": "ad9d9da3bc8f10bf0d999641d0c7e5ca2abc70ea52e529a8f2d5087e6e7dc7d2"
+  },
+  {
+    "path": "base44/entities/Audit.jsonc",
+    "sha256": "08ce5b11fd7539c021dee5c048a7ced5ba8d7d06c2868bf67b1db6f3970bb597"
+  },
+  {
+    "path": "base44/entities/CapabilityManifest.jsonc",
+    "sha256": "bde9698496c76ed22fbf6f08f7acfae0433715a4748cd2ed97805bf3994cd0ee"
+  },
+  {
+    "path": "base44/entities/Saas.jsonc",
+    "sha256": "35eb05fb50576c315fecadffc083c782ed06dc3fd6684dbe961798bb91389dcd"
+  },
+  {
+    "path": "base44/workflows/Incident to Linear.jsonc",
+    "sha256": "28e89b03ef00100b6bcb95b3eb07d8811484a5a34de43467d68b5534c95ef024"
+  },
+  {
+    "path": "base44/workflows/Resolve Incident in Linear.jsonc",
+    "sha256": "2532874d690020b22e4509d8bbda93c20de214b0c3fa1076fd64ab382a5fd74e"
+  },
+  {
+    "path": "src/App.jsx",
+    "sha256": "77ce7737af63a6505986f974633c5b58840fdb14cb9fbd93f504079ae80576ee"
+  },
+  {
+    "path": "src/index.css",
+    "sha256": "578640a1bb0dd7e6aa509d5339a48749983042d63eba1ac139e7ae6b174a1f2f"
+  },
+  {
+    "path": "src/main.jsx",
+    "sha256": "caa3bab80b647fbb53fccd2e80d6e190d45a4b06c92bf85e3968d87e8d891cec"
+  },
+  {
+    "path": "src/components/AuthLayout.jsx",
+    "sha256": "27191e5279ab7a6d30609f7954c64edf586ce11817ca50ca63ed03bd432629ce"
+  },
+  {
+    "path": "src/components/CommandPalette.jsx",
+    "sha256": "88241e59bee3f66bbf282426f3b0f590a053433f8bb39a1d3a9ef6690fb8b572"
+  },
+  {
+    "path": "src/components/TenantSwitcher.jsx",
+    "sha256": "74b3187741d11edd4a274aab3f2a444b09a0dac45a1b60da36ffc8b5c0b99cc4"
+  },
+  {
+    "path": "src/components/AdminLayout.jsx",
+    "sha256": "b96200b9e01e673da1b4cf0a25b74397c6357fe8c7d3126425e3f379287f49cb"
+  },
+  {
+    "path": "src/components/StatusBadge.jsx",
+    "sha256": "d8ebe31fa60f891916debfb59a96f53de0e16ad798d3734541b1873b6d1a1c87"
+  },
+  {
+    "path": "src/components/ui-primitives.jsx",
+    "sha256": "d00330ba3a510a8e2fe94a8aa3ef2931655d010af0db03b4ac85e2798ef6bb97"
+  },
+  {
+    "path": "src/components/QuickActionsMenu.jsx",
+    "sha256": "a7fb0664f86d81c154fddefbf029a487dbe7d9e56d40617cddf0b9383b0e4c7b"
+  },
+  {
+    "path": "src/components/GoogleIcon.jsx",
+    "sha256": "4d5d7b5c6a368f8246fe088eaa158b2cd0872bfafa8e5c495ec39ebb697c4f6b"
+  },
+  {
+    "path": "src/components/ProtectedRoute.jsx",
+    "sha256": "f1121449bc7f8f31b2ed2d4a6e0211c8d300319efd58919efdd313dc7b586068"
+  },
+  {
+    "path": "src/components/Highlight.jsx",
+    "sha256": "219b9aa896319c9f00dde814f5d3c2fcb410c9e28b64db884656020c75528dd5"
+  },
+  {
+    "path": "src/components/UserNotRegisteredError.jsx",
+    "sha256": "5cecb11fe2fb3a03a73e5845b5ee9d26c9255e80feda689b3dfc70822ba288f1"
+  },
+  {
+    "path": "src/components/PageHeader.jsx",
+    "sha256": "7b762ca26b5367d1fe49802cbc0343388085e07ecc64a3467b3c59f5cbaade67"
+  },
+  {
+    "path": "src/components/ScrollToTop.jsx",
+    "sha256": "56f6ecc5d3f0bd692e7d4bb6d89f73ddac4148150718388ef8cf996a985f6138"
+  },
+  {
+    "path": "src/components/users/NewProductUserDialog.jsx",
+    "sha256": "ab259cbd3d203429d04c234f72e7bd3d26c9f3222b81ccfa494ebc170831db08"
+  },
+  {
+    "path": "src/components/users/NewManagerDialog.jsx",
+    "sha256": "2f87e858aa70fd137900c06238a9ea14e0af0278f97988ca627231bb89540ef1"
+  },
+  {
+    "path": "src/components/incidents/IncidentCard.jsx",
+    "sha256": "dc077b840a9eac2d09b1f0fd09edceda954402f0d089715cce422d6dfdd203b7"
+  },
+  {
+    "path": "src/components/incidents/MonthlyIncidentsChart.jsx",
+    "sha256": "656e8ded86c9b00f09cab71e5aa219ee5c652081735fb1d4176e04dbcfc33f2d"
+  },
+  {
+    "path": "src/components/incidents/ResolveIncidentDialog.jsx",
+    "sha256": "09cdeb7157dd69e13193654490200aca83188a1792e50869521c64a6f33ff2ab"
+  },
+  {
+    "path": "src/components/incidents/IncidentCharts.jsx",
+    "sha256": "c5ccfac6730acb909a3c5872ddf2cfec76fb30d2d6cfbbed07a53c82b3bc76dc"
+  },
+  {
+    "path": "src/components/incidents/NewIncidentDialog.jsx",
+    "sha256": "4dda1ed781c9ba53679328fce90603b0e547ff3bccefdbc041769f30dbc1faa0"
+  },
+  {
+    "path": "src/components/resolution/AiAssistant.jsx",
+    "sha256": "0ec4c481068687883ee134e63d5235d4e73edc657e968561a2c9ab376fe81430"
+  },
+  {
+    "path": "src/components/resolution/ResolutionActions.jsx",
+    "sha256": "55a706d53f11027fbed1d836d648f9adefe231a8ed26d1e81abde10bcec45996"
+  },
+  {
+    "path": "src/components/resolution/ProblemCard.jsx",
+    "sha256": "241d14f5bfaececa14db54ca762fd87000e721fb9d6a5f3070b2b38cc5f8588d"
+  },
+  {
+    "path": "src/components/operations/NewOperationDialog.jsx",
+    "sha256": "33f8ce4ea587b9e497a3a82fd208838aa6a721e776fe3d3b699285f840178bed"
+  },
+  {
+    "path": "src/components/configurations/NewConfigurationDialog.jsx",
+    "sha256": "4bfbb24d4a8d2286495ac0eda3103f79e5e62e92bea52b811568a1adf2cd175f"
+  },
+  {
+    "path": "src/components/saas/NewSaasDialog.jsx",
+    "sha256": "cf814bffcdea20c1afb8fc9779532e5deb048c824fdfbb8f4873e21cd955e016"
+  },
+  {
+    "path": "src/components/ui/image-helpers.js",
+    "sha256": "2bf8f14c37c7c8165afe4562a1fb445866f8ab21b2baf55af34961d68b170d42"
+  },
+  {
+    "path": "src/components/ui/sheet.jsx",
+    "sha256": "33f27d1b55925dbc354d0a61b0cbc6f977352da13f4df519f06e5b5bd9ed2d5c"
+  },
+  {
+    "path": "src/components/ui/navigation-menu.jsx",
+    "sha256": "a1f789747cb750329a33ee04c54209b044239a15ba200fb9d7da1f2ce6b73403"
+  },
+  {
+    "path": "src/components/ui/progress.jsx",
+    "sha256": "1ad2808d51c365f04f23a4e985b03274dcc30735d74db68e1f78332a6533859c"
+  },
+  {
+    "path": "src/components/ui/use-responsive-image.jsx",
+    "sha256": "2bf5573b4688bea5f3edf76c68889737c8b8e0163b5fb4c3b4ab5da5715e25b9"
+  },
+  {
+    "path": "src/components/ui/badge.jsx",
+    "sha256": "380dcda78ff8fdd80c82b89cb7dd38ffd84c355735fc8f16300ff647e15988aa"
+  },
+  {
+    "path": "src/components/ui/input-otp.jsx",
+    "sha256": "78a437a82203c1d9d22d47db830bdc67d49d6473c5c28ad77634eeb8c399a649"
+  },
+  {
+    "path": "src/components/ui/toggle.jsx",
+    "sha256": "e8fe6de52ef73d6fa868229ae7a21e681fb3088975847d6ee65a8387731c1c79"
+  },
+  {
+    "path": "src/components/ui/dialog.jsx",
+    "sha256": "50a7cc4ae5ce0f2527662ed9742d35b8c4933d1629a2740b26890793aee00742"
+  },
+  {
+    "path": "src/components/ui/menubar.jsx",
+    "sha256": "5411f1b8221d9a34fc9b58f830642cfa3a33c776d0072014690e2f024515391d"
+  },
+  {
+    "path": "src/components/ui/hover-card.jsx",
+    "sha256": "3b49e533ad60995767a3419351642037438e8f27b62132115fc71115cf1fd0ad"
+  },
+  {
+    "path": "src/components/ui/calendar.jsx",
+    "sha256": "06e0c81497bda70ac24855b54fddd385557cbc3be8d8066a345bedbec551b3ee"
+  },
+  {
+    "path": "src/components/ui/toggle-group.jsx",
+    "sha256": "1c7566b9f2aa00f0afdf161527be90588a11386158dca55425ea0d8c0e3883e4"
+  },
+  {
+    "path": "src/components/ui/image.jsx",
+    "sha256": "28f925694fedbec102d3333b6ec0e4a571439fff5e29ccd3da050aec21512dd5"
+  },
+  {
+    "path": "src/components/ui/pagination.jsx",
+    "sha256": "1d519fc3ba1c8c6cf7f2d30c98739ecba2fa7af35cbc024d6793785e7a6d65c8"
+  },
+  {
+    "path": "src/components/ui/switch.jsx",
+    "sha256": "880e95637cc1d90ef4476f79114afd2fa7b5f6e5da1f49a70e0efc1f84aa0c8a"
+  },
+  {
+    "path": "src/components/ui/alert.jsx",
+    "sha256": "c5baf27fb6a4bf130236fa0f336c21084fee192e8215bb6b20c87436c27f3b38"
+  },
+  {
+    "path": "src/components/ui/popover.jsx",
+    "sha256": "199cc7b3d810013867ae91305f0966b8a66526a1c13d10248c38ee1797d169db"
+  },
+  {
+    "path": "src/components/ui/scroll-area.jsx",
+    "sha256": "3de4bed34be51a940243b0fbf8c6d9324ecb416a91a919d65ca18d15a7ba32a1"
+  },
+  {
+    "path": "src/components/ui/command.jsx",
+    "sha256": "e7cea37aff49e211ffea1bf3ed67add6ce1ab29862e902aff739fcd11014f06f"
+  },
+  {
+    "path": "src/components/ui/select.jsx",
+    "sha256": "15c7a0e4c45b655ffa8d3f3be8bdaab727a19fd6baa95b34056bf02c7254243e"
+  },
+  {
+    "path": "src/components/ui/checkbox.jsx",
+    "sha256": "b0260cb7767493d8273f5def1b7d32e844d068db5f5760258d333ae6ad88f0d8"
+  },
+  {
+    "path": "src/components/ui/dropdown-menu.jsx",
+    "sha256": "d36cd67e71781bbb03059b057b6f686445477a4275120359178729574398c465"
+  },
+  {
+    "path": "src/components/ui/accordion.jsx",
+    "sha256": "b47533b3783b8149550b8481e4ae93d54bdcbc51d434793c176b0aec5558ee1c"
+  },
+  {
+    "path": "src/components/ui/collapsible.jsx",
+    "sha256": "f4cdd104de29928bfcd40b865c7d08eed9157a537fbb8b5e6d0921f02b63cc04"
+  },
+  {
+    "path": "src/components/ui/textarea.jsx",
+    "sha256": "b64a8fabf495dd59dbfd23914334ffbdfa695f506a133370603a49eca1243f62"
+  },
+  {
+    "path": "src/components/ui/carousel.jsx",
+    "sha256": "55eb9456609f96f5c28c1fa35fe79554fc0ffab12883e3aceb041ff10e347e83"
+  },
+  {
+    "path": "src/components/ui/alert-dialog.jsx",
+    "sha256": "a20098cdc2eb2b5915575d3f0fb7a3e8e6c1035c7eef77144f3fc389e0fdbda0"
+  },
+  {
+    "path": "src/components/ui/toaster.jsx",
+    "sha256": "fc1bce32d9a45f5be28c67b486962b90eed76742f3c0995f5fb908ffc6bde3cd"
+  },
+  {
+    "path": "src/components/ui/use-toast.jsx",
+    "sha256": "40f2839736597a3f7d54e4359a375c5991ce58eb341d8abb944874ac0dce9bbc"
+  },
+  {
+    "path": "src/components/ui/chart.jsx",
+    "sha256": "c4684b470cae53b857a08e5fe006d4406450a442a103858beb179ec810aba2b3"
+  },
+  {
+    "path": "src/components/ui/label.jsx",
+    "sha256": "37c6425d2a5c798ade4e60f89f86054d703433a8977e12d796de2b5bb4e3d0b7"
+  },
+  {
+    "path": "src/components/ui/tabs.jsx",
+    "sha256": "57591bdfb3fa931b06edcf4168b6881a79785c674ad0618003d12cd656072350"
+  },
+  {
+    "path": "src/components/ui/tooltip.jsx",
+    "sha256": "73e47a5dde6c55aca2e32e429ba95d8746ce2cca02cc718613f337b5bc9f5f19"
+  },
+  {
+    "path": "src/components/ui/separator.jsx",
+    "sha256": "2c82247abd573d0f4a93eb259166e3b778365b58c0d18921b4739d5ba4b29e7e"
+  },
+  {
+    "path": "src/components/ui/card.jsx",
+    "sha256": "8ab6f42e722e9c51752ce2f14aabb2696bddc0b6818041fb8f313f670955c2c4"
+  },
+  {
+    "path": "src/components/ui/drawer.jsx",
+    "sha256": "3d2dce97d3f6bc5dfa887e87c6688228298526bfdc29a28f2edbd6c1dc2eb47a"
+  },
+  {
+    "path": "src/components/ui/skeleton.jsx",
+    "sha256": "c5f32316d9f8feeba529bac6321766424067185afee5f29a15bb18145adaf1bc"
+  },
+  {
+    "path": "src/components/ui/table.jsx",
+    "sha256": "301509bb8337184f1b299cb15b8d4f8ec8f0d3bbc17a2ffdf33ff58f7eaa444e"
+  },
+  {
+    "path": "src/components/ui/sonner.jsx",
+    "sha256": "f1309f953467d583202225d08414161fc3183758ac38c997249eb63686a27ba8"
+  },
+  {
+    "path": "src/components/ui/button.jsx",
+    "sha256": "6c28699c64ff8c36ec5a2baf835d6bfa141cedeaf472b97d64671dac6cf7cbf8"
+  },
+  {
+    "path": "src/components/ui/breadcrumb.jsx",
+    "sha256": "4c0972765dc0212c5101446cb931db44b7db68a21ef9d7bc8a75c46f9bb96e42"
+  },
+  {
+    "path": "src/components/ui/slider.jsx",
+    "sha256": "1761bfaa0a06480b76b31511e4a5c24903b407732e027fc11ad615dd3d93a562"
+  },
+  {
+    "path": "src/components/ui/avatar.jsx",
+    "sha256": "703fb6852952bd039b68dc494c004eee1d835fa12647b851722ab9b6b3058b32"
+  },
+  {
+    "path": "src/components/ui/context-menu.jsx",
+    "sha256": "5fe320cad9ee1833e9528f86e340f83f419f77790549f4cff083fad329e8dc4c"
+  },
+  {
+    "path": "src/components/ui/sidebar.jsx",
+    "sha256": "828bec5ac1ec715fe50deebae08a7da23f01e9b0dcb221b110e37de63eb22d3c"
+  },
+  {
+    "path": "src/components/ui/responsive-image.jsx",
+    "sha256": "e15b3be64dd8d69183a64c052becafaa6b9a27472bf358edc9fced194e09ba5b"
+  },
+  {
+    "path": "src/components/ui/toast.jsx",
+    "sha256": "cf9d4869024d879c2e0c4122f74dd0d7cfc834c7377634a14e1bfc47db1d15e0"
+  },
+  {
+    "path": "src/components/ui/radio-group.jsx",
+    "sha256": "10ced1e6932e4fe53d6c18201f50b8bb4b334b4372f01ce5f0993aa2a6bb9110"
+  },
+  {
+    "path": "src/components/ui/resizable.jsx",
+    "sha256": "4e74fb31b8321012570554dc8c55a58aacf1adcced2fdc43085c67ff96ce9773"
+  },
+  {
+    "path": "src/components/ui/form.jsx",
+    "sha256": "d899b071230c321acdb2996cbe02d84a46dd9825f81af1015f7e54c6b9ee211c"
+  },
+  {
+    "path": "src/components/ui/input.jsx",
+    "sha256": "4455aea152904f128df0ecd82047bbceb23e06ffcc9ccc7cbb3bcc87df5bcc4f"
+  },
+  {
+    "path": "src/components/ui/aspect-ratio.jsx",
+    "sha256": "08b0aa0b05efc573c7d63363c03e83d4b101bfeb54140764e96ddea30659cfcc"
+  },
+  {
+    "path": "src/pages/Integrations.jsx",
+    "sha256": "3970b5c8dcc8d3d5a30cac1f4f0df3467927c6c20feac5e2eac4e69af9778233"
+  },
+  {
+    "path": "src/pages/Configurations.jsx",
+    "sha256": "fabde59742d9ad40d6574b8e3154e909306729fbcd78dfe2b8849a7f2b7f798d"
+  },
+  {
+    "path": "src/pages/AuditLog.jsx",
+    "sha256": "dc283d5ce5649514866e61d2d43032a15833544162f0f673bdb59d71eb984702"
+  },
+  {
+    "path": "src/pages/UsersAccess.jsx",
+    "sha256": "8607d62100a6bfa8ba1fadf3c185ae69051d3d787153c0f1392675a199b668ef"
+  },
+  {
+    "path": "src/pages/Home.jsx",
+    "sha256": "360b1a7ee27858978972a375110da00b6177c2511706f6f5fadc136ad71f2910"
+  },
+  {
+    "path": "src/pages/Login.jsx",
+    "sha256": "041529e220537152d1aaab51ca3c2ce46229415cc8d7e9effa4ad13a3f498379"
+  },
+  {
+    "path": "src/pages/SaasDetail.jsx",
+    "sha256": "1af395cd9268a4eec38a44d25491daf5e437cbf3adf634b508e9fa36ad508180"
+  },
+  {
+    "path": "src/pages/ResolutionCenter.jsx",
+    "sha256": "b5158862b76e6efc7e30fbc1623df53781c478543a591ec02001f6a39d416678"
+  },
+  {
+    "path": "src/pages/Register.jsx",
+    "sha256": "bea8b4668238d0768e50be970b3ea1b43ae31c0247786bb935f0e421d277b6aa"
+  },
+  {
+    "path": "src/pages/ResetPassword.jsx",
+    "sha256": "e68c455710f69a5bd3028c3c42609eba8dd11155f076462cb3a1e0e18fc4c3f4"
+  },
+  {
+    "path": "src/pages/OperationCenter.jsx",
+    "sha256": "87cec4508293d810d79f6b859a1e9da9472371480ab36377957372ff5383b608"
+  },
+  {
+    "path": "src/pages/OAuthConsent.jsx",
+    "sha256": "010ab0d83bb6b84c371b7895c99b8ae6fa21b06253c4a705bf3edea4d18d030a"
+  },
+  {
+    "path": "src/pages/ForgotPassword.jsx",
+    "sha256": "a5637ed3c56e98a97dd70ff74201a87383d9b9683af43599d39979e0b4a059f3"
+  },
+  {
+    "path": "src/pages/ApiGuides.jsx",
+    "sha256": "d286aab8ccb2bbe59bcd834a818b3691ad20cb3087489434eb61de0a17ccf03a"
+  },
+  {
+    "path": "src/pages/Incidents.jsx",
+    "sha256": "172014914358d9de0b190d7bf988fa38867de9bb73588dec9e207049312a3ad9"
+  },
+  {
+    "path": "src/pages/SaasList.jsx",
+    "sha256": "34b43afab2c90d8093ea2a878864469743ad8032da75f3a730414769f4a68bd6"
+  },
+  {
+    "path": "src/api/base44Client.js",
+    "sha256": "ac90e3b11d391f5ed5d365053acd2d2d30f1f43c06f81d9cfd235c15548a88d9"
+  },
+  {
+    "path": "src/hooks/use-size.jsx",
+    "sha256": "9d9e943e8dadcc95a2be6c40c20dee85029c87b443ed1fa1c6104d10ae7b9bdc"
+  },
+  {
+    "path": "src/hooks/use-mobile.jsx",
+    "sha256": "a136217739e79f9d02440e711b9bd1abb6adf60f1a83b45a39a009a09568ad1c"
+  },
+  {
+    "path": "src/hooks/usePermissions.jsx",
+    "sha256": "c5bd31864daf2f474b24cc4923beadee6a1fe4dd0d9ebf96d236afef5ba178a8"
+  },
+  {
+    "path": "src/utils/index.ts",
+    "sha256": "1bd31d3e8630b19dcb1d92878a2501d5e29fc935eab48ec5d90e66c410cf7e1a"
+  },
+  {
+    "path": "src/lib/audit.js",
+    "sha256": "2677e06059170609d9aa2eecd753e989ed0397e4df7bfd90290ceba10993a9f2"
+  },
+  {
+    "path": "src/lib/problems.js",
+    "sha256": "0d306a8ddf767369c720aebce03b687d3e9de2cb90c3b7162342518dfeb36ca8"
+  },
+  {
+    "path": "src/lib/quickActions.js",
+    "sha256": "aaaee7e0dfea558520fc2f8f50287e97c2892cfa790641755a4522930170e3df"
+  },
+  {
+    "path": "src/lib/utils.js",
+    "sha256": "4f592359765d69c32c3617700fa111af9a6a9cac8f18cb1987c25503a343c203"
+  },
+  {
+    "path": "src/lib/searchUtils.js",
+    "sha256": "5f2596bc0e26902339e9559fb6978927d77aecd51bcbef9fdf6ac5e1e109cdf3"
+  },
+  {
+    "path": "src/lib/app-params.js",
+    "sha256": "9a9654b09eaa21f651851caa75ddf05e5c95b2dbc3c2858d168264e0e36ed780"
+  },
+  {
+    "path": "src/lib/query-client.js",
+    "sha256": "0a080b6d9a1ed9f5f32150d9e3faa928f955d2b8d6206831e2b1658e84612c92"
+  },
+  {
+    "path": "src/lib/TenantContext.jsx",
+    "sha256": "fa8849a3e1f1ba68055906fdf4b0b75cb1829b214fe6cfd0d580571e1e5ecbe9"
+  },
+  {
+    "path": "src/lib/adminHelpers.js",
+    "sha256": "f7d5b92f396e8277d0c21ae19bbe726568b779a9de4b21fac453e61266500337"
+  },
+  {
+    "path": "src/lib/PageNotFound.jsx",
+    "sha256": "8536e2091188275762a6729ecd77a77b8c5f1187525ae4189df42c95ca42f196"
+  },
+  {
+    "path": "src/lib/authReturnTo.js",
+    "sha256": "945e12ab4a68e6166ddefbb9c91983d04e7b55db7bb2a3af628a192b95de01c9"
+  },
+  {
+    "path": "src/lib/AuthContext.jsx",
+    "sha256": "2ac2133bc9448d8e8c0f12d3ccef7287f20efddfe0f4c90d0b517bbdc25c0fc0"
+  },
+  {
+    "path": "src/lib/permissions.js",
+    "sha256": "b4b9c9b08aeb916e2704fce48d2d454916796bd9f532729f1594eea4a089862f"
+  }
+]

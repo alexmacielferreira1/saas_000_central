@@ -1,0 +1,85 @@
+{
+  "name": "Configuration",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization (tenant)",
+      "default": "default"
+    },
+    "saas_id": {
+      "type": "string",
+      "title": "SaaS (id, nome ou 'central')"
+    },
+    "key": {
+      "type": "string",
+      "title": "Chave"
+    },
+    "value": {
+      "type": "string",
+      "title": "Valor"
+    },
+    "previous_value": {
+      "type": "string",
+      "title": "Valor anterior"
+    },
+    "environment": {
+      "type": "string",
+      "enum": [
+        "production",
+        "staging",
+        "development"
+      ],
+      "default": "production",
+      "title": "Ambiente"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "feature_flag",
+        "setting",
+        "limit"
+      ],
+      "default": "setting",
+      "title": "Tipo"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "title": "Ativo"
+    },
+    "author": {
+      "type": "string",
+      "title": "Autor"
+    },
+    "reason": {
+      "type": "string",
+      "title": "Motivo"
+    },
+    "valid_from": {
+      "type": "string",
+      "format": "date-time",
+      "title": "V\u00e1lido de"
+    },
+    "valid_until": {
+      "type": "string",
+      "format": "date-time",
+      "title": "V\u00e1lido at\u00e9"
+    },
+    "approval_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected",
+        "auto"
+      ],
+      "default": "auto",
+      "title": "Aprova\u00e7\u00e3o"
+    }
+  },
+  "required": [
+    "saas_id",
+    "key"
+  ]
+}

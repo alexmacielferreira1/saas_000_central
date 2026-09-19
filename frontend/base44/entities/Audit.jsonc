@@ -1,0 +1,70 @@
+{
+  "name": "Audit",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization (tenant)",
+      "default": "default"
+    },
+    "actor": {
+      "type": "string",
+      "title": "Quem"
+    },
+    "saas": {
+      "type": "string",
+      "title": "Onde (SaaS)"
+    },
+    "tenant": {
+      "type": "string",
+      "title": "Tenant"
+    },
+    "action": {
+      "type": "string",
+      "title": "A\u00e7\u00e3o"
+    },
+    "entity": {
+      "type": "string",
+      "title": "Entidade"
+    },
+    "entity_id": {
+      "type": "string",
+      "title": "ID da entidade"
+    },
+    "before": {
+      "type": "string",
+      "title": "Antes"
+    },
+    "after": {
+      "type": "string",
+      "title": "Depois"
+    },
+    "reason": {
+      "type": "string",
+      "title": "Motivo"
+    },
+    "operation_id": {
+      "type": "string",
+      "title": "Operation / correlation ID"
+    },
+    "result": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failed",
+        "partial",
+        "denied"
+      ],
+      "default": "success",
+      "title": "Resultado"
+    },
+    "origin": {
+      "type": "string",
+      "title": "Origem (ui/api/automation/break_glass)"
+    }
+  },
+  "required": [
+    "actor",
+    "action"
+  ]
+}

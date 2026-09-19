@@ -1,0 +1,62 @@
+{
+  "name": "CapabilityManifest",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization (tenant)",
+      "default": "default"
+    },
+    "saas_id": {
+      "type": "string",
+      "title": "SaaS (id ou nome)"
+    },
+    "version": {
+      "type": "string",
+      "title": "Vers\u00e3o do manifest"
+    },
+    "capabilities": {
+      "type": "string",
+      "title": "Capabilities (JSON)"
+    },
+    "health": {
+      "type": "string",
+      "title": "Health endpoints"
+    },
+    "resources": {
+      "type": "string",
+      "title": "Recursos administrativos expostos"
+    },
+    "scopes": {
+      "type": "string",
+      "title": "Scopes / permiss\u00f5es"
+    },
+    "events": {
+      "type": "string",
+      "title": "Eventos / webhooks"
+    },
+    "limits": {
+      "type": "string",
+      "title": "Limites"
+    },
+    "admin_api_version": {
+      "type": "string",
+      "title": "Admin API version"
+    },
+    "compatibility": {
+      "type": "string",
+      "enum": [
+        "supported",
+        "deprecated",
+        "limited",
+        "incompatible"
+      ],
+      "default": "limited",
+      "title": "Compatibilidade"
+    }
+  },
+  "required": [
+    "saas_id",
+    "version"
+  ]
+}

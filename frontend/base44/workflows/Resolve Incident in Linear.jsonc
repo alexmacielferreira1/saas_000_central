@@ -1,0 +1,40 @@
+{
+  "name": "Resolve Incident in Linear",
+  "description": "Quando o status de um incidente muda para 'resolved' na Central, marca a tarefa vinculada no Linear como conclu\u00edda automaticamente.",
+  "trigger": {
+    "config": {
+      "trigger_type": "entity",
+      "entity_name": "Incident",
+      "events": [
+        "update"
+      ]
+    },
+    "condition": "${ .trigger.data.status == \"resolved\" and .trigger.old_data.status != \"resolved\" }"
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "resolve_incident_in_linear",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "resolve_linear": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "resolveLinearIssueForIncident",
+            "args": {
+              "incident_id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Resolver tarefa no Linear",
+            "description": "Marca a issue vinculada como conclu\u00edda"
+          }
+        }
+      }
+    ]
+  }
+}

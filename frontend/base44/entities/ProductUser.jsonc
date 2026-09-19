@@ -1,0 +1,69 @@
+{
+  "name": "ProductUser",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "title": "Organization (tenant)",
+      "default": "default"
+    },
+    "saas_id": {
+      "type": "string",
+      "title": "SaaS (id ou nome)"
+    },
+    "external_user_id": {
+      "type": "string",
+      "title": "ID externo no SaaS"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "title": "Email"
+    },
+    "full_name": {
+      "type": "string",
+      "title": "Nome"
+    },
+    "role": {
+      "type": "string",
+      "title": "Role no SaaS"
+    },
+    "tenant": {
+      "type": "string",
+      "title": "Tenant"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "suspended",
+        "invited",
+        "removed"
+      ],
+      "default": "active",
+      "title": "Status"
+    },
+    "provenance": {
+      "type": "string",
+      "enum": [
+        "live_api",
+        "cache",
+        "webhook",
+        "sync",
+        "import",
+        "local_calculation"
+      ],
+      "default": "live_api",
+      "title": "Proveni\u00eancia"
+    },
+    "last_sync": {
+      "type": "string",
+      "format": "date-time",
+      "title": "\u00daltima sincroniza\u00e7\u00e3o"
+    }
+  },
+  "required": [
+    "saas_id",
+    "email"
+  ]
+}
