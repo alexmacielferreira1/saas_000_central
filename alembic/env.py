@@ -1,5 +1,6 @@
 from app.core.config import get_settings
 from app.db.session import Base, engine
+from app.models import AuthSession, Membership, Tenant, User  # noqa: F401
 
 from alembic import context
 
