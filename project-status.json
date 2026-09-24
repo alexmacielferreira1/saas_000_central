@@ -51,6 +51,21 @@
           "updated_at": "2026-09-19T19:54:35.473971+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_typecheck.log"
         },
+        "frontend_tests": {
+          "status": "passed",
+          "updated_at": "2026-09-22T23:51:23.1612973-03:00",
+          "notes": "Vitest/jsdom: 1 suite and 3 route-contract tests passed. Full functional coverage is not yet achieved."
+        },
+        "frontend_coverage": {
+          "status": "blocked",
+          "updated_at": "2026-09-22T23:51:23.1612973-03:00",
+          "notes": "Baseline: 4.05% statements, 0.18% branches, 0.27% functions and 4.42% lines. Expand progressively toward the HUB target."
+        },
+        "frontend_dependency_audit": {
+          "status": "blocked",
+          "updated_at": "2026-09-22T23:51:23.1612973-03:00",
+          "notes": "Compatible npm audit fixes applied; 2 low and 2 moderate findings remain in React Router/Quill and require isolated compatibility work."
+        },
         "http_smoke": {
           "status": "passed",
           "updated_at": "2026-09-19T19:54:41.041044+00:00",

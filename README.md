@@ -2,6 +2,8 @@
 
 Bootstrap local em andamento. Backend FastAPI e PostgreSQL independentes; frontend Base44 preservado. **M0 ainda não aprovado:** ver `docs/PROJECT_STATUS.md`, `docs/FRONTEND_BASELINE.md` e `docs/TESTING_STRATEGY.md`.
 
+O baseline em `docs/FRONTEND_BASELINE.md` registra o diagnóstico do export original. O estado atual é diferente: 25 correções de tipos/imports estão auditadas, e build, lint e typecheck passam. Isso ainda não comprova login ou funções Base44.
+
 ## Uso no Windows
 
 Abra PowerShell na pasta deste produto. Python 3.12, Node 24 e Docker Desktop em funcionamento são necessários. O setup baixa dependências na primeira preparação.
@@ -24,6 +26,8 @@ Abra PowerShell na pasta deste produto. Python 3.12, Node 24 e Docker Desktop em
 - PostgreSQL: 127.0.0.1:5434
 
 A porta de referência da Central é 8001, mas está ocupada pelo projeto antigo. O .env local usa 8011. Em outra instalação, ajuste API_PORT se necessário.
+
+O `.env` da raiz configura o backend. O Vite lê a configuração Base44 no diretório `frontend`: copie `frontend/.env.example` para `frontend/.env.local` e preencha localmente os três valores somente quando forem fornecidos. O template contém placeholders vazios; não inventar App ID, URL, versão, token ou credenciais e não versionar `.env.local`.
 
 `/health` verifica se a API está viva; `/ready` testa o banco de verdade; `/version` identifica produto e versão. As telas ainda não consomem este backend. A abertura do login não comprova autenticação real nem funções migradas.
 

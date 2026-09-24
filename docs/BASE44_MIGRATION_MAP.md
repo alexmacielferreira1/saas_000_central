@@ -208,7 +208,10 @@ SDK permanece instalado. Variáveis Base44 ausentes no export não serão invent
 - `frontend/src/pages/ResetPassword.jsx:28`
 
 ## Uploads
-Nenhuma ocorrência neste rastreio; revisão semântica pendente.
+
+Revisão semântica estática concluída em 19/09/2026. Não há fluxo de upload no export: nenhuma ocorrência de input `type="file"`, atributo `accept`, `FormData`, `FileReader`, `uploadFile`, multipart ou entidades/campos de anexo nos arquivos de `frontend/src` e `frontend/base44`. Componentes genéricos de imagem (`frontend/src/components/ui/image.jsx`, `responsive-image.jsx` e auxiliares) apenas renderizam URLs/propriedades; não selecionam nem enviam arquivos.
+
+Conclusão limitada ao código recebido: upload não faz parte da implementação atual. Isso não autoriza criar nem remover funcionalidade; eventual requisito posterior precisa de fonte e fatia de migração próprias.
 
 ## Local storage
 - `frontend/src/lib/app-params.js:9`
@@ -496,7 +499,15 @@ Nenhuma ocorrência neste rastreio; revisão semântica pendente.
 Nenhuma duplicata exata encontrada entre fontes analisadas.
 
 ## Arquivos não utilizados
-Pendente análise de imports/rotas em M4. Não remover por heurística.
+
+Análise estática de imports locais a partir de `frontend/src/main.jsx` e conferência das rotas de `frontend/src/App.jsx`, concluídas em 19/09/2026:
+
+- 115 módulos JS/JSX/TS/TSX foram inventariados em `frontend/src`; 68 são alcançáveis pelo grafo de imports estáticos a partir da entrada e 47 não são alcançáveis por esse grafo.
+- As 16 rotas registradas são: `/login`, `/register`, `/forgot-password`, `/reset-password`, `/`, `/resolution`, `/api-guides`, `/saas`, `/saas/:id`, `/users`, `/configurations`, `/operations`, `/audit`, `/incidents`, `/integrations` e o fallback `*`.
+- Todas as páginas dessas rotas são alcançáveis. `frontend/src/pages/OAuthConsent.jsx` existe, mas não está importada nem registrada em `App.jsx`.
+- Os outros candidatos não alcançáveis são 43 primitivas/auxiliares em `frontend/src/components/ui`, `frontend/src/hooks/use-mobile.jsx`, `frontend/src/hooks/use-size.jsx` e `frontend/src/utils/index.ts`.
+
+Esse resultado identifica candidatos, não lixo confirmado. Primitivas podem ser reserva do kit de interface, e `OAuthConsent.jsx` pode depender de uma rota ou integração ausente no export. Nenhum arquivo deve ser removido por esta análise; a decisão pertence à validação de paridade em M4.
 
 ## Paridade
 Todas as funcionalidades de negócio: NÃO MIGRADAS para FastAPI neste bootstrap.

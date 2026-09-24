@@ -4,7 +4,9 @@ Este documento aplica o padrão global `../../_documentacao/standards/17-TESTING
 
 ## Baseline atual
 
-M0 possui 23 casos executados e aprovados na última suíte completa. Eles cobrem liveness, versão, correlação, IDs inválidos, contrato de erros, disponibilidade do banco, cabeçalhos HTTP, referência pública de erro, cálculo dos gates, integridade auditada do frontend e banco PostgreSQL real. Build, lint e typecheck do frontend passaram. A validação funcional continua bloqueada pela configuração Base44 ausente.
+Na revalidação local de 22/09/2026, M0 possui 22 testes de backend executados e aprovados. Eles cobrem liveness, versão, correlação, IDs inválidos, contrato de erros, disponibilidade do banco, cabeçalhos HTTP, referência pública de erro, cálculo dos gates, integridade auditada do frontend e banco PostgreSQL real. Build, lint e typecheck do frontend passaram.
+
+O frontend agora possui Vitest/jsdom, relatório V8 e 3 testes que protegem unicidade e presença das rotas públicas/administrativas. O baseline medido é 4,05% statements, 0,18% branches, 0,27% functions e 4,42% lines. Isso é apenas o início e não comprova comportamento das páginas, login ou persistência. C0 deve elevar a cobertura progressivamente antes e durante a migração funcional do Base44, sem reduzir limiares para obter sucesso artificial.
 
 ## Cobertura planejada
 

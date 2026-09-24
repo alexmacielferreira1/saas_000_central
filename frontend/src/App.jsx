@@ -8,21 +8,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import AdminLayout from '@/components/AdminLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import Home from '@/pages/Home';
-import ResolutionCenter from '@/pages/ResolutionCenter';
-import ApiGuides from '@/pages/ApiGuides';
-import SaasList from '@/pages/SaasList';
-import SaasDetail from '@/pages/SaasDetail';
-import UsersAccess from '@/pages/UsersAccess';
-import Configurations from '@/pages/Configurations';
-import OperationCenter from '@/pages/OperationCenter';
-import AuditLog from '@/pages/AuditLog';
-import Incidents from '@/pages/Incidents';
-import Integrations from '@/pages/Integrations';
-import Login from '@/pages/Login';
-import Register from '@/pages/Register';
-import ForgotPassword from '@/pages/ForgotPassword';
-import ResetPassword from '@/pages/ResetPassword';
+import { ADMIN_ROUTES, PUBLIC_ROUTES } from '@/lib/routes';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -50,23 +36,14 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+      {PUBLIC_ROUTES.map(({ path, Component }) => (
+        <Route key={path} path={path} element={<Component />} />
+      ))}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route element={<AdminLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/resolution" element={<ResolutionCenter />} />
-          <Route path="/api-guides" element={<ApiGuides />} />
-          <Route path="/saas" element={<SaasList />} />
-          <Route path="/saas/:id" element={<SaasDetail />} />
-          <Route path="/users" element={<UsersAccess />} />
-          <Route path="/configurations" element={<Configurations />} />
-          <Route path="/operations" element={<OperationCenter />} />
-          <Route path="/audit" element={<AuditLog />} />
-          <Route path="/incidents" element={<Incidents />} />
-          <Route path="/integrations" element={<Integrations />} />
+          {ADMIN_ROUTES.map(({ path, Component }) => (
+            <Route key={path} path={path} element={<Component />} />
+          ))}
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />
