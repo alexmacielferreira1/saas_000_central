@@ -30,6 +30,8 @@ Esta entrega não compartilha banco, cookies, sessão, cliente OAuth, credenciai
 
 Um comando de bootstrap separado e idempotente cria a conta administrativa inicial somente quando ela ainda não existe. Os dados vêm de variáveis seguras de ambiente, com `alexmacielferreira@gmail.com` configurado como e-mail administrativo do ambiente autorizado.
 
+Localmente, o comando cria essa conta no PostgreSQL local. Quando a Central receber seu próprio banco Neon, o mesmo comando deve ser executado uma única vez apontando para o banco da Central. A conta existente no MediaMind não é visível nem copiada automaticamente porque os produtos possuem bancos independentes. `BOOTSTRAP_ADMIN_PASSWORD` é necessária para manter o login alternativo por e-mail; deve existir apenas durante a execução segura do bootstrap e pode ser removida das variáveis do serviço depois que a criação for comprovada. O hash permanece no banco. E-mail e nome podem ser mantidos apenas se forem úteis para recuperação operacional, mas o bootstrap nunca roda no startup comum.
+
 Regras:
 
 - não executar demo seed em produção;
@@ -86,6 +88,8 @@ Variáveis do backend da Central:
 - `BOOTSTRAP_ADMIN_EMAIL`
 - `BOOTSTRAP_ADMIN_PASSWORD`
 - `BOOTSTRAP_ADMIN_NAME`
+
+Essas três variáveis de bootstrap não são configuração permanente do fluxo Google. Em Neon/Render elas servem ao comando operacional inicial da Central; a senha em texto claro deve ser retirada do ambiente após a criação comprovada e nunca entra em Git, log ou imagem de container.
 
 Variável de build do frontend:
 
