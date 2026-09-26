@@ -1,138 +1,148 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
-import { appParams } from '@/lib/app-params';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+
+import { apiUrl, ApiError, request } from '@/api/httpClient';
 
 const AuthContext = createContext(undefined);
 
+function sessionState(payload) {
+  const memberships = payload.memberships || [];
+  const selectedTenantId = payload.selected_tenant_id || memberships[0]?.tenant_id || null;
+  const selectedMembership = memberships.find(({ tenant_id }) => tenant_id === selectedTenantId)
+    || memberships[0];
+
+  return {
+    user: {
+      ...payload.user,
+      name: payload.user.full_name,
+      role: selectedMembership?.role || null,
+    },
+    memberships,
+    selectedTenantId,
+  };
+}
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [memberships, setMemberships] = useState([]);
+  const [selectedTenantId, setSelectedTenantId] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
-  const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(true);
   const [authError, setAuthError] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
-  const [appPublicSettings, setAppPublicSettings] = useState(null); // Contains only { id, public_settings }
 
-  useEffect(() => {
-    checkAppState();
+  const clearSessionState = useCallback(() => {
+    setUser(null);
+    setMemberships([]);
+    setSelectedTenantId(null);
+    setIsAuthenticated(false);
   }, []);
 
-  const checkAppState = async () => {
-    try {
-      setIsLoadingPublicSettings(true);
-      setAuthError(null);
-      
-      try {
-        const publicSettings = await base44.app.getPublicSettings();
-        setAppPublicSettings(publicSettings);
-        
-        // If we got the app public settings successfully, check if user is authenticated
-        if (appParams.token) {
-          await checkUserAuth();
-        } else {
-          setIsLoadingAuth(false);
-          setIsAuthenticated(false);
-          setAuthChecked(true);
-        }
-        setIsLoadingPublicSettings(false);
-      } catch (appError) {
-        console.error('App state check failed:', appError);
-        
-        // Handle app-level errors
-        if (appError.status === 403 && appError.data?.extra_data?.reason) {
-          const reason = appError.data.extra_data.reason;
-          if (reason === 'auth_required') {
-            setAuthError({
-              type: 'auth_required',
-              message: 'Authentication required'
-            });
-          } else if (reason === 'user_not_registered') {
-            setAuthError({
-              type: 'user_not_registered',
-              message: 'User not registered for this app'
-            });
-          } else {
-            setAuthError({
-              type: reason,
-              message: appError.message
-            });
-          }
-        } else {
-          setAuthError({
-            type: 'unknown',
-            message: appError.message || 'Failed to load app'
-          });
-        }
-        setIsLoadingPublicSettings(false);
-        setIsLoadingAuth(false);
-      }
-    } catch (error) {
-      console.error('Unexpected error:', error);
-      setAuthError({
-        type: 'unknown',
-        message: error.message || 'An unexpected error occurred'
-      });
-      setIsLoadingPublicSettings(false);
-      setIsLoadingAuth(false);
-    }
-  };
+  const applySession = useCallback((payload) => {
+    const next = sessionState(payload);
+    setUser(next.user);
+    setMemberships(next.memberships);
+    setSelectedTenantId(next.selectedTenantId);
+    setIsAuthenticated(true);
+    setAuthError(null);
+    return next.user;
+  }, []);
 
-  const checkUserAuth = async () => {
+  const checkUserAuth = useCallback(async () => {
+    setIsLoadingAuth(true);
+    setAuthError(null);
     try {
-      // Now check if the user is authenticated
-      setIsLoadingAuth(true);
-      const currentUser = await base44.auth.me();
-      setUser(currentUser);
-      setIsAuthenticated(true);
-      setIsLoadingAuth(false);
-      setAuthChecked(true);
+      const payload = await request('/auth/session');
+      applySession(payload);
+      return payload;
     } catch (error) {
-      console.error('User auth check failed:', error);
-      setIsLoadingAuth(false);
-      setIsAuthenticated(false);
-      setAuthChecked(true);
-      
-      // If user auth fails, it might be an expired token
-      if (error.status === 401 || error.status === 403) {
+      clearSessionState();
+      if (!(error instanceof ApiError && error.status === 401)) {
         setAuthError({
-          type: 'auth_required',
-          message: 'Authentication required'
+          type: error.errorCode || 'session_restore_failed',
+          message: error.message || 'Nao foi possivel restaurar a sessao.',
+          publicReference: error.publicReference,
         });
       }
+      return null;
+    } finally {
+      setIsLoadingAuth(false);
+      setAuthChecked(true);
     }
-  };
+  }, [applySession, clearSessionState]);
 
-  const logout = (shouldRedirect = true) => {
-    setUser(null);
-    setIsAuthenticated(false);
-    
+  useEffect(() => {
+    checkUserAuth();
+  }, [checkUserAuth]);
+
+  const login = useCallback(async (email, password) => {
+    setIsLoadingAuth(true);
+    setAuthError(null);
+    try {
+      const payload = await request('/auth/login', {
+        method: 'POST',
+        body: { email, password },
+      });
+      applySession(payload);
+      setAuthChecked(true);
+      return payload;
+    } catch (error) {
+      clearSessionState();
+      setAuthError({
+        type: error.errorCode || 'login_failed',
+        message: error.message || 'Nao foi possivel entrar.',
+        publicReference: error.publicReference,
+      });
+      throw error;
+    } finally {
+      setIsLoadingAuth(false);
+    }
+  }, [applySession, clearSessionState]);
+
+  const loginWithGoogle = useCallback((navigate = (url) => window.location.assign(url)) => {
+    const url = apiUrl('/auth/google/start');
+    navigate(url);
+    return url;
+  }, []);
+
+  const logout = useCallback(async (shouldRedirect = true) => {
+    try {
+      await request('/auth/logout', { method: 'POST' });
+    } catch (error) {
+      if (!(error instanceof ApiError && error.status === 401)) {
+        throw error;
+      }
+    } finally {
+      clearSessionState();
+      setAuthError(null);
+      setAuthChecked(true);
+    }
+
     if (shouldRedirect) {
-      // Use the SDK's logout method which handles token cleanup and redirect
-      base44.auth.logout(window.location.href);
-    } else {
-      // Just remove the token without redirect
-      base44.auth.logout();
+      window.location.assign('/login');
     }
-  };
+  }, [clearSessionState]);
 
-  const navigateToLogin = () => {
-    // Use the SDK's redirectToLogin method
-    base44.auth.redirectToLogin(window.location.href);
-  };
+  const navigateToLogin = useCallback(() => {
+    window.location.assign('/login');
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      isAuthenticated, 
+    <AuthContext.Provider value={{
+      user,
+      memberships,
+      selectedTenantId,
+      isAuthenticated,
       isLoadingAuth,
-      isLoadingPublicSettings,
+      isLoadingPublicSettings: false,
       authError,
-      appPublicSettings,
+      appPublicSettings: null,
       authChecked,
+      login,
+      loginWithGoogle,
       logout,
       navigateToLogin,
       checkUserAuth,
-      checkAppState
+      checkAppState: checkUserAuth,
     }}>
       {children}
     </AuthContext.Provider>
