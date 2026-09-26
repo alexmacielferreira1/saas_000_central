@@ -53,4 +53,4 @@ Não executar reset-db por rotina. O banco persiste no volume do Docker. Logs/PI
 
 Ler `AGENTS.md`, `docs/ARCHITECTURE.md`, `docs/DEVELOPMENT_WORKFLOW.md` e `docs/PROJECT_STATUS.md`. No workspace completo, o acompanhamento geral está em `../_documentacao/RETOMADA.md`.
 
-Planejamento da Central: começar por `docs/CENTRAL_IMPLEMENTATION_PLAN.md`; consultar `docs/CENTRAL_CAPABILITY_CATALOG.md` para o inventário de telas, módulos e fluxos planejados. O README dentro de `frontend/` pertence ao export histórico e não é instrução de publicação da reconstrução.
+Para entregar o trabalho a outro chat/agente, começar por `docs/CENTRAL_MASTER_IMPLEMENTATION_CHECKLIST.md`. O índice completo está em `docs/README.md`, o plano técnico em `docs/CENTRAL_IMPLEMENTATION_PLAN.md`, e o inventário de telas, módulos e fluxos em `docs/CENTRAL_CAPABILITY_CATALOG.md`. O README dentro de `frontend/` pertence ao export histórico e não é instrução de publicação da reconstrução.

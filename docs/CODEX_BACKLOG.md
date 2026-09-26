@@ -2,6 +2,8 @@
 
 Fonte geral: `../../_documentacao/CODEX_BACKLOG.md`.
 
+Para execução em outro chat, usar `CENTRAL_MASTER_IMPLEMENTATION_CHECKLIST.md` como lista mestra. Ele reúne as tarefas dispersas e aponta para as especificações de origem; este backlog continua sendo a visão curta.
+
 ## Agora — C0
 
 1. **Em andamento:** auditar a estrutura atual e definir o gate de reconstrução sem Base44.
