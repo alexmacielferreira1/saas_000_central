@@ -53,4 +53,4 @@ Não executar reset-db por rotina. O banco persiste no volume do Docker. Logs/PI
 
 Ler `AGENTS.md`, `docs/ARCHITECTURE.md`, `docs/DEVELOPMENT_WORKFLOW.md` e `docs/PROJECT_STATUS.md`. No workspace completo, o acompanhamento geral está em `../_documentacao/RETOMADA.md`.
 
-Git local: branch `bootstrap/m0`, snapshot original `base44-export`; nenhum remoto configurado. O README dentro de frontend/ pertence ao export e descreve publicação Base44 histórica; não é instrução de publicação deste bootstrap.
+Planejamento da Central: começar por `docs/CENTRAL_IMPLEMENTATION_PLAN.md`; consultar `docs/CENTRAL_CAPABILITY_CATALOG.md` para o inventário de telas, módulos e fluxos planejados. O README dentro de `frontend/` pertence ao export histórico e não é instrução de publicação da reconstrução.

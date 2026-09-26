@@ -2,6 +2,8 @@
 
 Este plano inicia a reconstrução da `000_central` sem alterar o frontend histórico às cegas. Cada fase só avança quando seus critérios de aceite e testes estiverem comprovados. A Central reutiliza padrões de infraestrutura do HUB, mas mantém domínio, banco, repositório e deploy independentes.
 
+O inventário completo de telas e capacidades está em `CENTRAL_CAPABILITY_CATALOG.md`. Este arquivo define a ordem técnica; o catálogo evita perder funcionalidades planejadas. A proveniência integral e a classificação das 1.591 páginas recebidas estão em `../../_documentacao/SOURCE_INTAKE_2026-09-25_TWO_MASTER_PDFS.md`.
+
 ## Estado de partida — 22/09/2026
 
 - Backend local: FastAPI, configuração por ambiente, PostgreSQL/Alembic, health/version/readiness, correlação e erros públicos.

@@ -23,5 +23,6 @@ Fonte geral: `../../_documentacao/CODEX_BACKLOG.md`.
 14. **C9:** backup/restore, exportação, portabilidade, transferência e detachment test.
 
 Detalhamento, critérios de aceite e dependências: `CENTRAL_IMPLEMENTATION_PLAN.md`.
+Catálogo completo de telas, módulos e fluxos: `CENTRAL_CAPABILITY_CATALOG.md`.
 
 Nenhum URL GitHub/Render/Neon deve ser inventado; cada alvo precisa ser fornecido ou confirmado.
