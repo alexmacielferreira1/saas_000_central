@@ -97,6 +97,16 @@ def create_app() -> FastAPI:
     def health():
         return {"status": "ok", "service": settings.app_name}
 
+    @app.get("/")
+    def root():
+        return {
+            "service": settings.app_name,
+            "status": "ok",
+            "health": "/health",
+            "readiness": "/ready",
+            "api": "/api/v1",
+        }
+
     @app.get("/version")
     def version():
         return {"service": settings.app_name, "version": settings.version, "api_version": "v1"}

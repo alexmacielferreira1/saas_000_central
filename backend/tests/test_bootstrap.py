@@ -32,6 +32,18 @@ def test_health_is_liveness_without_database(client):
     assert response.json()["status"] == "ok"
 
 
+def test_root_identifies_the_service_without_returning_not_found(client):
+    response = client.get("/")
+    assert response.status_code == 200
+    assert response.json() == {
+        "service": "central",
+        "status": "ok",
+        "health": "/health",
+        "readiness": "/ready",
+        "api": "/api/v1",
+    }
+
+
 def test_version_comes_from_version_file(client):
     from app.core.config import ROOT
 
