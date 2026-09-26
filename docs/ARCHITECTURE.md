@@ -22,7 +22,7 @@ O Google OAuth é opcional e usa `/api/v1/auth/google/start` e `/api/v1/auth/goo
 
 ## Registro de produtos e acessos administrativos
 
-`SaasProduct` é a fonte local inicial do catálogo da Central. `/api/v1/saas` lista e cria produtos, e `/api/v1/saas/{product_id}` retorna detalhe; todas as rotas exigem sessão e a criação exige papel administrativo. O catálogo alimenta Home, SaaS 360/lista, Guias das APIs, detalhe e Integrações & Saúde. Conectores reais, manifests, capabilities, ambientes e health remoto ainda não foram implementados.
+`SaasProduct` é a fonte local inicial do catálogo da Central. `/api/v1/saas` lista e cria produtos; `/api/v1/saas/{product_id}` lê e atualiza parcialmente os dados principais com `PATCH`. Todas as rotas exigem sessão; criação e atualização exigem membership ativa com papel `admin` ou `superadmin`, respeitam o tenant selecionado e rejeitam conflito de slug. O catálogo alimenta Home, SaaS 360/lista, Guias das APIs, detalhe e Integrações & Saúde. Conectores reais, manifests, capabilities, ambientes e health remoto ainda não foram implementados.
 
 `/api/v1/access/managers` lista e cadastra administradores vinculados à Central. A interface de Usuários & Acesso já consome esse contrato. A matriz completa de pessoas, perfis, funções, permissões, equipes e exceções permanece pendente.
 

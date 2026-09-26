@@ -5,13 +5,16 @@ import { getSaas } from "@/api/saasRegistry";
 import PageHeader from "@/components/PageHeader";
 import { Card, CardBody, EmptyState, ErrorState } from "@/components/ui-primitives";
 import StatusBadge from "@/components/StatusBadge";
+import EditSaasDialog from "@/components/saas/EditSaasDialog";
 import { SAAS_STATUS, HEALTH, COMPATIBILITY, OP_STATUS, PRODUCT_USER_STATUS, fmtDate } from "@/lib/adminHelpers";
-import { Boxes, ArrowLeft, Activity, Users, Settings2, TerminalSquare, FileJson } from "lucide-react";
+import { Boxes, ArrowLeft, Activity, Users, Settings2, TerminalSquare, FileJson, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { usePermissions } from "@/hooks/usePermissions";
 
 export default function SaasDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { can } = usePermissions();
   const [saas, setSaas] = useState(null);
   const [manifest, setManifest] = useState(null);
   const [users, setUsers] = useState([]);
@@ -20,6 +23,7 @@ export default function SaasDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [tab, setTab] = useState("overview");
+  const [editOpen, setEditOpen] = useState(false);
 
   const load = async () => {
     try {
@@ -64,6 +68,11 @@ export default function SaasDetail() {
         icon={Boxes}
         actions={
           <div className="flex items-center gap-2">
+            {can("saas") && (
+              <Button variant="outline" size="sm" className="gap-2" onClick={() => setEditOpen(true)}>
+                <Pencil className="h-4 w-4" /> Editar
+              </Button>
+            )}
             <StatusBadge map={SAAS_STATUS} value={saas.status} />
             <StatusBadge map={HEALTH} value={saas.health} />
             <StatusBadge map={COMPATIBILITY} value={saas.compatibility} />
@@ -181,6 +190,13 @@ export default function SaasDetail() {
           )}
         </CardBody></Card>
       )}
+
+      <EditSaasDialog
+        open={editOpen}
+        product={saas}
+        onOpenChange={setEditOpen}
+        onUpdated={setSaas}
+      />
     </div>
   );
 }

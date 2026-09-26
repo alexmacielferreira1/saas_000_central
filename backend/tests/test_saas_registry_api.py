@@ -4,7 +4,7 @@ from app.main import create_app
 from app.models.identity import Membership, Tenant, User
 from app.security.passwords import hash_password
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -132,3 +132,62 @@ def test_registry_does_not_expose_products_from_another_tenant(registry_client):
 
     listed = client.get("/api/v1/saas")
     assert [item["slug"] for item in listed.json()] == ["mediamind-ai"]
+
+
+def test_superadmin_can_update_saas_and_change_is_persisted(registry_client):
+    client, _ = registry_client
+    login(client)
+    created = client.post("/api/v1/saas", json=product_payload()).json()
+
+    response = client.patch(
+        f"/api/v1/saas/{created['id']}",
+        json={"name": "MediaMind Control", "version": "2.0.0", "health": "degraded"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["name"] == "MediaMind Control"
+    assert response.json()["version"] == "2.0.0"
+    assert response.json()["health"] == "degraded"
+    persisted = client.get(f"/api/v1/saas/{created['id']}")
+    assert persisted.json()["name"] == "MediaMind Control"
+
+
+def test_registry_update_rejects_duplicate_slug(registry_client):
+    client, _ = registry_client
+    login(client)
+    client.post("/api/v1/saas", json=product_payload())
+    second = client.post(
+        "/api/v1/saas",
+        json=product_payload(name="Outro produto", slug="outro-produto"),
+    ).json()
+
+    response = client.patch(f"/api/v1/saas/{second['id']}", json={"slug": "mediamind-ai"})
+
+    assert response.status_code == 409
+    assert response.json()["error_code"] == "SAAS_SLUG_EXISTS"
+
+
+def test_registry_update_rejects_null_for_persisted_fields(registry_client):
+    client, _ = registry_client
+    login(client)
+    created = client.post("/api/v1/saas", json=product_payload()).json()
+
+    response = client.patch(f"/api/v1/saas/{created['id']}", json={"name": None})
+
+    assert response.status_code == 422
+
+
+def test_viewer_cannot_update_saas(registry_client):
+    client, factory = registry_client
+    login(client)
+    created = client.post("/api/v1/saas", json=product_payload()).json()
+
+    with factory() as session:
+        membership = session.scalar(select(Membership))
+        membership.role = "viewer"
+        session.commit()
+
+    response = client.patch(f"/api/v1/saas/{created['id']}", json={"name": "Negado"})
+
+    assert response.status_code == 403
+    assert response.json()["error_code"] == "SAAS_WRITE_FORBIDDEN"

@@ -112,7 +112,7 @@ Objetivo: eliminar ambiguidades sobre o que já funciona, preservar o frontend e
 Aceite da fase:
 
 - [ ] build, lint, typecheck, testes, migrations, integração PostgreSQL e smoke passam;
-- [ ] todas as rotas críticas possuem pelo menos teste de acesso e renderização;
+- [x] todas as rotas críticas possuem pelo menos teste de acesso e renderização;
 - [ ] toda dependência Base44 restante está localizada e classificada;
 - [ ] existe uma jornada funcional local completa além de apenas abrir tela;
 - [ ] `PROJECT_STATUS`, JSON de estado e handoff mostram a mesma situação.

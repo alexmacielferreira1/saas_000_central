@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class SaasCreate(BaseModel):
@@ -15,6 +15,31 @@ class SaasCreate(BaseModel):
     health: str = Field(default="unknown", max_length=50)
     compatibility: str = Field(default="limited", max_length=50)
     integration_level: str = Field(default="inventory", max_length=50)
+
+
+class SaasUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=200)
+    slug: str | None = Field(
+        default=None,
+        pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$",
+        max_length=100,
+    )
+    description: str | None = Field(default=None, max_length=5000)
+    version: str | None = Field(default=None, max_length=50)
+    base_url: str | None = Field(default=None, max_length=500)
+    color: str | None = Field(default=None, pattern=r"^#[0-9A-Fa-f]{6}$")
+    icon: str | None = Field(default=None, max_length=100)
+    status: str | None = Field(default=None, max_length=50)
+    health: str | None = Field(default=None, max_length=50)
+    compatibility: str | None = Field(default=None, max_length=50)
+    integration_level: str | None = Field(default=None, max_length=50)
+
+    @model_validator(mode="before")
+    @classmethod
+    def reject_explicit_nulls(cls, values):
+        if isinstance(values, dict) and any(value is None for value in values.values()):
+            raise ValueError("Campos enviados para atualização não podem ser nulos.")
+        return values
 
 
 class SaasResponse(SaasCreate):

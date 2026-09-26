@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { createSaas, getSaas, listSaas } from './saasRegistry';
+import { createSaas, getSaas, listSaas, updateSaas } from './saasRegistry';
 
 describe('native SaaS registry client', () => {
   afterEach(() => vi.unstubAllGlobals());
@@ -53,6 +53,25 @@ describe('native SaaS registry client', () => {
     expect(fetchMock).toHaveBeenCalledWith(
       'http://127.0.0.1:8011/api/v1/saas/saas-1',
       expect.objectContaining({ credentials: 'include' }),
+    );
+  });
+
+  it('updates one product through the native API', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ id: 'saas-1', name: 'MediaMind Control' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await updateSaas('saas-1', { name: 'MediaMind Control' });
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://127.0.0.1:8011/api/v1/saas/saas-1',
+      expect.objectContaining({
+        method: 'PATCH',
+        body: JSON.stringify({ name: 'MediaMind Control' }),
+      }),
     );
   });
 });

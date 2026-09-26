@@ -38,7 +38,7 @@
   ["src/components/users/NewProductUserDialog.jsx","ab259cbd3d203429d04c234f72e7bd3d26c9f3222b81ccfa494ebc170831db08","3d9f2822bc0e9cf269cceb3270cd7ca9f600fa1c32eb1387d4e14d2f727bcce3"],
   ["src/components/users/NewManagerDialog.jsx","2f87e858aa70fd137900c06238a9ea14e0af0278f97988ca627231bb89540ef1","4ecfcb9def485f24e15855c2ce96341a56c552662a8f00e0a256076a2f55a9cc"],
   ["src/components/saas/NewSaasDialog.jsx","cf814bffcdea20c1afb8fc9779532e5deb048c824fdfbb8f4873e21cd955e016","dbc959d873038e29641e82c178d79a094e16a0e546eb47c01be7f65903fe22c6"],
-  ["src/pages/SaasDetail.jsx","1af395cd9268a4eec38a44d25491daf5e437cbf3adf634b508e9fa36ad508180","51601336532d5c8284f3ccee12ed298481694f585a14096a2432f8776f961e05"],
+  ["src/pages/SaasDetail.jsx","1af395cd9268a4eec38a44d25491daf5e437cbf3adf634b508e9fa36ad508180","98c9bd042c70f78841cae0b388d41b18679cd5627fb3d3581dd5f377834a0ffc"],
   ["src/pages/ApiGuides.jsx","d286aab8ccb2bbe59bcd834a818b3691ad20cb3087489434eb61de0a17ccf03a","a70c603e9446a479a979a6163d7272cb0583ffc4c68133fde088461494bcfacf"]
   ]
 }

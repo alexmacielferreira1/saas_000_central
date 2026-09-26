@@ -28,7 +28,7 @@ Atualizado em 26/09/2026 para o CEN-000/C0. Este documento descreve o código ex
 | `/resolution` | Central de Resolução | `Incident`, `AdminCommand`, `Saas`, `Configuration` Base44 | aprovar/rejeitar operações, incidentes e configurações; IA por `functions.invoke` | Base44 | manter layout; substituir por APIs nativas após Operations/Error Center |
 | `/api-guides` | Guias das APIs | `listSaas()` nativo; `CapabilityManifest` Base44 | atualizar lista, expandir guia, abrir SaaS | Híbrida | manter; criar manifest/capabilities nativos em C2–C4 |
 | `/saas` | SaaS 360 | `/api/v1/saas` | criar SaaS e abrir detalhe | Nativa | manter e cobrir jornada completa |
-| `/saas/:id` | Detalhe SaaS | `/api/v1/saas/{id}`; manifest, usuários, configurações e comandos Base44 | trocar abas e navegar | Híbrida | manter; migrar abas separadamente |
+| `/saas/:id` | Detalhe SaaS | `GET/PATCH /api/v1/saas/{id}`; manifest, usuários, configurações e comandos Base44 | editar dados principais, trocar abas e navegar | Híbrida | edição principal nativa; migrar abas separadamente |
 | `/users` | Usuários & Acesso | `/api/v1/access/managers`; usuários dos SaaS retornam lista vazia intencional | criar administrador nativo; cadastro de usuário SaaS exibe bloqueio explícito | Híbrida/parcial | manter; concluir pessoas, memberships e conectores em C1/C2 |
 | `/configurations` | Configurações & Flags | `Configuration` Base44 por organização | criar configuração Base44 | Base44 | manter layout; API nativa exige auditoria/aprovação |
 | `/operations` | Centro de Operações | `AdminCommand` Base44 | criar, aprovar e rejeitar; auditoria Base44 | Base44 | manter layout; migrar com idempotência e estados assíncronos |
@@ -62,7 +62,7 @@ Atualizado em 26/09/2026 para o CEN-000/C0. Este documento descreve o código ex
 | Jornada | Passos atuais | Situação |
 |---|---|---|
 | Sessão administrativa | login → restaurar sessão → rota protegida → logout | funcional e coberta parcialmente |
-| Catálogo SaaS | login → SaaS 360 → registrar SaaS → abrir detalhe | API nativa; falta teste integrado de renderização e evidência visual |
+| Catálogo SaaS | login → SaaS 360 → registrar SaaS → abrir detalhe → editar dados principais | API nativa para catálogo e dados principais; acesso/renderização e edição cobertos; falta evidência visual e migração das abas |
 | Administração | login → Usuários & Acesso → criar administrador → filtrar lista | API nativa; falta teste integrado de renderização e evidência visual |
 | Saúde básica | login → Integrações & Saúde → atualizar → abrir produto | usa inventário nativo, ainda sem handshake remoto |
 | Operação controlada | criar → aprovar/rejeitar → auditar | dependente do Base44; não considerar funcional localmente |
@@ -72,8 +72,8 @@ Atualizado em 26/09/2026 para o CEN-000/C0. Este documento descreve o código ex
 
 ## Ordem de migração sem redesenho
 
-1. Cobrir renderização/acesso das 15 rotas declaradas e o fallback 404.
-2. Fechar evidência da jornada nativa de catálogo SaaS e administradores.
+1. Registrar evidência visual das telas históricas; as 15 rotas declaradas já possuem teste de renderização e as 11 administrativas também possuem teste de bloqueio anônimo.
+2. Fechar evidência manual da jornada nativa de catálogo SaaS e administradores.
 3. Remover Base44 de `PageNotFound` e das fontes já nativas da Command Palette.
 4. Concluir C1: sessão/tenant/permissões/auditoria.
 5. Migrar detalhe e manifests/capabilities.

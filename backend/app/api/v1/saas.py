@@ -3,8 +3,14 @@ from typing import Annotated
 from app.core.errors import error_response
 from app.db.session import get_session
 from app.models.identity import Membership
-from app.repositories.saas import create_product, get_product, get_product_by_slug, list_products
-from app.schemas.saas import SaasCreate, SaasResponse
+from app.repositories.saas import (
+    create_product,
+    get_product,
+    get_product_by_slug,
+    list_products,
+    update_product,
+)
+from app.schemas.saas import SaasCreate, SaasResponse, SaasUpdate
 from app.tenancy.context import CurrentSession, get_current_session
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy import select
@@ -18,6 +24,17 @@ def selected_tenant(current: CurrentSession) -> str:
     if not tenant_id:
         raise ValueError("authenticated session has no selected tenant")
     return tenant_id
+
+
+def can_write_saas(session: Session, current: CurrentSession, tenant_id: str) -> bool:
+    role = session.scalar(
+        select(Membership.role).where(
+            Membership.user_id == current.user.id,
+            Membership.tenant_id == tenant_id,
+            Membership.is_active.is_(True),
+        )
+    )
+    return role in {"superadmin", "admin"}
 
 
 @router.get("", response_model=list[SaasResponse])
@@ -36,14 +53,7 @@ def create(
     session: Annotated[Session, Depends(get_session)],
 ):
     tenant_id = selected_tenant(current)
-    role = session.scalar(
-        select(Membership.role).where(
-            Membership.user_id == current.user.id,
-            Membership.tenant_id == tenant_id,
-            Membership.is_active.is_(True),
-        )
-    )
-    if role not in {"superadmin", "admin"}:
+    if not can_write_saas(session, current, tenant_id):
         return error_response(request, 403, "SAAS_WRITE_FORBIDDEN", "Ação não autorizada.")
     if get_product_by_slug(session, tenant_id, body.slug):
         return error_response(request, 409, "SAAS_SLUG_EXISTS", "Já existe um SaaS com este slug.")
@@ -61,3 +71,28 @@ def show(
     if product is None:
         return error_response(request, 404, "SAAS_NOT_FOUND", "SaaS não encontrado.")
     return product
+
+
+@router.patch("/{product_id}", response_model=SaasResponse)
+def update(
+    product_id: str,
+    body: SaasUpdate,
+    request: Request,
+    current: Annotated[CurrentSession, Depends(get_current_session)],
+    session: Annotated[Session, Depends(get_session)],
+):
+    tenant_id = selected_tenant(current)
+    if not can_write_saas(session, current, tenant_id):
+        return error_response(request, 403, "SAAS_WRITE_FORBIDDEN", "Ação não autorizada.")
+
+    product = get_product(session, tenant_id, product_id)
+    if product is None:
+        return error_response(request, 404, "SAAS_NOT_FOUND", "SaaS não encontrado.")
+
+    values = body.model_dump(exclude_unset=True)
+    requested_slug = values.get("slug")
+    existing = get_product_by_slug(session, tenant_id, requested_slug) if requested_slug else None
+    if existing is not None and existing.id != product.id:
+        return error_response(request, 409, "SAAS_SLUG_EXISTS", "Já existe um SaaS com este slug.")
+
+    return update_product(session, product, values)

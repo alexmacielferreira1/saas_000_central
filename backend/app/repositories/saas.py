@@ -36,3 +36,11 @@ def create_product(session: Session, tenant_id: str, values: dict) -> SaasProduc
     session.commit()
     session.refresh(product)
     return product
+
+
+def update_product(session: Session, product: SaasProduct, values: dict) -> SaasProduct:
+    for field, value in values.items():
+        setattr(product, field, value)
+    session.commit()
+    session.refresh(product)
+    return product

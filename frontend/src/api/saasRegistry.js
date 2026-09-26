@@ -11,3 +11,7 @@ export function createSaas(values) {
 export function getSaas(id) {
   return request(`/saas/${id}`);
 }
+
+export function updateSaas(id, values) {
+  return request(`/saas/${id}`, { method: 'PATCH', body: values });
+}
