@@ -94,9 +94,9 @@ Objetivo: eliminar ambiguidades sobre o que já funciona, preservar o frontend e
 
 ## CEN-000 / C0 — baseline
 
-- [ ] Executar o gate completo e registrar o resultado atual, sem reutilizar números antigos.
-- [ ] Conferir `git status` e separar alterações da sessão de alterações preexistentes.
-- [ ] Atualizar `ARCHITECTURE.md` para refletir auth, sessão, tenancy e `SaasProduct` já presentes.
+- [x] Executar o gate completo e registrar o resultado atual, sem reutilizar números antigos.
+- [x] Conferir `git status` e separar alterações da sessão de alterações preexistentes.
+- [x] Atualizar `ARCHITECTURE.md` para refletir auth, sessão, tenancy e `SaasProduct` já presentes.
 - [ ] Atualizar o inventário de rotas e jornadas do frontend.
 - [ ] Registrar screenshots das telas históricas ainda relevantes.
 - [ ] Mapear por tela: origem dos dados, chamadas Base44, mocks, `localStorage`, botões e efeitos.

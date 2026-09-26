@@ -4,8 +4,8 @@
   "manual_checks": {
     "frontend_functional_validation": {
       "status": "blocked",
-      "updated_at": "2026-09-26T00:45:44.8610148Z",
-      "notes": "Autenticação nativa validada localmente: login 200, restauração 200 com superadmin, logout 204 e nova sessão 401; Google sem credenciais retorna aviso amigável. Paridade funcional total continua bloqueada pelas telas de domínio ainda dependentes do Base44."
+      "updated_at": "2026-09-26T01:23:11.0169477Z",
+      "notes": "Autenticação, sessão, logout, catálogo/detalhe de SaaS e administradores já possuem integração nativa. A suíte frontend tem 27 testes em 8 arquivos e 11,21% de cobertura de linhas. Paridade funcional continua bloqueada pelas telas de domínio ainda dependentes do Base44, rotas sem teste de renderização e jornadas visuais pendentes."
     }
   },
   "milestones": {
@@ -15,71 +15,71 @@
       "checks": {
         "backend_lint": {
           "status": "passed",
-          "updated_at": "2026-09-26T00:46:06.796114+00:00",
+          "updated_at": "2026-09-26T01:23:56.513285+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/backend_lint.log"
         },
         "backend_format": {
           "status": "passed",
-          "updated_at": "2026-09-26T00:46:07.515180+00:00",
+          "updated_at": "2026-09-26T01:23:57.163483+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/backend_format.log"
         },
         "unit_tests": {
           "status": "passed",
-          "updated_at": "2026-09-26T00:46:09.065072+00:00",
+          "updated_at": "2026-09-26T01:23:58.641285+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/unit_tests.log"
         },
         "migration": {
           "status": "passed",
-          "updated_at": "2026-09-26T00:46:17.316292+00:00",
+          "updated_at": "2026-09-26T01:24:09.719001+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/migration.log"
         },
         "database_integration": {
           "status": "passed",
-          "updated_at": "2026-09-26T00:46:20.559914+00:00",
+          "updated_at": "2026-09-26T01:24:12.814317+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/database_integration.log"
         },
         "dependency_consistency": {
           "status": "passed",
-          "updated_at": "2026-09-26T00:46:23.964016+00:00",
+          "updated_at": "2026-09-26T01:24:16.267689+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/dependency_consistency.log"
         },
         "frontend_build": {
           "status": "passed",
-          "updated_at": "2026-09-26T00:46:26.498774+00:00",
+          "updated_at": "2026-09-26T01:24:18.680485+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_build.log"
         },
         "frontend_lint": {
           "status": "passed",
-          "updated_at": "2026-09-26T00:46:32.331964+00:00",
+          "updated_at": "2026-09-26T01:24:24.670471+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_lint.log"
         },
         "frontend_typecheck": {
           "status": "passed",
-          "updated_at": "2026-09-26T00:46:40.141254+00:00",
+          "updated_at": "2026-09-26T01:24:31.961117+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_typecheck.log"
         },
         "http_smoke": {
           "status": "passed",
-          "updated_at": "2026-09-26T00:46:46.366433+00:00",
+          "updated_at": "2026-09-26T01:24:38.049761+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/http_smoke.log"
         },
         "original_frontend_integrity": {
           "status": "passed",
-          "updated_at": "2026-09-26T00:46:47.775314+00:00",
-          "notes": "147 original files; 34 approved typed corrections; 0 unapproved changes or missing. "
+          "updated_at": "2026-09-26T01:24:39.285004+00:00",
+          "notes": "147 original files; 39 approved typed corrections; 0 unapproved changes or missing. "
         },
         "frontend_functional_validation": {
           "status": "blocked",
-          "updated_at": "2026-09-26T00:45:44.8610148Z",
-          "notes": "Autenticação nativa validada localmente: login 200, restauração 200 com superadmin, logout 204 e nova sessão 401; Google sem credenciais retorna aviso amigável. Paridade funcional total continua bloqueada pelas telas de domínio ainda dependentes do Base44."
+          "updated_at": "2026-09-26T01:23:11.0169477Z",
+          "notes": "Autenticação, sessão, logout, catálogo/detalhe de SaaS e administradores já possuem integração nativa. A suíte frontend tem 27 testes em 8 arquivos e 11,21% de cobertura de linhas. Paridade funcional continua bloqueada pelas telas de domínio ainda dependentes do Base44, rotas sem teste de renderização e jornadas visuais pendentes."
         },
         "git_clean_at_check": {
           "status": "pending",
-          "updated_at": "2026-09-26T00:46:47.775314+00:00",
+          "updated_at": "2026-09-26T01:24:39.285004+00:00",
           "notes": "Snapshot before writing this report. Verify and commit reviewed work separately."
         }
       },
-      "updated_at": "2026-09-26T00:46:47.775314+00:00",
+      "updated_at": "2026-09-26T01:24:39.285004+00:00",
       "notes": "Partial M0; unresolved gates. Do not advance to M1."
     },
     "M1": {

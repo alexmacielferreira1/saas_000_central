@@ -6,11 +6,13 @@ Para execução em outro chat, usar `CENTRAL_MASTER_IMPLEMENTATION_CHECKLIST.md`
 
 ## Agora — C0
 
-1. **Em andamento:** auditar a estrutura atual e definir o gate de reconstrução sem Base44.
-2. **Em andamento:** ampliar a suíte de frontend iniciada com 3 testes de rotas; cobertura baseline atual é 4,42% de linhas e a meta progressiva permanece 100%.
-3. **P0:** registrar jornadas e evidências visuais do export antes de substituir integrações.
-4. **P0:** manter build, lint, typecheck, backend e migrations verdes durante a reconstrução.
-5. **P0 segurança:** revisar isoladamente a migração do React Router 6 para 7 e o `react-quill-new`; o `npm audit fix` seguro removeu severidades altas, mas restaram 2 baixas e 2 moderadas que exigem mudança potencialmente incompatível.
+1. **Concluído neste bloco:** executar o gate completo, corrigir o teste de integração para a migration `0003_saas_registry` e registrar 39 alterações frontend aprovadas sem desligar a verificação de integridade.
+2. **Em andamento:** ampliar a suíte frontend; há 27 testes em 8 arquivos e cobertura baseline de 11,21% de linhas. A meta continua progressiva e não autoriza declarar paridade.
+3. **P0 — próximo item desbloqueado:** atualizar inventário de rotas/jornadas e mapear por tela Base44, mocks, `localStorage`, botões e efeitos.
+4. **P0:** registrar jornadas e evidências visuais do export antes de substituir novas integrações.
+5. **P0:** cobrir acesso e renderização das rotas críticas e uma jornada local completa.
+6. **P0:** manter build, lint, typecheck, backend, migrations, PostgreSQL, smoke e integridade do frontend verdes durante a reconstrução.
+7. **P0 segurança:** revisar isoladamente a migração do React Router 6 para 7 e o `react-quill-new`; o `npm audit fix` seguro removeu severidades altas, mas restaram 2 baixas e 2 moderadas que exigem mudança potencialmente incompatível.
 
 ## Próximas fases
 

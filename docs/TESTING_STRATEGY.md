@@ -4,9 +4,9 @@ Este documento aplica o padrão global `../../_documentacao/standards/17-TESTING
 
 ## Baseline atual
 
-Na revalidação local de 22/09/2026, M0 possui 22 testes de backend executados e aprovados. Eles cobrem liveness, versão, correlação, IDs inválidos, contrato de erros, disponibilidade do banco, cabeçalhos HTTP, referência pública de erro, cálculo dos gates, integridade auditada do frontend e banco PostgreSQL real. Build, lint e typecheck do frontend passaram.
+Na revalidação local de 26/09/2026, o gate executou 45 testes de backend com sucesso e validou a revisão Alembic `0003_saas_registry` contra PostgreSQL real. A suíte cobre liveness, versão, correlação, IDs inválidos, contrato de erros, disponibilidade do banco, autenticação e sessão, catálogo de SaaS, administradores, cabeçalhos HTTP, cálculo dos gates e integridade auditada do frontend. Build, lint, typecheck, migration, integração com banco e smoke HTTP passaram.
 
-O frontend agora possui Vitest/jsdom, relatório V8 e 3 testes que protegem unicidade e presença das rotas públicas/administrativas. O baseline medido é 4,05% statements, 0,18% branches, 0,27% functions e 4,42% lines. Isso é apenas o início e não comprova comportamento das páginas, login ou persistência. C0 deve elevar a cobertura progressivamente antes e durante a migração funcional do Base44, sem reduzir limiares para obter sucesso artificial.
+O frontend possui Vitest/jsdom, relatório V8 e 27 testes em 8 arquivos. O baseline medido em 26/09/2026 é 10,53% statements, 4,64% branches, 6,32% functions e 11,21% lines. Há cobertura para contratos de rotas e partes das jornadas nativas, mas isso ainda não comprova paridade das páginas de domínio. C0 deve continuar elevando cobertura por autenticação, proteção de rota, menu e cadastro/listagem/detalhe de SaaS, sem reduzir limiares para obter sucesso artificial.
 
 ## Cobertura planejada
 
