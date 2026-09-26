@@ -19,6 +19,8 @@ Fonte geral: `../../_documentacao/CODEX_BACKLOG.md`.
 10. **C5:** implementar capacidades opcionais de mídia em lote, formulários e busca.
 11. **C6:** implementar Error Center e diagnóstico por IA com aprovação humana e rollback.
 12. **C7:** preparar staging/produção apenas com alvos cloud confirmados e gates aprovados.
+13. **C8:** lifecycle, Service Registry, entitlements, usage/FinOps, governança de telas/configurações e LGPD.
+14. **C9:** backup/restore, exportação, portabilidade, transferência e detachment test.
 
 Detalhamento, critérios de aceite e dependências: `CENTRAL_IMPLEMENTATION_PLAN.md`.
 

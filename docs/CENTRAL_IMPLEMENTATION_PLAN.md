@@ -165,6 +165,44 @@ Aceite:
 - autenticação e cookies funcionam no domínio real;
 - canário pós-publicação detecta regressão sem expor segredos.
 
+## C8 — Governança, lifecycle e FinOps
+
+Objetivo: administrar o portfólio sem transformar a Central em banco operacional dos produtos.
+
+Entregas:
+
+1. lifecycle de produto, serviço, ambiente e tenant;
+2. Service Registry, dependências, capabilities e compatibilidade;
+3. planos, entitlements, subscriptions e usage por contrato;
+4. custos diretos e rateio de infraestrutura, IA, storage e jobs;
+5. governança de telas, módulos, configurações e feature flags;
+6. classificação LGPD, finalidade, retenção, exportação e eliminação.
+
+Aceite:
+
+- a Central explica origem e vigência de cada configuração;
+- custo e consumo são atribuíveis a produto, ambiente e tenant;
+- mudança de lifecycle ou entitlement gera evento e auditoria;
+- dados operacionais continuam no SaaS proprietário.
+
+## C9 — Portabilidade e recuperação
+
+Objetivo: garantir que cada SaaS possa ser restaurado, migrado, destacado ou transferido.
+
+Entregas:
+
+1. inventário de banco, storage, secrets, domínios, serviços e owners;
+2. estado e evidência de backups e restore tests;
+3. exportação administrativa por produto/tenant conforme contrato;
+4. checklist de detachment e transferência de propriedade;
+5. RPO/RTO, disaster recovery e histórico de exercícios.
+
+Aceite:
+
+- a Central não considera backup saudável sem restore testado;
+- o detachment test identifica dependências compartilhadas e plano de separação;
+- nenhum produto depende do domínio ou banco da Central para operar.
+
 ## Ordem executável imediata
 
 1. concluir C0 com testes automatizados do frontend;
@@ -173,4 +211,4 @@ Aceite:
 4. migrar uma tela real do Base44 para a API local e validar ponta a ponta;
 5. repetir por módulo antes de iniciar C2.
 
-Não iniciar C4–C7 apenas porque as telas existem no export. Cada módulo exige contrato, persistência, autorização e testes próprios.
+Não iniciar C4–C9 apenas porque as telas existem no export. Cada módulo exige contrato, persistência, autorização e testes próprios. O plano transversal do portfólio está em `../../_documentacao/PORTFOLIO_IMPLEMENTATION_PLAN.md`.

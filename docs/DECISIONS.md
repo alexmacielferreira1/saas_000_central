@@ -5,3 +5,5 @@
 - Hierarquia administrativa: produto → segmento de cliente → função/cargo/perfil → exceção por usuário.
 - Diagnóstico pode ser automático; correção estrutural, banco, auth, permissão ou produção exige aprovação e rollback.
 - Criador de SaaS começa como planejamento/checklist; provisionamento cloud automático só depois de segurança e contratos validados.
+- A Central administra lifecycle, contratos, capacidades, saúde, consumo e comandos; dados operacionais permanecem no SaaS proprietário.
+- Backup só é considerado saudável com restauração testada. Todo produto deve permanecer destacável, migrável e operável sem a Central.
