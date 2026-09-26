@@ -31,6 +31,7 @@ describe('route contract', () => {
       '/audit',
       '/incidents',
       '/integrations',
+      '/data/imports/new',
     ])
   })
 })

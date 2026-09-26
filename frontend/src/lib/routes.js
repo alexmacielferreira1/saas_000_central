@@ -13,6 +13,7 @@ import ResolutionCenter from '@/pages/ResolutionCenter'
 import SaasDetail from '@/pages/SaasDetail'
 import SaasList from '@/pages/SaasList'
 import UsersAccess from '@/pages/UsersAccess'
+import ImportWorkbench from '@/pages/ImportWorkbench'
 
 export const PUBLIC_ROUTES = [
   { path: '/login', Component: Login },
@@ -33,4 +34,5 @@ export const ADMIN_ROUTES = [
   { path: '/audit', Component: AuditLog },
   { path: '/incidents', Component: Incidents },
   { path: '/integrations', Component: Integrations },
+  { path: '/data/imports/new', Component: ImportWorkbench },
 ]

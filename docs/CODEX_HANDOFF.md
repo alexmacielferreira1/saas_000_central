@@ -88,3 +88,10 @@
 - Limites: PostgreSQL/API locais continuam indisponíveis, portanto a migration não foi aplicada e a jornada autenticada não foi validada no navegador. Edição, histórico/versionamento, aprovação operacional e propagação para SaaS remoto permanecem pendentes. Nenhum ambiente Render/Neon foi alterado.
 - Rollback: downgrade de `0007_configurations` remove apenas as configurações nativas.
 - Próximo item desbloqueado: migrar `Operações` para contrato nativo e depois restaurar banco/API para validação integral.
+
+## Bloco SCR-091/SCR-092 parcial executado em 26/09/2026
+
+- Nova rota `/data/imports/new` e item `Importar dados` no menu.
+- A bancada PowerQuery aceita CSV, cria prévia tabular editável, permite marcar colunas obrigatórias, destaca linhas inválidas, substitui valores em massa e exporta o CSV tratado.
+- Limite explícito: a confirmação persistente, histórico, receitas e importação assíncrona no backend ainda não foram implementados; a tela não declara escrita definitiva.
+- Verificação: parser/edição/substituição/validação cobertos por testes; rota coberta por renderização, lint e build.

@@ -109,6 +109,7 @@ authState.current = authenticatedState();
 const ADMIN_CASES = [
   ['/', 'Home do ecossistema'],
   ['/resolution', 'Central de Resolução'],
+  ['/data/imports/new', 'PowerQuery de importação'],
   ['/api-guides', 'Guias das APIs (Guarda-chuva)'],
   ['/saas', 'SaaS 360'],
   ['/saas/saas-1', 'Produto de teste'],

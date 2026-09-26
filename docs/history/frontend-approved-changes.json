@@ -2,7 +2,7 @@
   "reason": "Reviewed correction or incremental replacement of Base44 infrastructure with native Central tooling, tests, session auth and tenant data; the approved visual structure is preserved.",
   "changes": [
   ["jsconfig.json","e73e9adf0fcd9194c496670efb5251825685314475c9548c3ec4d74056ccc75b","88f592af159674189821fa36088590245d27af63dd8062d2773e55d7b9299026"],
-  ["src/components/AdminLayout.jsx","b96200b9e01e673da1b4cf0a25b74397c6357fe8c7d3126425e3f379287f49cb","b5408fffdd95b70346f895113ffb6e2f9ca8cd9e74b821d593af8ec3abc47996"],
+  ["src/components/AdminLayout.jsx","b96200b9e01e673da1b4cf0a25b74397c6357fe8c7d3126425e3f379287f49cb","ef370ffa630267626205b8e956da2939b7650443e09880c7f03db737104c23cb"],
   ["src/components/AuthLayout.jsx","27191e5279ab7a6d30609f7954c64edf586ce11817ca50ca63ed03bd432629ce","1a00c2d0dc971d701fcacdbfb5a75b91195e9f90be34c7232d2c40802142d8e0"],
   ["src/components/CommandPalette.jsx","88241e59bee3f66bbf282426f3b0f590a053433f8bb39a1d3a9ef6690fb8b572","5f873cce1f712e22d4031d49a5d326dbd8d5190443105daaa68f921c00a3c397"],
   ["src/components/PageHeader.jsx","7b762ca26b5367d1fe49802cbc0343388085e07ecc64a3467b3c59f5cbaade67","40c6fe78513f68bd84a2b27e9d3df46d0c6b40e84a5f448b2d47e284d984cf92"],

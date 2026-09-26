@@ -3,7 +3,7 @@ import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Boxes, Users, Settings2, ScrollText, TerminalSquare,
   AlertTriangle, Plug, Search, Menu, ShieldCheck, LogOut,
-  Activity, BookOpen,
+  Activity, BookOpen, DatabaseZap,
 } from "lucide-react";
 import CommandPalette from "@/components/CommandPalette";
 import { TenantProvider } from "@/lib/TenantContext";
@@ -24,6 +24,7 @@ const NAV = [
   { to: "/audit", label: "Auditoria", icon: ScrollText },
   { to: "/incidents", label: "Incidentes", icon: AlertTriangle },
   { to: "/integrations", label: "Integrações & Saúde", icon: Plug },
+  { to: "/data/imports/new", label: "Importar dados", icon: DatabaseZap },
 ];
 
 export default function AdminLayout() {
