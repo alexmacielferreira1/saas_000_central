@@ -5,9 +5,10 @@ Use este índice para localizar rapidamente a fonte correta. Não execute docume
 ## Começar aqui
 
 1. [`CENTRAL_MASTER_IMPLEMENTATION_CHECKLIST.md`](CENTRAL_MASTER_IMPLEMENTATION_CHECKLIST.md) — lista mestra para implementar ou continuar em outro chat.
-2. [`PROJECT_STATUS.md`](PROJECT_STATUS.md) e [`../project-status.json`](../project-status.json) — estado técnico verificado mais recente.
-3. [`CODEX_HANDOFF.md`](CODEX_HANDOFF.md) — contexto curto da última sessão.
-4. [`CODEX_BACKLOG.md`](CODEX_BACKLOG.md) — prioridades resumidas.
+2. [`CENTRAL_SCREEN_IMPLEMENTATION_MATRIX.md`](CENTRAL_SCREEN_IMPLEMENTATION_MATRIX.md) — telas e rotas concretas; usar para entregar código, não novas promessas.
+3. [`PROJECT_STATUS.md`](PROJECT_STATUS.md) e [`../project-status.json`](../project-status.json) — estado técnico verificado mais recente.
+4. [`CODEX_HANDOFF.md`](CODEX_HANDOFF.md) — contexto curto da última sessão.
+5. [`CODEX_BACKLOG.md`](CODEX_BACKLOG.md) — prioridades resumidas.
 
 ## Planejamento e escopo
 

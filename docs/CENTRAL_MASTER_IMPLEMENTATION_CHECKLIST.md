@@ -41,6 +41,7 @@ SaaS conectado (data plane)
 | `docs/PROJECT_STATUS.md` e `project-status.json` | estado verificado e gates atuais |
 | `docs/CENTRAL_IMPLEMENTATION_PLAN.md` | fases C0–C9, dependências e aceite |
 | `docs/CENTRAL_CAPABILITY_CATALOG.md` | catálogo completo de 23 áreas funcionais |
+| `docs/CENTRAL_SCREEN_IMPLEMENTATION_MATRIX.md` | inventário explícito de mais de 100 telas/subtelas, rotas, tratamento e ordem de implementação |
 | `docs/CODEX_BACKLOG.md` | fila curta do produto |
 | `docs/DECISIONS.md` | decisões que não devem ser rediscutidas sem evidência nova |
 | `docs/ARCHITECTURE.md` | arquitetura implementada e limites do produto |
@@ -85,6 +86,9 @@ Confirmar novamente antes de editar. No snapshot documental de 26/09/2026:
 - [ ] Cada SaaS deve continuar operando sem a Central.
 - [ ] Não redesenhar ou apagar o frontend histórico antes de registrar paridade e evidência.
 - [ ] Não iniciar cloud, deploy ou provisionamento automático sem destinos confirmados e autorização.
+- [ ] Cada sessão de implementação deve alterar código funcional e testes; criar somente planos/documentos não conta como avanço, salvo quando o pedido for exclusivamente documental.
+- [ ] Não refazer o layout de tela existente: preservar, conectar, completar e melhorar.
+- [ ] Usar `CENTRAL_SCREEN_IMPLEMENTATION_MATRIX.md` para escolher a tela e marcar progresso somente após cumprir seu critério de conclusão.
 
 ---
 
