@@ -1,19 +1,16 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { createManager } from "@/api/access";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { MANAGER_ROLE } from "@/lib/adminHelpers";
-import { useOrgId } from "@/lib/TenantContext";
-import { writeAudit } from "@/lib/audit";
 
 const ROLES = Object.keys(MANAGER_ROLE);
 
 export default function NewManagerDialog({ open, onOpenChange, onCreated }) {
-  const orgId = useOrgId();
-  const [form, setForm] = useState({ full_name: "", email: "", role: "viewer", scope_saas: "*", status: "active", two_factor_enabled: false });
+  const [form, setForm] = useState({ full_name: "", email: "", role: "viewer", password: "" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -24,19 +21,15 @@ export default function NewManagerDialog({ open, onOpenChange, onCreated }) {
     if (!form.full_name.trim() || !form.email.trim()) { setError("Nome e email são obrigatórios."); return; }
     setSaving(true); setError("");
     try {
-      const created = await base44.entities.Manager.create({
-        organization_id: orgId,
+      await createManager({
         full_name: form.full_name.trim(),
         email: form.email.trim(),
         role: form.role,
-        scope_saas: form.scope_saas.trim() || "*",
-        status: form.status,
-        two_factor_enabled: form.two_factor_enabled,
+        password: form.password,
       });
-      writeAudit({ action: "manager.create", saas: "central", entity: "Manager", entityId: created.id, after: JSON.stringify({ full_name: created.full_name, role: created.role, scope_saas: created.scope_saas }), reason: "Cadastro via Busca Global / Topbar" });
       onCreated?.();
       onOpenChange(false);
-      setForm({ full_name: "", email: "", role: "viewer", scope_saas: "*", status: "active", two_factor_enabled: false });
+      setForm({ full_name: "", email: "", role: "viewer", password: "" });
     } catch (err) {
       setError(err?.message || "Não foi possível cadastrar o administrador.");
     } finally { setSaving(false); }
@@ -65,22 +58,10 @@ export default function NewManagerDialog({ open, onOpenChange, onCreated }) {
                 {ROLES.map((r) => <option key={r} value={r}>{MANAGER_ROLE[r].label}</option>)}
               </select>
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="mgr-status">Status</Label>
-              <select id="mgr-status" value={form.status} onChange={(e) => set("status", e.target.value)} disabled={saving} className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
-                <option value="active">Ativo</option>
-                <option value="suspended">Suspenso</option>
-                <option value="break_glass">Break glass</option>
-              </select>
-            </div>
             <div className="col-span-2 space-y-1.5">
-              <Label htmlFor="mgr-scope">Escopo SaaS</Label>
-              <Input id="mgr-scope" value={form.scope_saas} onChange={(e) => set("scope_saas", e.target.value)} placeholder="* ou ids separados por vírgula" disabled={saving} />
+              <Label htmlFor="mgr-password">Senha temporária *</Label>
+              <Input id="mgr-password" type="password" value={form.password} onChange={(e) => set("password", e.target.value)} minLength={12} disabled={saving} />
             </div>
-            <label className="col-span-2 flex items-center gap-2 text-sm text-slate-600">
-              <input type="checkbox" checked={form.two_factor_enabled} onChange={(e) => set("two_factor_enabled", e.target.checked)} disabled={saving} className="h-4 w-4 rounded border-slate-300" />
-              2FA habilitado
-            </label>
           </div>
           {error && <p className="text-sm text-rose-600">{error}</p>}
           <DialogFooter>

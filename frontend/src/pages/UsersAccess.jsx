@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
-import { useOrgId } from "@/lib/TenantContext";
+import { listManagers } from "@/api/access";
 import { useSearchParams } from "react-router-dom";
 import PageHeader from "@/components/PageHeader";
 import { Card, EmptyState, ErrorState } from "@/components/ui-primitives";
@@ -13,7 +12,6 @@ import NewProductUserDialog from "@/components/users/NewProductUserDialog";
 import { usePermissions } from "@/hooks/usePermissions";
 
 export default function UsersAccess() {
-  const orgId = useOrgId();
   const [searchParams, setSearchParams] = useSearchParams();
   const { can } = usePermissions();
   const [managers, setManagers] = useState([]);
@@ -29,16 +27,12 @@ export default function UsersAccess() {
     try {
       setError(false);
       setLoading(true);
-      const filter = { organization_id: orgId };
-      const [m, u] = await Promise.all([
-        base44.entities.Manager.filter(filter),
-        base44.entities.ProductUser.filter(filter, "-last_sync", 50),
-      ]);
+      const [m, u] = await Promise.all([listManagers(), Promise.resolve([])]);
       setManagers(m || []);
       setUsers(u || []);
     } catch { setError(true); } finally { setLoading(false); }
   };
-  useEffect(() => { load(); }, [orgId]);
+  useEffect(() => { load(); }, []);
 
   // Abre o drawer de criação quando vier da Busca Global / Topbar (?novo=...)
   useEffect(() => {

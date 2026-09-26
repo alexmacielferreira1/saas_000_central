@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { listSaas } from "@/api/saasRegistry";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { PRODUCT_USER_STATUS } from "@/lib/adminHelpers";
-import { useOrgId } from "@/lib/TenantContext";
-import { writeAudit } from "@/lib/audit";
 
 const STATUSES = Object.keys(PRODUCT_USER_STATUS);
 
 export default function NewProductUserDialog({ open, onOpenChange, onCreated }) {
-  const orgId = useOrgId();
   const [saasList, setSaasList] = useState([]);
   const [form, setForm] = useState({ saas_id: "", email: "", full_name: "", role: "", tenant: "", status: "active" });
   const [saving, setSaving] = useState(false);
@@ -21,7 +18,7 @@ export default function NewProductUserDialog({ open, onOpenChange, onCreated }) 
   useEffect(() => {
     if (!open) return;
     (async () => {
-      try { const data = await base44.entities.Saas.list(); setSaasList(data || []); } catch {}
+      try { const data = await listSaas(); setSaasList(data || []); } catch {}
     })();
   }, [open]);
 
@@ -32,18 +29,7 @@ export default function NewProductUserDialog({ open, onOpenChange, onCreated }) 
     if (!form.email.trim() || !form.saas_id) { setError("SaaS e email são obrigatórios."); return; }
     setSaving(true); setError("");
     try {
-      const created = await base44.entities.ProductUser.create({
-        organization_id: orgId,
-        saas_id: form.saas_id,
-        email: form.email.trim(),
-        full_name: form.full_name.trim(),
-        role: form.role.trim(),
-        tenant: form.tenant.trim(),
-        status: form.status,
-        provenance: "local_calculation",
-        last_sync: new Date().toISOString(),
-      });
-      writeAudit({ action: "productuser.create", saas: created.saas_id, entity: "ProductUser", entityId: created.id, after: JSON.stringify({ email: created.email, role: created.role, status: created.status }), reason: "Cadastro via Busca Global / Topbar" });
+      throw new Error("O cadastro de usuário do produto será feito pelo conector nativo do SaaS.");
       onCreated?.();
       onOpenChange(false);
       setForm({ saas_id: "", email: "", full_name: "", role: "", tenant: "", status: "active" });
