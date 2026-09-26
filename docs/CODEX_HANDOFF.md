@@ -1,10 +1,10 @@
 # Handoff da Central
 
 - Estado: segundo produto do HUB, ainda em M0 e sem publicação em Render/Neon autorizada nesta sessão.
-- Revalidação de 26/09/2026: backend lint/format, 49 testes de backend, consistência de dependências, frontend build/lint/typecheck e integridade do export estão verdes. Migration, integração PostgreSQL e smoke HTTP estão vermelhos porque o Docker Desktop/serviço local está parado e não pôde ser iniciado sem privilégio administrativo; não foi encontrada regressão de schema neste bloco.
+- Revalidação de 26/09/2026: backend lint/format, 51 testes de backend, migrations, integração PostgreSQL, consistência de dependências, frontend build/lint/typecheck, smoke HTTP e integridade do export estão verdes. O PostgreSQL de validação roda temporariamente no WSL local porque o Docker Desktop 4.86 falha antes do engine ao criar o socket do Model Runner; nenhum dado publicado foi acessado.
 - O build ainda emite aviso de configuração Base44 ausente e bundle principal elevado; isso não comprova funcionamento local.
 - C0 em andamento: autenticação/sessão, catálogo de SaaS e administradores já usam a API nativa; 39 alterações frontend estão classificadas no registro de integridade.
-- Cobertura do frontend: 55 testes em 10 arquivos; 27,66% statements, 17,85% branches, 20,86% functions e 28,49% lines. As 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. Não declarar paridade completa.
+- Cobertura do frontend: 57 testes em 11 arquivos; 26,81% statements, 18,98% branches, 20,52% functions e 27,70% lines. A Home possui 81,48% de linhas cobertas. As 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. Não declarar paridade completa.
 - Dependências: correções compatíveis do `npm audit` aplicadas; restaram 2 vulnerabilidades baixas e 2 moderadas ligadas a React Router/Quill, cuja correção automática é incompatível e não deve ser forçada.
 - Base técnica local existe; login, restauração de sessão, logout, lista/criação/detalhe de SaaS e lista/criação de administradores possuem contratos nativos. As demais telas de domínio ainda precisam ser classificadas e migradas.
 - Padrão de entrada: `../../_documentacao/HUB_PLATFORM_STANDARD.md`.
@@ -41,3 +41,13 @@
 - Jornada manual: pendente; não declarar SCR-002/SCR-003 concluídas até evidência visual, auditoria persistente e migração das abas Base44.
 - Rollback: reverter o bloco remove o endpoint PATCH, o diálogo e os testes sem alterar schema ou dados existentes.
 - Próximo item desbloqueado: evidência visual da jornada nativa de catálogo/edição e screenshots C0.
+
+## Bloco SCR-001 executado parcialmente em 26/09/2026
+
+- Estado anterior: a Home combinava catálogo nativo com `AdminCommand` e `Incident` do Base44 e convertia silenciosamente falhas desses serviços em contagens zero.
+- Estado novo: `GET /api/v1/home/summary` entrega KPIs reais de produtos isolados pelo tenant; membership inativa recebe 403. A Home preserva o layout, consome apenas APIs nativas e mostra indisponibilidade explícita para operações/incidentes ainda não migrados.
+- Migration: nenhuma; o resumo agrega `saas_products` existente e não grava dados.
+- Testes: 51 backend e 57 frontend aprovados; a Home possui testes próprios de sucesso e erro recuperável. Migrations, PostgreSQL e smoke voltaram a passar com banco local temporário.
+- Jornada manual: aplicação reiniciada em `http://127.0.0.1:5174/`; captura visual autenticada ainda pendente e o marco permanece M0 bloqueado.
+- Rollback: reverter este bloco remove o endpoint, cliente e testes sem alterar schema ou dados.
+- Próximo item desbloqueado: evidência visual da Home e da jornada catálogo/edição; depois continuar a remoção incremental do Base44 sem avançar de fase.

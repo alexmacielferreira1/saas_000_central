@@ -191,3 +191,59 @@ def test_viewer_cannot_update_saas(registry_client):
 
     assert response.status_code == 403
     assert response.json()["error_code"] == "SAAS_WRITE_FORBIDDEN"
+
+
+def test_home_summary_uses_only_selected_tenant_data(registry_client):
+    client, factory = registry_client
+    login(client)
+    assert client.post("/api/v1/saas", json=product_payload(status="connected")).status_code == 201
+    assert (
+        client.post(
+            "/api/v1/saas",
+            json=product_payload(
+                name="Produto degradado",
+                slug="produto-degradado",
+                status="connected",
+                health="degraded",
+            ),
+        ).status_code
+        == 201
+    )
+
+    from app.models.saas import SaasProduct
+
+    with factory() as session:
+        other = Tenant(name="Outro cliente", slug="outro-resumo")
+        session.add(other)
+        session.flush()
+        session.add(
+            SaasProduct(
+                tenant_id=other.id,
+                name="Produto de outro tenant",
+                slug="produto-outro-tenant",
+                status="connected",
+                health="down",
+            )
+        )
+        session.commit()
+
+    response = client.get("/api/v1/home/summary")
+
+    assert response.status_code == 200
+    assert response.json()["products"] == {"total": 2, "connected": 2, "degraded": 1}
+    assert response.json()["operations"] == {"availability": "unavailable", "active": None}
+    assert response.json()["incidents"] == {"availability": "unavailable", "open": None}
+
+
+def test_home_summary_denies_inactive_membership(registry_client):
+    client, factory = registry_client
+    login(client)
+    with factory() as session:
+        membership = session.scalar(select(Membership))
+        membership.is_active = False
+        session.commit()
+
+    response = client.get("/api/v1/home/summary")
+
+    assert response.status_code == 403
+    assert response.json()["error_code"] == "TENANT_ACCESS_FORBIDDEN"

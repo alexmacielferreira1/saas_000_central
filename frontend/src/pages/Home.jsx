@@ -1,34 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { getHomeSummary } from "@/api/home";
 import { listSaas } from "@/api/saasRegistry";
 import PageHeader from "@/components/PageHeader";
 import { Card, CardBody, KpiCard, ErrorState } from "@/components/ui-primitives";
 import StatusBadge from "@/components/StatusBadge";
-import { SAAS_STATUS, HEALTH, OP_STATUS, fmtDate } from "@/lib/adminHelpers";
+import { SAAS_STATUS, HEALTH } from "@/lib/adminHelpers";
 import { LayoutDashboard, Boxes, TerminalSquare, AlertTriangle, Activity, ArrowRight } from "lucide-react";
 import MonthlyIncidentsChart from "@/components/incidents/MonthlyIncidentsChart";
 
 export default function Home() {
   const navigate = useNavigate();
   const [saas, setSaas] = useState([]);
-  const [ops, setOps] = useState([]);
-  const [incidents, setIncidents] = useState([]);
+  const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const load = async () => {
     try {
       setLoading(true); setError(false);
-      const optional = (promise) => promise.catch(() => []);
-      const [s, o, i] = await Promise.all([
+      const [s, homeSummary] = await Promise.all([
         listSaas(),
-        optional(base44.entities.AdminCommand.list("-created_date", 5)),
-        optional(base44.entities.Incident.list("-opened_at", 200)),
+        getHomeSummary(),
       ]);
       setSaas(s || []);
-      setOps(o || []);
-      setIncidents(i || []);
+      setSummary(homeSummary);
     } catch (e) {
       setError(true);
     } finally {
@@ -37,10 +33,11 @@ export default function Home() {
   };
   useEffect(() => { load(); }, []);
 
-  const connected = saas.filter((s) => s.status === "connected").length;
-  const degraded = saas.filter((s) => s.health === "degraded" || s.health === "down").length;
-  const openOps = ops.filter((o) => ["executing", "queued", "awaiting_confirmation"].includes(o.status)).length;
-  const openIncidents = incidents.filter((i) => i.status === "open").length;
+  const productMetrics = summary?.products;
+  const operationsAvailable = summary?.operations.availability === "available";
+  const incidentsAvailable = summary?.incidents.availability === "available";
+  const pendingValue = loading ? "…" : "—";
+  const pendingLabel = loading ? "carregando" : "indisponível nesta etapa";
 
   return (
     <div>
@@ -55,14 +52,18 @@ export default function Home() {
       ) : (
         <>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <KpiCard label="SaaS inventariados" value={saas.length} sub={`${connected} conectados`} icon={Boxes} tone="indigo" onClick={() => navigate("/saas")} />
-        <KpiCard label="Health degradado" value={degraded} sub={degraded ? "requer atenção" : "tudo saudável"} icon={Activity} tone={degraded ? "rose" : "emerald"} onClick={() => navigate("/integrations")} />
-        <KpiCard label="Operações ativas" value={openOps} sub="em execução / fila" icon={TerminalSquare} tone="sky" onClick={() => navigate("/operations")} />
-        <KpiCard label="Incidentes abertos" value={openIncidents} sub="não resolvidos" icon={AlertTriangle} tone={openIncidents ? "amber" : "emerald"} onClick={() => navigate("/incidents")} />
+        <KpiCard label="SaaS inventariados" value={productMetrics?.total ?? pendingValue} sub={productMetrics ? `${productMetrics.connected} conectados` : pendingLabel} icon={Boxes} tone="indigo" onClick={() => navigate("/saas")} />
+        <KpiCard label="Health degradado" value={productMetrics?.degraded ?? pendingValue} sub={productMetrics ? (productMetrics.degraded ? "requer atenção" : "tudo saudável") : pendingLabel} icon={Activity} tone={productMetrics?.degraded ? "rose" : "emerald"} onClick={() => navigate("/integrations")} />
+        <KpiCard label="Operações ativas" value={operationsAvailable ? summary.operations.active : pendingValue} sub={operationsAvailable ? "em execução / fila" : pendingLabel} icon={TerminalSquare} tone="sky" onClick={() => navigate("/operations")} />
+        <KpiCard label="Incidentes abertos" value={incidentsAvailable ? summary.incidents.open : pendingValue} sub={incidentsAvailable ? "não resolvidos" : pendingLabel} icon={AlertTriangle} tone={incidentsAvailable && summary.incidents.open ? "amber" : "emerald"} onClick={() => navigate("/incidents")} />
       </div>
 
       <div className="mt-6">
-        <MonthlyIncidentsChart items={incidents} />
+        {incidentsAvailable ? (
+          <MonthlyIncidentsChart items={[]} />
+        ) : (
+          <Card><CardBody><h2 className="text-sm font-semibold text-slate-700">Incidentes por mês</h2><p className="mt-2 text-sm text-slate-500">Os dados aparecerão aqui após a migração nativa do módulo de incidentes.</p></CardBody></Card>
+        )}
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -105,20 +106,10 @@ export default function Home() {
         <Card>
           <CardBody>
             <h2 className="mb-4 text-sm font-semibold text-slate-700">Operações recentes</h2>
-            {ops.length === 0 ? (
-              <p className="py-8 text-center text-sm text-slate-400">Nenhuma operação registrada.</p>
+            {!operationsAvailable ? (
+              <p className="py-8 text-center text-sm text-slate-400">Os dados aparecerão aqui após a migração nativa do módulo de operações.</p>
             ) : (
-              <div className="space-y-3">
-                {ops.map((o) => (
-                  <div key={o.id} className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm text-slate-700">{o.action} · {o.resource}</p>
-                      <p className="truncate text-xs text-slate-400">{o.saas} · {fmtDate(o.created_date)}</p>
-                    </div>
-                    <StatusBadge map={OP_STATUS} value={o.status} />
-                  </div>
-                ))}
-              </div>
+              <p className="py-8 text-center text-sm text-slate-400">Nenhuma operação registrada.</p>
             )}
           </CardBody>
         </Card>

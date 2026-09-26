@@ -24,7 +24,7 @@ Atualizado em 26/09/2026 para o CEN-000/C0. Este documento descreve o código ex
 
 | Rota | Tela | Leituras | Mutações/efeitos | Estado | Decisão C0 |
 |---|---|---|---|---|---|
-| `/` | Home | `listSaas()` nativo; `AdminCommand` e `Incident` Base44 | navegação para detalhes e KPIs | Híbrida | manter layout; migrar operações/incidentes por contratos próprios |
+| `/` | Home | `GET /api/v1/home/summary` e `listSaas()` nativos | navegação para detalhes e KPIs; operações/incidentes mostram indisponibilidade explícita | Nativa/parcial | composição e dados de produto nativos; preencher os módulos indisponíveis somente após seus contratos próprios |
 | `/resolution` | Central de Resolução | `Incident`, `AdminCommand`, `Saas`, `Configuration` Base44 | aprovar/rejeitar operações, incidentes e configurações; IA por `functions.invoke` | Base44 | manter layout; substituir por APIs nativas após Operations/Error Center |
 | `/api-guides` | Guias das APIs | `listSaas()` nativo; `CapabilityManifest` Base44 | atualizar lista, expandir guia, abrir SaaS | Híbrida | manter; criar manifest/capabilities nativos em C2–C4 |
 | `/saas` | SaaS 360 | `/api/v1/saas` | criar SaaS e abrir detalhe | Nativa | manter e cobrir jornada completa |

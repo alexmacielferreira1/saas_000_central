@@ -5,81 +5,81 @@
     "frontend_functional_validation": {
       "status": "blocked",
       "updated_at": "2026-09-26T15:43:25.7734874Z",
-      "notes": "Autenticação, sessão, logout, catálogo/detalhe/edição principal de SaaS e administradores possuem integração nativa. As 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. A suíte frontend tem 55 testes em 10 arquivos e 28,49% de cobertura de linhas. Paridade continua bloqueada pelas jornadas Base44, evidências visuais e migração das abas do detalhe."
+      "notes": "Autenticação, sessão, logout, Home de produtos, catálogo/detalhe/edição principal de SaaS e administradores possuem integração nativa. Operações e incidentes ainda aparecem como indisponíveis na Home até seus contratos nativos existirem. As 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. A suíte frontend tem 57 testes em 11 arquivos e 27,70% de cobertura de linhas; a Home possui 81,48%. Paridade continua bloqueada pelas jornadas Base44, evidências visuais e migração das abas do detalhe."
     }
   },
   "milestones": {
     "M0": {
       "name": "bootstrap",
-      "status": "failed",
+      "status": "blocked",
       "checks": {
         "backend_lint": {
           "status": "passed",
-          "updated_at": "2026-09-26T15:41:30.211851+00:00",
+          "updated_at": "2026-09-26T16:11:45.158337+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/backend_lint.log"
         },
         "backend_format": {
           "status": "passed",
-          "updated_at": "2026-09-26T15:41:30.758235+00:00",
+          "updated_at": "2026-09-26T16:11:45.792943+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/backend_format.log"
         },
         "unit_tests": {
           "status": "passed",
-          "updated_at": "2026-09-26T15:41:32.282079+00:00",
+          "updated_at": "2026-09-26T16:11:47.274244+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/unit_tests.log"
         },
         "migration": {
-          "status": "failed",
-          "updated_at": "2026-09-26T15:41:44.588781+00:00",
-          "notes": "Exit 1; evidence: .runtime/checks/migration.log"
+          "status": "passed",
+          "updated_at": "2026-09-26T16:12:00.639676+00:00",
+          "notes": "Exit 0; evidence: .runtime/checks/migration.log"
         },
         "database_integration": {
-          "status": "failed",
-          "updated_at": "2026-09-26T15:41:50.637794+00:00",
-          "notes": "Exit 1; evidence: .runtime/checks/database_integration.log"
+          "status": "passed",
+          "updated_at": "2026-09-26T16:12:03.868420+00:00",
+          "notes": "Exit 0; evidence: .runtime/checks/database_integration.log"
         },
         "dependency_consistency": {
           "status": "passed",
-          "updated_at": "2026-09-26T15:41:57.564851+00:00",
+          "updated_at": "2026-09-26T16:12:07.180697+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/dependency_consistency.log"
         },
         "frontend_build": {
           "status": "passed",
-          "updated_at": "2026-09-26T15:42:00.026132+00:00",
+          "updated_at": "2026-09-26T16:12:09.624579+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_build.log"
         },
         "frontend_lint": {
           "status": "passed",
-          "updated_at": "2026-09-26T15:42:05.873597+00:00",
+          "updated_at": "2026-09-26T16:12:15.487837+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_lint.log"
         },
         "frontend_typecheck": {
           "status": "passed",
-          "updated_at": "2026-09-26T15:42:12.750650+00:00",
+          "updated_at": "2026-09-26T16:12:22.231031+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_typecheck.log"
         },
         "http_smoke": {
-          "status": "failed",
-          "updated_at": "2026-09-26T15:42:18.528880+00:00",
-          "notes": "Exit 1; evidence: .runtime/checks/http_smoke.log"
+          "status": "passed",
+          "updated_at": "2026-09-26T16:12:27.844661+00:00",
+          "notes": "Exit 0; evidence: .runtime/checks/http_smoke.log"
         },
         "original_frontend_integrity": {
           "status": "passed",
-          "updated_at": "2026-09-26T15:42:21.639424+00:00",
+          "updated_at": "2026-09-26T16:12:29.076985+00:00",
           "notes": "147 original files; 39 approved typed corrections; 0 unapproved changes or missing. "
         },
         "frontend_functional_validation": {
           "status": "blocked",
           "updated_at": "2026-09-26T15:43:25.7734874Z",
-          "notes": "Autenticação, sessão, logout, catálogo/detalhe/edição principal de SaaS e administradores possuem integração nativa. As 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. A suíte frontend tem 55 testes em 10 arquivos e 28,49% de cobertura de linhas. Paridade continua bloqueada pelas jornadas Base44, evidências visuais e migração das abas do detalhe."
+          "notes": "Autenticação, sessão, logout, Home de produtos, catálogo/detalhe/edição principal de SaaS e administradores possuem integração nativa. Operações e incidentes ainda aparecem como indisponíveis na Home até seus contratos nativos existirem. As 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. A suíte frontend tem 57 testes em 11 arquivos e 27,70% de cobertura de linhas; a Home possui 81,48%. Paridade continua bloqueada pelas jornadas Base44, evidências visuais e migração das abas do detalhe."
         },
         "git_clean_at_check": {
           "status": "pending",
-          "updated_at": "2026-09-26T15:42:21.639424+00:00",
+          "updated_at": "2026-09-26T16:12:29.076985+00:00",
           "notes": "Snapshot before writing this report. Verify and commit reviewed work separately."
         }
       },
-      "updated_at": "2026-09-26T15:42:21.639424+00:00",
+      "updated_at": "2026-09-26T16:12:29.076985+00:00",
       "notes": "Partial M0; unresolved gates. Do not advance to M1."
     },
     "M1": {

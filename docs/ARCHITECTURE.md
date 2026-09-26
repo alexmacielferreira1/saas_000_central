@@ -22,13 +22,13 @@ O Google OAuth é opcional e usa `/api/v1/auth/google/start` e `/api/v1/auth/goo
 
 ## Registro de produtos e acessos administrativos
 
-`SaasProduct` é a fonte local inicial do catálogo da Central. `/api/v1/saas` lista e cria produtos; `/api/v1/saas/{product_id}` lê e atualiza parcialmente os dados principais com `PATCH`. Todas as rotas exigem sessão; criação e atualização exigem membership ativa com papel `admin` ou `superadmin`, respeitam o tenant selecionado e rejeitam conflito de slug. O catálogo alimenta Home, SaaS 360/lista, Guias das APIs, detalhe e Integrações & Saúde. Conectores reais, manifests, capabilities, ambientes e health remoto ainda não foram implementados.
+`SaasProduct` é a fonte local inicial do catálogo da Central. `/api/v1/saas` lista e cria produtos; `/api/v1/saas/{product_id}` lê e atualiza parcialmente os dados principais com `PATCH`. Todas as rotas exigem sessão; criação e atualização exigem membership ativa com papel `admin` ou `superadmin`, respeitam o tenant selecionado e rejeitam conflito de slug. `GET /api/v1/home/summary` agrega os KPIs do catálogo somente para o tenant selecionado e nega memberships inativas. Operações e incidentes são declarados como indisponíveis nesse contrato até seus módulos nativos existirem, evitando apresentar falha de integração como contagem zero. O catálogo alimenta Home, SaaS 360/lista, Guias das APIs, detalhe e Integrações & Saúde. Conectores reais, manifests, capabilities, ambientes e health remoto ainda não foram implementados.
 
 `/api/v1/access/managers` lista e cadastra administradores vinculados à Central. A interface de Usuários & Acesso já consome esse contrato. A matriz completa de pessoas, perfis, funções, permissões, equipes e exceções permanece pendente.
 
 ## Frontend e migração do Base44
 
-O frontend mantém o layout React/Vite do export histórico. Login, sessão, logout, registro/listagem/detalhe de SaaS e administradores já foram migrados para a API local. As demais páginas continuam total ou parcialmente dependentes do SDK Base44, mocks ou dados estáticos. O SDK não será removido em bloco: cada jornada será substituída por uma fatia vertical com API, persistência, autorização, testes e evidência visual.
+O frontend mantém o layout React/Vite do export histórico. Login, sessão, logout, Home para KPIs de produtos, registro/listagem/detalhe de SaaS e administradores já foram migrados para a API local. A Home não consulta mais entidades Base44 e informa explicitamente quando operações e incidentes ainda estão indisponíveis. As demais páginas continuam total ou parcialmente dependentes do SDK Base44, mocks ou dados estáticos. O SDK não será removido em bloco: cada jornada será substituída por uma fatia vertical com API, persistência, autorização, testes e evidência visual.
 
 A tag `base44-export`, `docs/history/base44-manifest.json` e `docs/history/frontend-approved-changes.json` preservam o baseline e registram as alterações aprovadas. O gate falha quando um arquivo original muda sem classificação.
 

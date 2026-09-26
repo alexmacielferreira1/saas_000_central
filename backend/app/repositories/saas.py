@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.models.saas import SaasProduct
@@ -44,3 +44,18 @@ def update_product(session: Session, product: SaasProduct, values: dict) -> Saas
     session.commit()
     session.refresh(product)
     return product
+
+
+def summarize_products(session: Session, tenant_id: str) -> dict[str, int]:
+    total, connected, degraded = session.execute(
+        select(
+            func.count(SaasProduct.id),
+            func.count(SaasProduct.id).filter(SaasProduct.status == "connected"),
+            func.count(SaasProduct.id).filter(SaasProduct.health.in_(("degraded", "down"))),
+        ).where(SaasProduct.tenant_id == tenant_id)
+    ).one()
+    return {
+        "total": total,
+        "connected": connected,
+        "degraded": degraded,
+    }
