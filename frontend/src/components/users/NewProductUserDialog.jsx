@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { listSaas } from "@/api/saasRegistry";
+import { createProductUser, listSaas } from "@/api/saasRegistry";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -9,7 +9,7 @@ import { PRODUCT_USER_STATUS } from "@/lib/adminHelpers";
 
 const STATUSES = Object.keys(PRODUCT_USER_STATUS);
 
-export default function NewProductUserDialog({ open, onOpenChange, onCreated }) {
+export default function NewProductUserDialog({ open, onOpenChange, onCreated, productId = "" }) {
   const [saasList, setSaasList] = useState([]);
   const [form, setForm] = useState({ saas_id: "", email: "", full_name: "", role: "", tenant: "", status: "active" });
   const [saving, setSaving] = useState(false);
@@ -17,6 +17,7 @@ export default function NewProductUserDialog({ open, onOpenChange, onCreated }) 
 
   useEffect(() => {
     if (!open) return;
+    if (productId) setForm((current) => ({ ...current, saas_id: productId }));
     (async () => {
       try { const data = await listSaas(); setSaasList(data || []); } catch {}
     })();
@@ -29,7 +30,14 @@ export default function NewProductUserDialog({ open, onOpenChange, onCreated }) 
     if (!form.email.trim() || !form.saas_id) { setError("SaaS e email são obrigatórios."); return; }
     setSaving(true); setError("");
     try {
-      throw new Error("O cadastro de usuário do produto será feito pelo conector nativo do SaaS.");
+      await createProductUser({
+        saas_product_id: form.saas_id,
+        email: form.email.trim(),
+        full_name: form.full_name.trim(),
+        role: form.role.trim(),
+        product_tenant: form.tenant.trim(),
+        status: form.status,
+      });
       onCreated?.();
       onOpenChange(false);
       setForm({ saas_id: "", email: "", full_name: "", role: "", tenant: "", status: "active" });
@@ -49,9 +57,9 @@ export default function NewProductUserDialog({ open, onOpenChange, onCreated }) 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label htmlFor="pu-saas">SaaS *</Label>
-              <select id="pu-saas" value={form.saas_id} onChange={(e) => set("saas_id", e.target.value)} disabled={saving} className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+              <select id="pu-saas" value={form.saas_id} onChange={(e) => set("saas_id", e.target.value)} disabled={saving || Boolean(productId)} className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-70">
                 <option value="">— selecionar —</option>
-                {saasList.map((s) => <option key={s.id} value={s.name}>{s.name}</option>)}
+                {saasList.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
             </div>
             <div className="space-y-1.5">

@@ -5,81 +5,81 @@
     "frontend_functional_validation": {
       "status": "blocked",
       "updated_at": "2026-09-26T17:45:00Z",
-      "notes": "Autenticação, sessão, logout, Home de produtos, catálogo/detalhe/edição principal de SaaS, administradores, auditoria e Capability Manifest possuem integração nativa. A publicação do manifesto é persistida, isolada por tenant, autorizada e auditada; sua jornada foi validada manualmente no detalhe do SaaS e no Guia de APIs. Operações e incidentes ainda aparecem como indisponíveis na Home até seus contratos nativos existirem. As 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. A suíte frontend tem 62 testes em 12 arquivos e 28,79% de cobertura de linhas. Paridade continua bloqueada pelas jornadas Base44 restantes, pelo histórico imutável do manifesto e pela migração das abas Usuários, Configurações e Operações do detalhe."
+      "notes": "Autenticação, sessão, logout, Home de produtos, catálogo/detalhe/edição principal de SaaS, administradores, auditoria, Capability Manifest e criação/listagem de usuários do produto possuem contratos nativos. ProductUser é uma projeção administrativa isolada por tenant/produto, com autorização, duplicidade controlada, contagem no catálogo e auditoria transacional. As 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. A suíte frontend tem 65 testes em 13 arquivos e 29,57% de cobertura de linhas. Paridade continua bloqueada pelas jornadas Base44, pelas abas Configurações e Operações, pelos complementos de usuários e pela aplicação/validação local da migration 0006, impedida enquanto PostgreSQL/API locais estão indisponíveis."
     }
   },
   "milestones": {
     "M0": {
       "name": "bootstrap",
-      "status": "blocked",
+      "status": "failed",
       "checks": {
         "backend_lint": {
           "status": "passed",
-          "updated_at": "2026-09-26T18:13:19.925990+00:00",
+          "updated_at": "2026-09-26T22:49:46.149452+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/backend_lint.log"
         },
         "backend_format": {
           "status": "passed",
-          "updated_at": "2026-09-26T18:13:20.729840+00:00",
+          "updated_at": "2026-09-26T22:49:46.760456+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/backend_format.log"
         },
         "unit_tests": {
           "status": "passed",
-          "updated_at": "2026-09-26T18:13:22.374372+00:00",
+          "updated_at": "2026-09-26T22:49:48.265728+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/unit_tests.log"
         },
         "migration": {
-          "status": "passed",
-          "updated_at": "2026-09-26T18:13:38.385254+00:00",
-          "notes": "Exit 0; evidence: .runtime/checks/migration.log"
+          "status": "failed",
+          "updated_at": "2026-09-26T22:50:06.065340+00:00",
+          "notes": "Exit 1; evidence: .runtime/checks/migration.log"
         },
         "database_integration": {
-          "status": "passed",
-          "updated_at": "2026-09-26T18:13:41.982275+00:00",
-          "notes": "Exit 0; evidence: .runtime/checks/database_integration.log"
+          "status": "failed",
+          "updated_at": "2026-09-26T22:50:12.187070+00:00",
+          "notes": "Exit 1; evidence: .runtime/checks/database_integration.log"
         },
         "dependency_consistency": {
           "status": "passed",
-          "updated_at": "2026-09-26T18:13:45.952312+00:00",
+          "updated_at": "2026-09-26T22:50:19.233075+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/dependency_consistency.log"
         },
         "frontend_build": {
           "status": "passed",
-          "updated_at": "2026-09-26T18:13:48.649829+00:00",
+          "updated_at": "2026-09-26T22:50:23.171946+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_build.log"
         },
         "frontend_lint": {
           "status": "passed",
-          "updated_at": "2026-09-26T18:13:54.757901+00:00",
+          "updated_at": "2026-09-26T22:50:29.323759+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_lint.log"
         },
         "frontend_typecheck": {
           "status": "passed",
-          "updated_at": "2026-09-26T18:14:02.268792+00:00",
+          "updated_at": "2026-09-26T22:50:36.948219+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_typecheck.log"
         },
         "http_smoke": {
-          "status": "passed",
-          "updated_at": "2026-09-26T18:14:08.631882+00:00",
-          "notes": "Exit 0; evidence: .runtime/checks/http_smoke.log"
+          "status": "failed",
+          "updated_at": "2026-09-26T22:50:43.301168+00:00",
+          "notes": "Exit 1; evidence: .runtime/checks/http_smoke.log"
         },
         "original_frontend_integrity": {
           "status": "passed",
-          "updated_at": "2026-09-26T18:14:10.006846+00:00",
+          "updated_at": "2026-09-26T22:50:46.667559+00:00",
           "notes": "147 original files; 40 approved typed corrections; 0 unapproved changes or missing. "
         },
         "frontend_functional_validation": {
           "status": "blocked",
           "updated_at": "2026-09-26T17:45:00Z",
-          "notes": "Autenticação, sessão, logout, Home de produtos, catálogo/detalhe/edição principal de SaaS, administradores, auditoria e Capability Manifest possuem integração nativa. A publicação do manifesto é persistida, isolada por tenant, autorizada e auditada; sua jornada foi validada manualmente no detalhe do SaaS e no Guia de APIs. Operações e incidentes ainda aparecem como indisponíveis na Home até seus contratos nativos existirem. As 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. A suíte frontend tem 62 testes em 12 arquivos e 28,79% de cobertura de linhas. Paridade continua bloqueada pelas jornadas Base44 restantes, pelo histórico imutável do manifesto e pela migração das abas Usuários, Configurações e Operações do detalhe."
+          "notes": "Autenticação, sessão, logout, Home de produtos, catálogo/detalhe/edição principal de SaaS, administradores, auditoria, Capability Manifest e criação/listagem de usuários do produto possuem contratos nativos. ProductUser é uma projeção administrativa isolada por tenant/produto, com autorização, duplicidade controlada, contagem no catálogo e auditoria transacional. As 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. A suíte frontend tem 65 testes em 13 arquivos e 29,57% de cobertura de linhas. Paridade continua bloqueada pelas jornadas Base44, pelas abas Configurações e Operações, pelos complementos de usuários e pela aplicação/validação local da migration 0006, impedida enquanto PostgreSQL/API locais estão indisponíveis."
         },
         "git_clean_at_check": {
           "status": "pending",
-          "updated_at": "2026-09-26T18:14:10.006846+00:00",
+          "updated_at": "2026-09-26T22:50:46.667559+00:00",
           "notes": "Snapshot before writing this report. Verify and commit reviewed work separately."
         }
       },
-      "updated_at": "2026-09-26T18:14:10.006846+00:00",
+      "updated_at": "2026-09-26T22:50:46.667559+00:00",
       "notes": "Partial M0; unresolved gates. Do not advance to M1."
     },
     "M1": {

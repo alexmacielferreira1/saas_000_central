@@ -82,6 +82,8 @@ Não criar várias telas vazias de uma vez. Entregar uma fatia vertical funciona
 | SCR-045 | `/saas/:id/lifecycle` | Lifecycle | Ativar, manter, suspender, arquivar, transferir, descomissionar e excluir |
 | SCR-046 | `/saas/:id/portability` | Portabilidade | Export package, score, checklist, integridade e detachment test |
 
+Estado parcial em 26/09/2026: `SCR-040` possui projeção administrativa tenant-scoped, criação/listagem nativas, auditoria e uso nas telas preservadas. Ainda faltam vínculo com pessoa global, edição/revogação, sincronização por conector e explicação do acesso efetivo; portanto a tela não está concluída.
+
 ## Clientes e Tenant 360
 
 | ID | Rota sugerida | Tela | Entrega funcional |

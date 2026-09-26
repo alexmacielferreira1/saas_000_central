@@ -5,6 +5,7 @@ from app.models import (  # noqa: F401
     AuthSession,
     CapabilityManifest,
     Membership,
+    ProductUser,
     SaasProduct,
     Tenant,
     User,

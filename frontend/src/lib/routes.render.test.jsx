@@ -78,6 +78,8 @@ vi.mock('@/api/saasRegistry', () => ({
   listCapabilityManifests: vi.fn().mockResolvedValue([]),
   getCapabilityManifest: vi.fn().mockResolvedValue(null),
   upsertCapabilityManifest: vi.fn(),
+  listProductUsers: vi.fn().mockResolvedValue([]),
+  createProductUser: vi.fn(),
 }));
 
 vi.mock('@/api/access', () => ({

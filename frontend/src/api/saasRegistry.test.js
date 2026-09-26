@@ -6,7 +6,9 @@ import {
   getSaas,
   listAuditLogs,
   listCapabilityManifests,
+  listProductUsers,
   listSaas,
+  createProductUser,
   updateSaas,
   upsertCapabilityManifest,
 } from './saasRegistry';
@@ -146,6 +148,40 @@ describe('native SaaS registry client', () => {
     expect(fetchMock).toHaveBeenCalledWith(
       'http://127.0.0.1:8011/api/v1/manifests/saas-1',
       expect.objectContaining({ method: 'PUT', body: JSON.stringify(payload) }),
+    );
+  });
+
+  it('lists product users with an optional SaaS filter', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify([{ id: 'pu-1', email: 'editor@example.com' }]), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(listProductUsers('saas-1')).resolves.toHaveLength(1);
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://127.0.0.1:8011/api/v1/product-users?saas_product_id=saas-1',
+      expect.objectContaining({ credentials: 'include', method: 'GET' }),
+    );
+  });
+
+  it('creates a product user through the native API', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ id: 'pu-1', email: 'editor@example.com' }), {
+        status: 201,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    const payload = { saas_product_id: 'saas-1', email: 'editor@example.com' };
+
+    await createProductUser(payload);
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://127.0.0.1:8011/api/v1/product-users',
+      expect.objectContaining({ method: 'POST', body: JSON.stringify(payload) }),
     );
   });
 });

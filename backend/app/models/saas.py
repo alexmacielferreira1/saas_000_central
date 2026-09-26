@@ -71,3 +71,43 @@ class CapabilityManifest(Base):
         onupdate=lambda: datetime.now(UTC),
         nullable=False,
     )
+
+
+class ProductUser(Base):
+    __tablename__ = "product_users"
+    __table_args__ = (
+        UniqueConstraint(
+            "tenant_id",
+            "saas_product_id",
+            "email_normalized",
+            name="uq_product_user_tenant_product_email",
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    tenant_id: Mapped[str] = mapped_column(
+        ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    saas_product_id: Mapped[str] = mapped_column(
+        ForeignKey("saas_products.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    external_id: Mapped[str | None] = mapped_column(String(200))
+    email: Mapped[str] = mapped_column(String(320), nullable=False)
+    email_normalized: Mapped[str] = mapped_column(String(320), nullable=False)
+    full_name: Mapped[str] = mapped_column(String(200), default="", nullable=False)
+    role: Mapped[str] = mapped_column(String(100), default="", nullable=False)
+    product_tenant: Mapped[str] = mapped_column(String(200), default="", nullable=False)
+    status: Mapped[str] = mapped_column(String(50), default="active", nullable=False)
+    source: Mapped[str] = mapped_column(String(50), default="central_manual", nullable=False)
+    last_sync: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+        nullable=False,
+    )

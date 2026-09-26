@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { getCapabilityManifest, getSaas } from "@/api/saasRegistry";
+import { getCapabilityManifest, getSaas, listProductUsers } from "@/api/saasRegistry";
 import PageHeader from "@/components/PageHeader";
 import { Card, CardBody, EmptyState, ErrorState } from "@/components/ui-primitives";
 import StatusBadge from "@/components/StatusBadge";
 import EditSaasDialog from "@/components/saas/EditSaasDialog";
 import EditManifestDialog from "@/components/saas/EditManifestDialog";
+import NewProductUserDialog from "@/components/users/NewProductUserDialog";
 import { SAAS_STATUS, HEALTH, COMPATIBILITY, OP_STATUS, PRODUCT_USER_STATUS, fmtDate } from "@/lib/adminHelpers";
-import { Boxes, ArrowLeft, Activity, Users, Settings2, TerminalSquare, FileJson, Pencil } from "lucide-react";
+import { Boxes, ArrowLeft, Activity, Users, Settings2, TerminalSquare, FileJson, Pencil, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePermissions } from "@/hooks/usePermissions";
 
@@ -26,6 +27,7 @@ export default function SaasDetail() {
   const [tab, setTab] = useState("overview");
   const [editOpen, setEditOpen] = useState(false);
   const [manifestOpen, setManifestOpen] = useState(false);
+  const [productUserOpen, setProductUserOpen] = useState(false);
 
   const load = async () => {
     try {
@@ -37,7 +39,7 @@ export default function SaasDetail() {
           if (err?.status === 404) return null;
           throw err;
         }),
-        base44.entities.ProductUser.filter({ saas_id: id }, "-last_sync", 10).catch(() => []),
+        listProductUsers(id),
         base44.entities.Configuration.filter({ saas_id: id }, "-created_date", 10).catch(() => []),
         base44.entities.AdminCommand.filter({ saas: s?.name }, "-created_date", 10).catch(() => []),
       ]);
@@ -160,11 +162,18 @@ export default function SaasDetail() {
 
       {tab === "users" && (
         <Card><CardBody>
+          {can("product-user") && (
+            <div className="mb-4 flex justify-end">
+              <Button size="sm" className="gap-2" onClick={() => setProductUserOpen(true)}>
+                <Plus className="h-4 w-4" /> Novo usuário
+              </Button>
+            </div>
+          )}
           {users.length === 0 ? <EmptyState icon={Users} title="Nenhum usuário sincronizado" /> : (
             <div className="space-y-2">
               {users.map((u) => (
                 <div key={u.id} className="flex items-center justify-between rounded-lg border border-slate-100 p-3">
-                  <div><p className="text-sm font-medium text-slate-800">{u.full_name || u.email}</p><p className="text-xs text-slate-400">{u.role || "—"} · {u.tenant || "—"}</p></div>
+                  <div><p className="text-sm font-medium text-slate-800">{u.full_name || u.email}</p><p className="text-xs text-slate-400">{u.email} · {u.role || "—"} · {u.product_tenant || "—"}</p></div>
                   <StatusBadge map={PRODUCT_USER_STATUS} value={u.status} />
                 </div>
               ))}
@@ -215,6 +224,12 @@ export default function SaasDetail() {
         manifest={manifest}
         onOpenChange={setManifestOpen}
         onPublished={setManifest}
+      />
+      <NewProductUserDialog
+        open={productUserOpen}
+        productId={saas.id}
+        onOpenChange={setProductUserOpen}
+        onCreated={load}
       />
     </div>
   );

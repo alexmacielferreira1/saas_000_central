@@ -291,6 +291,103 @@ def test_viewer_cannot_publish_capability_manifest(registry_client):
     assert response.json()["error_code"] == "MANIFEST_WRITE_FORBIDDEN"
 
 
+def product_user_payload(product_id: str, **overrides):
+    payload = {
+        "saas_product_id": product_id,
+        "email": "editor@mediamind.local",
+        "full_name": "Editor MediaMind",
+        "role": "editor",
+        "product_tenant": "iacervo-corp",
+        "status": "active",
+        "external_id": "mm-user-1",
+    }
+    payload.update(overrides)
+    return payload
+
+
+def test_superadmin_creates_and_lists_product_user_with_audit(registry_client):
+    client, _ = registry_client
+    login(client)
+    product = client.post("/api/v1/saas", json=product_payload()).json()
+
+    created = client.post("/api/v1/product-users", json=product_user_payload(product["id"]))
+
+    assert created.status_code == 201
+    assert created.json()["saas_product_id"] == product["id"]
+    assert created.json()["email"] == "editor@mediamind.local"
+    assert created.json()["source"] == "central_manual"
+    listed = client.get(f"/api/v1/product-users?saas_product_id={product['id']}")
+    assert listed.status_code == 200
+    assert [item["email"] for item in listed.json()] == ["editor@mediamind.local"]
+    assert client.get(f"/api/v1/saas/{product['id']}").json()["user_count"] == 1
+
+    audit = client.get("/api/v1/audit").json()[0]
+    assert audit["action"] == "product_user.create"
+    assert audit["resource_id"] == created.json()["id"]
+    assert audit["after_data"]["email"] == "editor@mediamind.local"
+
+
+def test_product_users_reject_duplicate_email_in_same_product(registry_client):
+    client, _ = registry_client
+    login(client)
+    product = client.post("/api/v1/saas", json=product_payload()).json()
+    payload = product_user_payload(product["id"])
+    assert client.post("/api/v1/product-users", json=payload).status_code == 201
+
+    duplicate = client.post("/api/v1/product-users", json=payload)
+
+    assert duplicate.status_code == 409
+    assert duplicate.json()["error_code"] == "PRODUCT_USER_EXISTS"
+
+
+def test_product_users_are_isolated_by_selected_tenant(registry_client):
+    client, factory = registry_client
+    login(client)
+    product = client.post("/api/v1/saas", json=product_payload()).json()
+    assert (
+        client.post("/api/v1/product-users", json=product_user_payload(product["id"])).status_code
+        == 201
+    )
+
+    from app.models.saas import ProductUser, SaasProduct
+
+    with factory() as session:
+        other = Tenant(name="Outro tenant de contas", slug="outro-contas")
+        session.add(other)
+        session.flush()
+        other_product = SaasProduct(tenant_id=other.id, name="Outro SaaS", slug="outro-saas")
+        session.add(other_product)
+        session.flush()
+        session.add(
+            ProductUser(
+                tenant_id=other.id,
+                saas_product_id=other_product.id,
+                email="oculto@example.com",
+                email_normalized="oculto@example.com",
+                full_name="Usuário oculto",
+            )
+        )
+        session.commit()
+
+    listed = client.get("/api/v1/product-users")
+    assert [item["email"] for item in listed.json()] == ["editor@mediamind.local"]
+
+
+def test_viewer_cannot_create_product_user(registry_client):
+    client, factory = registry_client
+    login(client)
+    product = client.post("/api/v1/saas", json=product_payload()).json()
+    with factory() as session:
+        membership = session.scalar(select(Membership))
+        membership.role = "viewer"
+        session.commit()
+
+    response = client.post("/api/v1/product-users", json=product_user_payload(product["id"]))
+
+    assert response.status_code == 403
+    assert response.json()["error_code"] == "PRODUCT_USER_WRITE_FORBIDDEN"
+
+
 def test_home_summary_uses_only_selected_tenant_data(registry_client):
     client, factory = registry_client
     login(client)

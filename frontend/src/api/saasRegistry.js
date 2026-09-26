@@ -31,3 +31,12 @@ export function getCapabilityManifest(productId) {
 export function upsertCapabilityManifest(productId, values) {
   return request(`/manifests/${productId}`, { method: 'PUT', body: values });
 }
+
+export function listProductUsers(productId) {
+  const query = productId ? `?saas_product_id=${encodeURIComponent(productId)}` : '';
+  return request(`/product-users${query}`);
+}
+
+export function createProductUser(values) {
+  return request('/product-users', { method: 'POST', body: values });
+}

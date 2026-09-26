@@ -1,16 +1,16 @@
 # Handoff da Central
 
 - Estado: segundo produto do HUB, ainda em M0 e sem publicação em Render/Neon autorizada nesta sessão.
-- Revalidação de 26/09/2026: backend lint/format, 51 testes de backend, migrations, integração PostgreSQL, consistência de dependências, frontend build/lint/typecheck, smoke HTTP e integridade do export estão verdes. O PostgreSQL de validação roda temporariamente no WSL local porque o Docker Desktop 4.86 falha antes do engine ao criar o socket do Model Runner; nenhum dado publicado foi acessado.
+- Revalidação de 26/09/2026: backend lint/format, 59 testes de backend, 65 testes frontend, consistência de dependências, frontend build/lint/typecheck e integridade do export estão verdes. Migration, integração PostgreSQL e smoke estão falhando porque Docker Desktop e o PostgreSQL temporário local não estão ativos; nenhum dado publicado foi acessado. A migration `0006` gerou SQL PostgreSQL válido em modo offline, mas ainda precisa ser aplicada localmente.
 - O build ainda emite aviso de configuração Base44 ausente e bundle principal elevado; isso não comprova funcionamento local.
 - C0 em andamento: autenticação/sessão, catálogo de SaaS e administradores já usam a API nativa; 39 alterações frontend estão classificadas no registro de integridade.
-- Cobertura do frontend: 62 testes em 12 arquivos; 27,91% statements, 19,78% branches, 21,67% functions e 28,79% lines. A Home possui 81,48% de linhas cobertas. As 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. Não declarar paridade completa.
+- Cobertura do frontend: 65 testes em 13 arquivos; 28,80% statements, 20,30% branches, 22,87% functions e 29,57% lines. As 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. Não declarar paridade completa.
 - Dependências: correções compatíveis do `npm audit` aplicadas; restaram 2 vulnerabilidades baixas e 2 moderadas ligadas a React Router/Quill, cuja correção automática é incompatível e não deve ser forçada.
 - Base técnica local existe; login, restauração de sessão, logout, lista/criação/detalhe de SaaS e lista/criação de administradores possuem contratos nativos. As demais telas de domínio ainda precisam ser classificadas e migradas.
 - Padrão de entrada: `../../_documentacao/HUB_PLATFORM_STANDARD.md`.
 - Plano executável: `CENTRAL_IMPLEMENTATION_PLAN.md`.
 - Inventário C0 concluído em `FRONTEND_ROUTE_JOURNEY_INVENTORY.md`: 15 rotas declaradas, um componente histórico não roteado e os componentes transversais foram classificados como nativos, híbridos ou Base44.
-- Próximo bloco desbloqueado: migrar a aba `Usuários` do detalhe do SaaS para contrato nativo e continuar as evidências visuais. Não iniciar C1 antes do aceite de C0.
+- Próximo bloco desbloqueado: restaurar o PostgreSQL local, aplicar `0006_product_users` e migrar a aba `Configurações` do detalhe do SaaS. Não iniciar C1 antes do aceite de C0.
 - Preservar independência de bancos e não copiar o domínio audiovisual do MediaMind.
 - Git remoto confirmado: `origin` aponta para `alexmacielferreira1/saas_000_central`, branch `main`. Commit/push não equivalem a deploy; Render/Neon continuam fora de escopo sem autorização explícita.
 
@@ -70,3 +70,13 @@
 - Limites: existe uma versão corrente por produto; histórico imutável, assinatura do SaaS e ingestão automática continuam pendentes. As abas `Usuários`, `Configurações` e `Operações` ainda usam Base44. M0 permanece bloqueado.
 - Rollback: reverter este bloco e executar downgrade de `0005_capability_manifests` remove o contrato nativo e seus dados locais sem alterar catálogo, identidade ou auditoria existente.
 - Próximo item desbloqueado: migrar a aba `Usuários` do detalhe do SaaS mantendo o layout atual.
+
+## Bloco SCR-003/SCR-004/SCR-040 parcial executado em 26/09/2026
+
+- Estado anterior: a aba de usuários do detalhe consultava `ProductUser` no Base44; a Administração retornava lista vazia e o botão de cadastro sempre lançava uma mensagem de indisponibilidade.
+- Estado novo: `ProductUser` é uma projeção administrativa separada das credenciais globais, isolada por tenant e produto. `GET/POST /api/v1/product-users` lista e cria contas projetadas, bloqueia duplicidade, valida papel administrativo, atualiza `user_count` e grava `product_user.create` no `AuditLog` na mesma transação. O detalhe e a Administração preservados usam o contrato nativo e permitem cadastro.
+- Migration: `0006_product_users` criada e validada por SQL PostgreSQL offline. A aplicação local está pendente porque Docker Desktop/PostgreSQL não iniciaram; Neon/Render não foram acessados.
+- Testes: TDD vermelho→verde; 59 backend e 65 frontend aprovados. Ruff, formatação, lint, typecheck, build e integridade aprovados. Gate geral permanece `failed` por migration, integração e smoke dependentes do banco/API local indisponíveis.
+- Limites: ainda faltam vínculo com pessoa global, edição/revogação, sincronização assinada pelo SaaS, acesso efetivo e validação manual no navegador com banco migrado.
+- Rollback: downgrade de `0006_product_users` remove somente as projeções locais; contas globais, catálogo e dados dos SaaS permanecem.
+- Próximo item: restaurar o banco local, validar a jornada e migrar `Configurações`.

@@ -27,6 +27,8 @@ O Google OAuth é opcional e usa `/api/v1/auth/google/start` e `/api/v1/auth/goo
 
 `CapabilityManifest` mantém o contrato estruturado atual de cada produto por tenant: versão declarada, Admin API, compatibilidade, capabilities, health, recursos, scopes, eventos e limites. `GET /api/v1/manifests` e `GET /api/v1/manifests/{product_id}` alimentam Guias de APIs e Detalhe do SaaS; `PUT /api/v1/manifests/{product_id}` exige `admin`/`superadmin`, valida a estrutura, persiste e audita a substituição. A migration `0005_capability_manifests` cria a tabela e a unicidade produto/tenant. Histórico imutável de versões, conectores reais, ambientes e health remoto ainda não foram implementados.
 
+`ProductUser` registra somente uma projeção administrativa da conta existente em um produto, separada da identidade global e sem armazenar credencial. `GET/POST /api/v1/product-users` lista e cria projeções isoladas por tenant/produto, atualiza a contagem do catálogo e audita a mutação. A migration `0006_product_users` cria a tabela; vínculo com pessoa global, edição/revogação e sincronização assinada continuam pendentes.
+
 `/api/v1/access/managers` lista e cadastra administradores vinculados à Central. A interface de Usuários & Acesso já consome esse contrato. A matriz completa de pessoas, perfis, funções, permissões, equipes e exceções permanece pendente.
 
 ## Frontend e migração do Base44

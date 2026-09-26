@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { listManagers } from "@/api/access";
+import { listProductUsers } from "@/api/saasRegistry";
 import { useSearchParams } from "react-router-dom";
 import PageHeader from "@/components/PageHeader";
 import { Card, EmptyState, ErrorState } from "@/components/ui-primitives";
@@ -27,7 +28,7 @@ export default function UsersAccess() {
     try {
       setError(false);
       setLoading(true);
-      const [m, u] = await Promise.all([listManagers(), Promise.resolve([])]);
+      const [m, u] = await Promise.all([listManagers(), listProductUsers()]);
       setManagers(m || []);
       setUsers(u || []);
     } catch { setError(true); } finally { setLoading(false); }
@@ -101,7 +102,7 @@ export default function UsersAccess() {
                 <div key={u.id} className="flex items-center gap-3 p-4">
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium text-slate-800">{u.full_name || u.email}</p>
-                    <p className="truncate text-xs text-slate-400">{u.saas_id} · {u.role || "—"} · {u.tenant || "—"}</p>
+                    <p className="truncate text-xs text-slate-400">{u.saas_product_id} · {u.role || "—"} · {u.product_tenant || "—"}</p>
                   </div>
                   <span className="hidden text-xs text-slate-400 sm:block">{fmtDate(u.last_sync)}</span>
                   <StatusBadge map={PRODUCT_USER_STATUS} value={u.status} />
