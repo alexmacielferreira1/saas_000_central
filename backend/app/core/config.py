@@ -28,6 +28,11 @@ class Settings(BaseSettings):
     google_client_id: str | None = None
     google_client_secret: SecretStr | None = None
     google_redirect_uri: str = "http://127.0.0.1:8011/api/v1/auth/google/callback"
+    bootstrap_admin_email: str | None = None
+    bootstrap_admin_password: SecretStr | None = None
+    bootstrap_admin_name: str | None = None
+    bootstrap_tenant_name: str = "Central SaaS"
+    bootstrap_tenant_slug: str = "central"
 
     @model_validator(mode="after")
     def validate_production_auth(self):
