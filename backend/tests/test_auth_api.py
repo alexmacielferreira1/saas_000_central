@@ -1,4 +1,6 @@
 from types import SimpleNamespace
+from unittest.mock import AsyncMock
+from urllib.parse import parse_qs, urlparse
 
 import pytest
 from fastapi.testclient import TestClient
@@ -48,3 +50,30 @@ def test_logout_revokes_session(auth_client):
     auth_client.post("/api/v1/auth/login", json={"email": "alexmacielferreira@gmail.com", "password": PASSWORD})
     assert auth_client.post("/api/v1/auth/logout").status_code == 204
     assert auth_client.get("/api/v1/auth/session").status_code == 401
+
+
+def google_settings():
+    return SimpleNamespace(google_client_id="client", google_client_secret=SimpleNamespace(get_secret_value=lambda: "secret"), google_redirect_uri="http://127.0.0.1:8011/api/v1/auth/google/callback", frontend_url="http://127.0.0.1:5174", session_cookie_secure=False, session_hours=8)
+
+
+def test_google_start_reports_missing_configuration(auth_client):
+    response = auth_client.get("/api/v1/auth/google/start")
+    assert response.status_code == 503
+    assert response.json()["error_code"] == "GOOGLE_OAUTH_NOT_CONFIGURED"
+
+
+def test_google_callback_authenticates_only_existing_verified_account(auth_client, monkeypatch):
+    monkeypatch.setattr("app.api.v1.auth.get_settings", google_settings)
+    monkeypatch.setattr("app.api.v1.auth.exchange_google_code", AsyncMock(return_value={"email": "alexmacielferreira@gmail.com", "email_verified": True}))
+    start = auth_client.get("/api/v1/auth/google/start", follow_redirects=False)
+    state = parse_qs(urlparse(start.headers["location"]).query)["state"][0]
+    response = auth_client.get(f"/api/v1/auth/google/callback?code=abc&state={state}", follow_redirects=False)
+    assert response.status_code == 307
+    assert response.headers["location"] == "http://127.0.0.1:5174/"
+    assert "central_session=" in response.headers["set-cookie"]
+
+
+def test_google_callback_rejects_invalid_state(auth_client, monkeypatch):
+    monkeypatch.setattr("app.api.v1.auth.get_settings", google_settings)
+    response = auth_client.get("/api/v1/auth/google/callback?code=abc&state=wrong", follow_redirects=False)
+    assert response.headers["location"].endswith("/login?google_error=invalid_state")

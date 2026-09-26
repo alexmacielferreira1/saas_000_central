@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     session_cookie_secure: bool = False
     login_max_attempts: int = Field(default=5, ge=2, le=20)
     login_lockout_minutes: int = Field(default=15, ge=1, le=1440)
+    google_client_id: str | None = None
+    google_client_secret: SecretStr | None = None
+    google_redirect_uri: str = "http://127.0.0.1:8011/api/v1/auth/google/callback"
 
     @model_validator(mode="after")
     def validate_production_auth(self):
@@ -33,6 +36,8 @@ class Settings(BaseSettings):
                 raise ValueError("SESSION_COOKIE_SECURE deve ser true em production")
             if not self.frontend_url.startswith("https://"):
                 raise ValueError("FRONTEND_URL deve usar HTTPS em production")
+            if (self.google_client_id or self.google_client_secret) and not self.google_redirect_uri.startswith("https://"):
+                raise ValueError("GOOGLE_REDIRECT_URI deve usar HTTPS em production")
         return self
 
     @property
