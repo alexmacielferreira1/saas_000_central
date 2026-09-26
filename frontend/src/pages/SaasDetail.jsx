@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { getCapabilityManifest, getSaas, listProductUsers } from "@/api/saasRegistry";
+import { getCapabilityManifest, getSaas, listConfigurations, listProductUsers } from "@/api/saasRegistry";
 import PageHeader from "@/components/PageHeader";
 import { Card, CardBody, EmptyState, ErrorState } from "@/components/ui-primitives";
 import StatusBadge from "@/components/StatusBadge";
@@ -40,7 +40,7 @@ export default function SaasDetail() {
           throw err;
         }),
         listProductUsers(id),
-        base44.entities.Configuration.filter({ saas_id: id }, "-created_date", 10).catch(() => []),
+        listConfigurations(id),
         base44.entities.AdminCommand.filter({ saas: s?.name }, "-created_date", 10).catch(() => []),
       ]);
       setManifest(m || null);

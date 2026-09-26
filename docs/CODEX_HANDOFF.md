@@ -80,3 +80,11 @@
 - Limites: ainda faltam vínculo com pessoa global, edição/revogação, sincronização assinada pelo SaaS, acesso efetivo e validação manual no navegador com banco migrado.
 - Rollback: downgrade de `0006_product_users` remove somente as projeções locais; contas globais, catálogo e dados dos SaaS permanecem.
 - Próximo item: restaurar o banco local, validar a jornada e migrar `Configurações`.
+
+## Bloco SCR-003/SCR-006 Configurações parcial executado em 26/09/2026
+
+- Estado novo: migration `0007_configurations`, modelo isolado por tenant e escopo, `GET/POST /api/v1/configurations`, permissão administrativa, prevenção de duplicidade e auditoria transacional. A tela global e a aba do detalhe preservam o layout e agora consomem a API nativa; o formulário permite Central ou um SaaS cadastrado.
+- Testes: 59 backend e 65 frontend aprovados; Ruff, lint e build aprovados. O SQL PostgreSQL da migration foi gerado offline com sucesso.
+- Limites: PostgreSQL/API locais continuam indisponíveis, portanto a migration não foi aplicada e a jornada autenticada não foi validada no navegador. Edição, histórico/versionamento, aprovação operacional e propagação para SaaS remoto permanecem pendentes. Nenhum ambiente Render/Neon foi alterado.
+- Rollback: downgrade de `0007_configurations` remove apenas as configurações nativas.
+- Próximo item desbloqueado: migrar `Operações` para contrato nativo e depois restaurar banco/API para validação integral.

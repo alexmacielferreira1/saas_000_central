@@ -1,24 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { createConfiguration, listSaas } from "@/api/saasRegistry";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
-import { writeAudit } from "@/lib/audit";
-import { useOrgId } from "@/lib/TenantContext";
 
 export default function NewConfigurationDialog({ open, onOpenChange, onCreated }) {
-  const orgId = useOrgId();
   const [saasList, setSaasList] = useState([]);
-  const [form, setForm] = useState({ saas_id: "central", key: "", value: "", environment: "production", type: "setting", enabled: true, author: "", reason: "", approval_status: "auto" });
+  const [form, setForm] = useState({ saas_id: "", key: "", value: "", environment: "production", type: "setting", enabled: true, author: "", reason: "", approval_status: "auto" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (!open) return;
     (async () => {
-      try { const data = await base44.entities.Saas.list(); setSaasList(data || []); } catch {}
+      try { const data = await listSaas(); setSaasList(data || []); } catch {}
     })();
   }, [open]);
 
@@ -29,9 +26,8 @@ export default function NewConfigurationDialog({ open, onOpenChange, onCreated }
     if (!form.key.trim()) { setError("Chave é obrigatória."); return; }
     setSaving(true); setError("");
     try {
-      const created = await base44.entities.Configuration.create({
-        organization_id: orgId,
-        saas_id: form.saas_id,
+      await createConfiguration({
+        saas_product_id: form.saas_id || null,
         key: form.key.trim(),
         value: form.value,
         environment: form.environment,
@@ -41,10 +37,9 @@ export default function NewConfigurationDialog({ open, onOpenChange, onCreated }
         reason: form.reason.trim(),
         approval_status: form.approval_status,
       });
-      writeAudit({ action: "config.create", saas: created.saas_id, entity: "Configuration", entityId: created.id, after: JSON.stringify({ key: created.key, value: created.value, type: created.type, enabled: created.enabled }), reason: created.reason || "Criação via Control Plane" });
       onCreated?.();
       onOpenChange(false);
-      setForm({ saas_id: "central", key: "", value: "", environment: "production", type: "setting", enabled: true, author: "", reason: "", approval_status: "auto" });
+      setForm({ saas_id: "", key: "", value: "", environment: "production", type: "setting", enabled: true, author: "", reason: "", approval_status: "auto" });
     } catch (err) {
       setError(err?.message || "Não foi possível criar a configuração.");
     } finally { setSaving(false); }
@@ -62,8 +57,8 @@ export default function NewConfigurationDialog({ open, onOpenChange, onCreated }
             <div className="space-y-1.5">
               <Label htmlFor="cfg-saas">SaaS</Label>
               <select id="cfg-saas" value={form.saas_id} onChange={(e) => set("saas_id", e.target.value)} disabled={saving} className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
-                <option value="central">Central</option>
-                {saasList.map((s) => <option key={s.id} value={s.name}>{s.name}</option>)}
+                <option value="">Central</option>
+                {saasList.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
             </div>
             <div className="space-y-1.5">

@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy import JSON, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.session import Base
@@ -102,6 +102,42 @@ class ProductUser(Base):
     last_sync: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
     )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+        nullable=False,
+    )
+
+
+class Configuration(Base):
+    __tablename__ = "configurations"
+    __table_args__ = (
+        UniqueConstraint(
+            "tenant_id", "scope_key", "environment", "key", name="uq_configuration_scope_key"
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    tenant_id: Mapped[str] = mapped_column(
+        ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    saas_product_id: Mapped[str | None] = mapped_column(
+        ForeignKey("saas_products.id", ondelete="CASCADE"), index=True
+    )
+    scope_key: Mapped[str] = mapped_column(String(36), nullable=False)
+    key: Mapped[str] = mapped_column(String(200), nullable=False)
+    value: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    previous_value: Mapped[str | None] = mapped_column(Text)
+    environment: Mapped[str] = mapped_column(String(50), default="production", nullable=False)
+    type: Mapped[str] = mapped_column(String(50), default="setting", nullable=False)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    author: Mapped[str] = mapped_column(String(320), default="", nullable=False)
+    reason: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    approval_status: Mapped[str] = mapped_column(String(50), default="auto", nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
     )

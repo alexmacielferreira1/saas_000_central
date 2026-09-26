@@ -4,6 +4,7 @@ from app.models import (  # noqa: F401
     AuditLog,
     AuthSession,
     CapabilityManifest,
+    Configuration,
     Membership,
     ProductUser,
     SaasProduct,

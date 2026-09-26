@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
-import { useOrgId } from "@/lib/TenantContext";
+import { listConfigurations } from "@/api/saasRegistry";
 import { useSearchParams } from "react-router-dom";
 import PageHeader from "@/components/PageHeader";
 import { Card, CardBody, EmptyState, ErrorState } from "@/components/ui-primitives";
@@ -28,7 +27,6 @@ export default function Configurations() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [error, setError] = useState(false);
 
-  const orgId = useOrgId();
   const [searchParams, setSearchParams] = useSearchParams();
   const { can } = usePermissions();
 
@@ -36,11 +34,11 @@ export default function Configurations() {
     try {
       setError(false);
       setLoading(true);
-      const data = await base44.entities.Configuration.filter({ organization_id: orgId }, "-created_date", 50);
+      const data = await listConfigurations();
       setItems(data || []);
     } catch { setError(true); } finally { setLoading(false); }
   };
-  useEffect(() => { load(); }, [orgId]);
+  useEffect(() => { load(); }, []);
 
   useEffect(() => {
     if (searchParams.get("novo") === "config" && can("config")) {
@@ -49,7 +47,7 @@ export default function Configurations() {
     }
   }, [searchParams]);
 
-  const filtered = items.filter((c) => !q || (c.key || "").toLowerCase().includes(q.toLowerCase()) || (c.saas_id || "").toLowerCase().includes(q.toLowerCase()));
+  const filtered = items.filter((c) => !q || (c.key || "").toLowerCase().includes(q.toLowerCase()) || (c.scope_key || "").toLowerCase().includes(q.toLowerCase()));
 
   return (
     <div>
@@ -79,7 +77,7 @@ export default function Configurations() {
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-slate-900">{c.key}</p>
-                    <p className="truncate text-xs text-slate-400">{c.saas_id} · {c.environment}</p>
+                    <p className="truncate text-xs text-slate-400">{c.scope_key} · {c.environment}</p>
                   </div>
                   <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${TYPE_TONE[c.type] || TYPE_TONE.setting}`}>{c.type}</span>
                 </div>

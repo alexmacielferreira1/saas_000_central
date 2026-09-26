@@ -40,3 +40,12 @@ export function listProductUsers(productId) {
 export function createProductUser(values) {
   return request('/product-users', { method: 'POST', body: values });
 }
+
+export function listConfigurations(productId = '') {
+  const query = productId ? `?saas_product_id=${encodeURIComponent(productId)}` : '';
+  return request(`/configurations${query}`);
+}
+
+export function createConfiguration(values) {
+  return request('/configurations', { method: 'POST', body: values });
+}
