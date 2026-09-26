@@ -2,7 +2,7 @@
 
 Marco atual: **M0 — blocked**.
 
-Verificado em 2026-09-26T17:42:21.509045+00:00.
+Verificado em 2026-09-26T17:45:08.808208+00:00.
 
 | Verificação | Estado | Evidência |
 |---|---|---|
@@ -17,7 +17,7 @@ Verificado em 2026-09-26T17:42:21.509045+00:00.
 | frontend_typecheck | passed | Exit 0; evidence: .runtime/checks/frontend_typecheck.log |
 | http_smoke | passed | Exit 0; evidence: .runtime/checks/http_smoke.log |
 | original_frontend_integrity | passed | 147 original files; 40 approved typed corrections; 0 unapproved changes or missing.  |
-| frontend_functional_validation | blocked | Autenticação, sessão, logout, Home de produtos, catálogo/detalhe/edição principal de SaaS e administradores possuem integração nativa. Operações e incidentes ainda aparecem como indisponíveis na Home até seus contratos nativos existirem. As 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. A suíte frontend tem 57 testes em 11 arquivos e 27,70% de cobertura de linhas; a Home possui 81,48%. Paridade continua bloqueada pelas jornadas Base44, evidências visuais e migração das abas do detalhe. |
+| frontend_functional_validation | blocked | Autenticação, sessão, logout, Home de produtos, catálogo/detalhe/edição principal de SaaS, administradores e leitura da auditoria possuem integração nativa. Criação e edição de SaaS geram AuditLog persistente com ator, tenant, antes/depois saneado e correlação. Operações e incidentes ainda aparecem como indisponíveis na Home até seus contratos nativos existirem. As 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. A suíte frontend tem 58 testes em 11 arquivos e 27,66% de cobertura de linhas; Home e Auditoria possuem mais de 81% de linhas cobertas. Paridade continua bloqueada pelas jornadas Base44 restantes, evidências visuais e migração das abas do detalhe. |
 | git_clean_at_check | pending | Snapshot before writing this report. Verify and commit reviewed work separately. |
 
 M1–M7 continuam pendentes. Os relatórios não comprovam paridade nem uso em produção.

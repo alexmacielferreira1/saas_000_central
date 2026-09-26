@@ -158,6 +158,8 @@ Objetivo: concluir a fundação administrativa antes de conectar os demais SaaS.
 
 ## C1.4 — auditoria
 
+Estado parcial em 26/09/2026: `AuditLog` e `GET /api/v1/audit` existem; criação e edição do catálogo de SaaS gravam ator, tenant, recurso, antes/depois saneado, resultado e correlação. Os itens abaixo permanecem abertos até cobertura de todos os domínios, busca/exportação e política de retenção.
+
 - [ ] Criar `AuditLog` append-only com ator, tenant, ação, recurso, antes/depois saneado, resultado e correlação.
 - [ ] Auditar login, logout, falha, lockout, mudanças de acesso, configurações e comandos.
 - [ ] Garantir que logs técnicos e auditoria de negócio sejam conceitos separados.

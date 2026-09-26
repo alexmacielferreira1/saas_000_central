@@ -51,3 +51,12 @@
 - Jornada manual: aplicação reiniciada em `http://127.0.0.1:5174/`; captura visual autenticada ainda pendente e o marco permanece M0 bloqueado.
 - Rollback: reverter este bloco remove o endpoint, cliente e testes sem alterar schema ou dados.
 - Próximo item desbloqueado: evidência visual da Home e da jornada catálogo/edição; depois continuar a remoção incremental do Base44 sem avançar de fase.
+
+## Bloco SCR-007/C1.4 parcial executado em 26/09/2026
+
+- Estado anterior: a tela de Auditoria consultava a entidade `Audit` do Base44 e as mutações nativas do catálogo não produziam trilha de negócio.
+- Estado novo: migration `0004_audit_logs`, modelo append-only, `GET /api/v1/audit` isolado por tenant e restrito a papéis administrativos; criação e edição de SaaS registram ator, recurso, snapshots saneados e correlation ID na mesma transação. A tela preservada agora consome a API nativa.
+- Acesso local: o banco temporário estava sem identidades; o superadmin local foi recriado pelo bootstrap operacional e o login por e-mail foi validado. Nenhum ambiente Render/Neon foi alterado.
+- Testes: 52 backend e 58 frontend aprovados; migration, integração PostgreSQL, build, lint, typecheck, smoke e integridade do frontend aprovados. Cobertura frontend: 27,66% de linhas; Auditoria possui 81,25%.
+- Limites: faltam auditoria de login/logout/acesso/configurações/comandos, filtros avançados, detalhe, exportação controlada, retenção e evidência visual autenticada. M0 continua bloqueado e não houve deploy.
+- Rollback: reverter este bloco e executar downgrade de `0004_audit_logs` remove somente a trilha nativa; o catálogo e a identidade permanecem.
