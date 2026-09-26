@@ -15,58 +15,58 @@
       "checks": {
         "backend_lint": {
           "status": "passed",
-          "updated_at": "2026-09-26T16:14:59.827383+00:00",
+          "updated_at": "2026-09-26T17:41:33.958230+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/backend_lint.log"
         },
         "backend_format": {
           "status": "passed",
-          "updated_at": "2026-09-26T16:15:00.450868+00:00",
+          "updated_at": "2026-09-26T17:41:34.966001+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/backend_format.log"
         },
         "unit_tests": {
           "status": "passed",
-          "updated_at": "2026-09-26T16:15:02.006954+00:00",
+          "updated_at": "2026-09-26T17:41:36.689013+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/unit_tests.log"
         },
         "migration": {
           "status": "passed",
-          "updated_at": "2026-09-26T16:15:15.481495+00:00",
+          "updated_at": "2026-09-26T17:41:51.568937+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/migration.log"
         },
         "database_integration": {
           "status": "passed",
-          "updated_at": "2026-09-26T16:15:18.652766+00:00",
+          "updated_at": "2026-09-26T17:41:54.966060+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/database_integration.log"
         },
         "dependency_consistency": {
           "status": "passed",
-          "updated_at": "2026-09-26T16:15:22.035908+00:00",
+          "updated_at": "2026-09-26T17:41:59.545310+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/dependency_consistency.log"
         },
         "frontend_build": {
           "status": "passed",
-          "updated_at": "2026-09-26T16:15:24.515954+00:00",
+          "updated_at": "2026-09-26T17:42:01.428876+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_build.log"
         },
         "frontend_lint": {
           "status": "passed",
-          "updated_at": "2026-09-26T16:15:30.409766+00:00",
+          "updated_at": "2026-09-26T17:42:06.359929+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_lint.log"
         },
         "frontend_typecheck": {
           "status": "passed",
-          "updated_at": "2026-09-26T16:15:37.658799+00:00",
+          "updated_at": "2026-09-26T17:42:13.835334+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_typecheck.log"
         },
         "http_smoke": {
           "status": "passed",
-          "updated_at": "2026-09-26T16:15:43.548807+00:00",
+          "updated_at": "2026-09-26T17:42:20.065984+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/http_smoke.log"
         },
         "original_frontend_integrity": {
           "status": "passed",
-          "updated_at": "2026-09-26T16:15:44.907803+00:00",
-          "notes": "147 original files; 39 approved typed corrections; 0 unapproved changes or missing. "
+          "updated_at": "2026-09-26T17:42:21.509045+00:00",
+          "notes": "147 original files; 40 approved typed corrections; 0 unapproved changes or missing. "
         },
         "frontend_functional_validation": {
           "status": "blocked",
@@ -74,12 +74,12 @@
           "notes": "Autenticação, sessão, logout, Home de produtos, catálogo/detalhe/edição principal de SaaS e administradores possuem integração nativa. Operações e incidentes ainda aparecem como indisponíveis na Home até seus contratos nativos existirem. As 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. A suíte frontend tem 57 testes em 11 arquivos e 27,70% de cobertura de linhas; a Home possui 81,48%. Paridade continua bloqueada pelas jornadas Base44, evidências visuais e migração das abas do detalhe."
         },
         "git_clean_at_check": {
-          "status": "passed",
-          "updated_at": "2026-09-26T16:15:44.907803+00:00",
+          "status": "pending",
+          "updated_at": "2026-09-26T17:42:21.509045+00:00",
           "notes": "Snapshot before writing this report. Verify and commit reviewed work separately."
         }
       },
-      "updated_at": "2026-09-26T16:15:44.907803+00:00",
+      "updated_at": "2026-09-26T17:42:21.509045+00:00",
       "notes": "Partial M0; unresolved gates. Do not advance to M1."
     },
     "M1": {

@@ -1,4 +1,5 @@
 from app.api.v1.access import router as access_router
+from app.api.v1.audit import router as audit_router
 from app.api.v1.auth import router as auth_router
 from app.api.v1.home import router as home_router
 from app.api.v1.saas import router as saas_router
@@ -6,6 +7,7 @@ from fastapi import APIRouter
 
 router = APIRouter()
 router.include_router(access_router)
+router.include_router(audit_router)
 router.include_router(auth_router)
 router.include_router(home_router)
 router.include_router(saas_router)

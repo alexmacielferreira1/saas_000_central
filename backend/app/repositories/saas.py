@@ -33,7 +33,7 @@ def get_product(session: Session, tenant_id: str, product_id: str) -> SaasProduc
 def create_product(session: Session, tenant_id: str, values: dict) -> SaasProduct:
     product = SaasProduct(tenant_id=tenant_id, **values)
     session.add(product)
-    session.commit()
+    session.flush()
     session.refresh(product)
     return product
 
@@ -41,7 +41,7 @@ def create_product(session: Session, tenant_id: str, values: dict) -> SaasProduc
 def update_product(session: Session, product: SaasProduct, values: dict) -> SaasProduct:
     for field, value in values.items():
         setattr(product, field, value)
-    session.commit()
+    session.flush()
     session.refresh(product)
     return product
 

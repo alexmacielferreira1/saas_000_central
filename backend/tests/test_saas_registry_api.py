@@ -87,6 +87,13 @@ def test_superadmin_can_register_and_list_saas_for_selected_tenant(registry_clie
     assert listed.status_code == 200
     assert [item["name"] for item in listed.json()] == ["MediaMind AI"]
 
+    audit = client.get("/api/v1/audit")
+    assert audit.status_code == 200
+    assert audit.json()[0]["action"] == "saas.create"
+    assert audit.json()[0]["resource_id"] == created.json()["id"]
+    assert audit.json()[0]["actor_email"] == "alex@example.com"
+    assert audit.json()[0]["after_data"]["slug"] == "mediamind-ai"
+
 
 def test_registry_rejects_duplicate_slug_in_same_tenant(registry_client):
     client, _ = registry_client
@@ -151,6 +158,12 @@ def test_superadmin_can_update_saas_and_change_is_persisted(registry_client):
     persisted = client.get(f"/api/v1/saas/{created['id']}")
     assert persisted.json()["name"] == "MediaMind Control"
 
+    audit = client.get("/api/v1/audit").json()[0]
+    assert audit["action"] == "saas.update"
+    assert audit["before_data"]["name"] == "MediaMind AI"
+    assert audit["after_data"]["name"] == "MediaMind Control"
+    assert audit["correlation_id"] == response.headers["X-Correlation-ID"]
+
 
 def test_registry_update_rejects_duplicate_slug(registry_client):
     client, _ = registry_client
@@ -191,6 +204,21 @@ def test_viewer_cannot_update_saas(registry_client):
 
     assert response.status_code == 403
     assert response.json()["error_code"] == "SAAS_WRITE_FORBIDDEN"
+
+
+def test_viewer_cannot_read_audit_log(registry_client):
+    client, factory = registry_client
+    login(client)
+
+    with factory() as session:
+        membership = session.scalar(select(Membership))
+        membership.role = "viewer"
+        session.commit()
+
+    response = client.get("/api/v1/audit")
+
+    assert response.status_code == 403
+    assert response.json()["error_code"] == "AUDIT_READ_FORBIDDEN"
 
 
 def test_home_summary_uses_only_selected_tenant_data(registry_client):

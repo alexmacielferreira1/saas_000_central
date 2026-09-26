@@ -3,6 +3,7 @@ from typing import Annotated
 from app.core.errors import error_response
 from app.db.session import get_session
 from app.models.identity import Membership
+from app.repositories.audit import append_audit
 from app.repositories.saas import (
     create_product,
     get_product,
@@ -17,6 +18,24 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/saas", tags=["saas"])
+
+AUDITABLE_FIELDS = (
+    "name",
+    "slug",
+    "description",
+    "version",
+    "base_url",
+    "color",
+    "icon",
+    "status",
+    "health",
+    "compatibility",
+    "integration_level",
+)
+
+
+def audit_snapshot(product) -> dict:
+    return {field: getattr(product, field) for field in AUDITABLE_FIELDS}
 
 
 def selected_tenant(current: CurrentSession) -> str:
@@ -57,7 +76,21 @@ def create(
         return error_response(request, 403, "SAAS_WRITE_FORBIDDEN", "Ação não autorizada.")
     if get_product_by_slug(session, tenant_id, body.slug):
         return error_response(request, 409, "SAAS_SLUG_EXISTS", "Já existe um SaaS com este slug.")
-    return create_product(session, tenant_id, body.model_dump())
+    product = create_product(session, tenant_id, body.model_dump())
+    append_audit(
+        session,
+        tenant_id=tenant_id,
+        actor_user_id=current.user.id,
+        actor_email=current.user.email,
+        action="saas.create",
+        resource_type="saas_product",
+        resource_id=product.id,
+        correlation_id=request.state.correlation_id,
+        after_data=audit_snapshot(product),
+    )
+    session.commit()
+    session.refresh(product)
+    return product
 
 
 @router.get("/{product_id}", response_model=SaasResponse)
@@ -95,4 +128,20 @@ def update(
     if existing is not None and existing.id != product.id:
         return error_response(request, 409, "SAAS_SLUG_EXISTS", "Já existe um SaaS com este slug.")
 
-    return update_product(session, product, values)
+    before = audit_snapshot(product)
+    product = update_product(session, product, values)
+    append_audit(
+        session,
+        tenant_id=tenant_id,
+        actor_user_id=current.user.id,
+        actor_email=current.user.email,
+        action="saas.update",
+        resource_type="saas_product",
+        resource_id=product.id,
+        correlation_id=request.state.correlation_id,
+        before_data=before,
+        after_data=audit_snapshot(product),
+    )
+    session.commit()
+    session.refresh(product)
+    return product

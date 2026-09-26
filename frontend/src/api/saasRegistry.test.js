@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { createSaas, getSaas, listSaas, updateSaas } from './saasRegistry';
+import { createSaas, getSaas, listAuditLogs, listSaas, updateSaas } from './saasRegistry';
 
 describe('native SaaS registry client', () => {
   afterEach(() => vi.unstubAllGlobals());
@@ -72,6 +72,22 @@ describe('native SaaS registry client', () => {
         method: 'PATCH',
         body: JSON.stringify({ name: 'MediaMind Control' }),
       }),
+    );
+  });
+
+  it('loads tenant audit events through the native API', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify([{ id: 'audit-1', action: 'saas.update' }]), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(listAuditLogs()).resolves.toEqual([{ id: 'audit-1', action: 'saas.update' }]);
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://127.0.0.1:8011/api/v1/audit',
+      expect.objectContaining({ credentials: 'include', method: 'GET' }),
     );
   });
 });

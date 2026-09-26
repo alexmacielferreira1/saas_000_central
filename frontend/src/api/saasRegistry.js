@@ -15,3 +15,7 @@ export function getSaas(id) {
 export function updateSaas(id, values) {
   return request(`/saas/${id}`, { method: 'PATCH', body: values });
 }
+
+export function listAuditLogs() {
+  return request('/audit');
+}

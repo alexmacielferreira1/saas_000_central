@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
-import { useOrgId } from "@/lib/TenantContext";
+import { listAuditLogs } from "@/api/saasRegistry";
 import PageHeader from "@/components/PageHeader";
 import { Card, EmptyState, ErrorState } from "@/components/ui-primitives";
 import { ScrollText, Search } from "lucide-react";
@@ -12,19 +11,17 @@ export default function AuditLog() {
   const [q, setQ] = useState("");
   const [error, setError] = useState(false);
 
-  const orgId = useOrgId();
-
   const load = async () => {
     try {
       setError(false);
       setLoading(true);
-      const data = await base44.entities.Audit.filter({ organization_id: orgId }, "-created_date", 100);
+      const data = await listAuditLogs();
       setItems(data || []);
     } catch { setError(true); } finally { setLoading(false); }
   };
-  useEffect(() => { load(); }, [orgId]);
+  useEffect(() => { load(); }, []);
 
-  const filtered = items.filter((a) => !q || (a.actor || "").toLowerCase().includes(q.toLowerCase()) || (a.action || "").toLowerCase().includes(q.toLowerCase()) || (a.saas || "").toLowerCase().includes(q.toLowerCase()));
+  const filtered = items.filter((a) => !q || (a.actor_email || "").toLowerCase().includes(q.toLowerCase()) || (a.action || "").toLowerCase().includes(q.toLowerCase()) || (a.resource_type || "").toLowerCase().includes(q.toLowerCase()) || (a.resource_id || "").toLowerCase().includes(q.toLowerCase()));
 
   return (
     <div>
@@ -59,15 +56,15 @@ export default function AuditLog() {
               <tbody className="divide-y divide-slate-50">
                 {filtered.map((a) => (
                   <tr key={a.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 font-medium text-slate-800">{a.actor}</td>
+                    <td className="px-4 py-3 font-medium text-slate-800">{a.actor_email}</td>
                     <td className="px-4 py-3 text-slate-600">{a.action}</td>
-                    <td className="px-4 py-3 text-slate-600">{a.saas || "—"}<br /><span className="text-xs text-slate-400">{a.tenant || "—"}</span></td>
-                    <td className="px-4 py-3 text-slate-600">{a.entity}<br /><span className="font-mono text-[11px] text-slate-400">{a.entity_id || "—"}</span></td>
+                    <td className="px-4 py-3 text-slate-600">{a.resource_type || "—"}<br /><span className="text-xs text-slate-400">{a.tenant_id || "—"}</span></td>
+                    <td className="px-4 py-3 text-slate-600">{a.resource_type}<br /><span className="font-mono text-[11px] text-slate-400">{a.resource_id || "—"}</span></td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-medium ${toneClass(RESULT_TONE[a.result] || "slate")}`}>{a.result}</span>
                     </td>
                     <td className="px-4 py-3 text-xs text-slate-400">{a.origin || "—"}</td>
-                    <td className="px-4 py-3 text-xs text-slate-400">{fmtDate(a.created_date)}</td>
+                    <td className="px-4 py-3 text-xs text-slate-400">{fmtDate(a.created_at)}</td>
                   </tr>
                 ))}
               </tbody>
