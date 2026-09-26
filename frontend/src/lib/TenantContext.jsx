@@ -1,39 +1,38 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
-import { useAuth } from "@/lib/AuthContext";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
-// Available organizations (tenants) for the Control Plane switcher.
-// "default" is the baseline org where legacy records live.
-export const ORGANIZATIONS = [
-  { id: "default", name: "Central (Padrão)", avatar: "C" },
-  { id: "acme", name: "Acme Corp", avatar: "A" },
-  { id: "globex", name: "Globex Inc.", avatar: "G" },
-];
+import { useAuth } from "@/lib/AuthContext";
 
 const TenantContext = createContext(null);
 
+function tenantAvatar(name) {
+  return name?.trim().charAt(0).toUpperCase() || "E";
+}
+
 export function TenantProvider({ children }) {
-  const { user } = useAuth();
-  const [orgId, setOrgIdState] = useState("default");
+  const { memberships = [], selectedTenantId } = useAuth();
+  const organizations = useMemo(() => memberships.map((membership) => ({
+    id: membership.tenant_id,
+    name: membership.tenant_name,
+    avatar: tenantAvatar(membership.tenant_name),
+    role: membership.role,
+  })), [memberships]);
+  const [orgId, setOrgIdState] = useState(selectedTenantId || organizations[0]?.id || null);
 
-  // Hydrate active org from the persisted user profile (updateMe store).
   useEffect(() => {
-    const persisted = user?.organization_id || user?.data?.organization_id;
-    if (persisted) setOrgIdState(persisted);
-  }, [user]);
+    const requested = selectedTenantId || organizations[0]?.id || null;
+    setOrgIdState((current) => (
+      organizations.some(({ id }) => id === current) ? current : requested
+    ));
+  }, [organizations, selectedTenantId]);
 
-  const setOrgId = useCallback(async (id) => {
-    setOrgIdState(id);
-    // Persist on the user so it survives reloads; best-effort.
-    try {
-      await base44.auth.updateMe({ organization_id: id });
-    } catch {
-      /* swallow — tenant switch is still effective in-session */
+  const setOrgId = useCallback((id) => {
+    if (organizations.some((organization) => organization.id === id)) {
+      setOrgIdState(id);
     }
-  }, []);
+  }, [organizations]);
 
   return (
-    <TenantContext.Provider value={{ orgId, setOrgId, organizations: ORGANIZATIONS }}>
+    <TenantContext.Provider value={{ orgId, setOrgId, organizations }}>
       {children}
     </TenantContext.Provider>
   );

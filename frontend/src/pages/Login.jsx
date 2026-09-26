@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,23 +7,45 @@ import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { safeReturnTo } from "@/lib/authReturnTo";
+import { useAuth } from "@/lib/AuthContext";
+
+const GOOGLE_ERROR_MESSAGES = {
+  invalid_state: "A tentativa de login expirou. Tente entrar com Google novamente.",
+  access_denied: "O acesso pelo Google foi cancelado.",
+  not_configured: "Google ainda não está configurado neste ambiente. Use e-mail e senha por enquanto.",
+  provider_failed: "O Google não concluiu o login. Tente novamente.",
+  account_not_allowed: "Esta conta Google ainda não possui acesso à Central.",
+};
 
 export default function Login() {
+  const { login, loginWithGoogle } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(() => {
+    const code = new URLSearchParams(location.search).get("google_error");
+    return GOOGLE_ERROR_MESSAGES[code] || "";
+  });
   const [loading, setLoading] = useState(false);
   // Post-login destination (e.g. the MCP OAuth consent page sends users here
   // with returnTo so the grant flow can resume). Same-origin paths only.
-  const returnTo = safeReturnTo();
+  const returnTo = safeReturnTo(location.search);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (!params.has("google_error")) return;
+    params.delete("google_error");
+    navigate({ pathname: location.pathname, search: params.toString() }, { replace: true });
+  }, [location.pathname, location.search, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
-      await base44.auth.loginViaEmailPassword(email, password);
-      window.location.href = returnTo;
+      await login(email, password);
+      navigate(returnTo, { replace: true });
     } catch (err) {
       setError(err.message || "Invalid email or password");
     } finally {
@@ -33,7 +54,7 @@ export default function Login() {
   };
 
   const handleGoogle = () => {
-    base44.auth.loginWithProvider("google", returnTo);
+    loginWithGoogle();
   };
 
   return (
@@ -72,7 +93,7 @@ export default function Login() {
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+        <div role="alert" className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
           {error}
         </div>
       )}

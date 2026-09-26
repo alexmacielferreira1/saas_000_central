@@ -1,5 +1,5 @@
 import React from "react";
-import { useTenant, ORGANIZATIONS } from "@/lib/TenantContext";
+import { useTenant } from "@/lib/TenantContext";
 import { ChevronDown, Check, Building2 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
@@ -7,8 +7,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function TenantSwitcher() {
-  const { orgId, setOrgId } = useTenant();
-  const active = ORGANIZATIONS.find((o) => o.id === orgId) || ORGANIZATIONS[0];
+  const { orgId, setOrgId, organizations } = useTenant();
+  const active = organizations.find((o) => o.id === orgId) || organizations[0];
+
+  if (!active) return null;
 
   return (
     <DropdownMenu>
@@ -29,7 +31,7 @@ export default function TenantSwitcher() {
           <Building2 className="h-3.5 w-3.5" /> Empresa ativa
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {ORGANIZATIONS.map((o) => (
+        {organizations.map((o) => (
           <DropdownMenuItem
             key={o.id}
             onClick={() => setOrgId(o.id)}

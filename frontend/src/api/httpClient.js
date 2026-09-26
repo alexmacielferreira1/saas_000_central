@@ -7,6 +7,10 @@ if (import.meta.env.PROD && !configuredApiUrl) {
 export const API_URL = configuredApiUrl || 'http://127.0.0.1:8011';
 
 export class ApiError extends Error {
+  /**
+   * @param {string} message
+   * @param {{status?: number, errorCode?: string, retryable?: boolean, publicReference?: string}} [options]
+   */
   constructor(message, { status, errorCode, retryable = false, publicReference } = {}) {
     super(message);
     this.name = 'ApiError';
@@ -37,6 +41,10 @@ export function apiUrl(path) {
   return `${API_URL}/api/v1${path}`;
 }
 
+/**
+ * @param {string} path
+ * @param {{method?: string, body?: unknown}} [options]
+ */
 export async function request(path, { method = 'GET', body } = {}) {
   const response = await fetch(apiUrl(path), {
     method,
