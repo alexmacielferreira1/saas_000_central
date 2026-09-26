@@ -1,6 +1,15 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { createSaas, getSaas, listAuditLogs, listSaas, updateSaas } from './saasRegistry';
+import {
+  createSaas,
+  getCapabilityManifest,
+  getSaas,
+  listAuditLogs,
+  listCapabilityManifests,
+  listSaas,
+  updateSaas,
+  upsertCapabilityManifest,
+} from './saasRegistry';
 
 describe('native SaaS registry client', () => {
   afterEach(() => vi.unstubAllGlobals());
@@ -88,6 +97,55 @@ describe('native SaaS registry client', () => {
     expect(fetchMock).toHaveBeenCalledWith(
       'http://127.0.0.1:8011/api/v1/audit',
       expect.objectContaining({ credentials: 'include', method: 'GET' }),
+    );
+  });
+
+  it('lists and loads native capability manifests', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify([{ id: 'manifest-1', saas_product_id: 'saas-1' }]), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ id: 'manifest-1', saas_product_id: 'saas-1' }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(listCapabilityManifests()).resolves.toHaveLength(1);
+    await expect(getCapabilityManifest('saas-1')).resolves.toMatchObject({ id: 'manifest-1' });
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      'http://127.0.0.1:8011/api/v1/manifests',
+      expect.objectContaining({ credentials: 'include', method: 'GET' }),
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      'http://127.0.0.1:8011/api/v1/manifests/saas-1',
+      expect.objectContaining({ credentials: 'include', method: 'GET' }),
+    );
+  });
+
+  it('publishes a capability manifest through the native API', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ id: 'manifest-1', version: '1.0.0' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    const payload = { version: '1.0.0', capabilities: ['users.read'] };
+
+    await upsertCapabilityManifest('saas-1', payload);
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://127.0.0.1:8011/api/v1/manifests/saas-1',
+      expect.objectContaining({ method: 'PUT', body: JSON.stringify(payload) }),
     );
   });
 });

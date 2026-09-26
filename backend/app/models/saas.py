@@ -1,6 +1,7 @@
 from datetime import UTC, datetime
+from typing import Any
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import JSON, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.session import Base
@@ -28,6 +29,39 @@ class SaasProduct(Base):
     last_handshake: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     tenant_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     user_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+        nullable=False,
+    )
+
+
+class CapabilityManifest(Base):
+    __tablename__ = "capability_manifests"
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "saas_product_id", name="uq_manifest_tenant_product"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    tenant_id: Mapped[str] = mapped_column(
+        ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    saas_product_id: Mapped[str] = mapped_column(
+        ForeignKey("saas_products.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    version: Mapped[str] = mapped_column(String(50), default="1.0.0", nullable=False)
+    admin_api_version: Mapped[str | None] = mapped_column(String(50))
+    compatibility: Mapped[str] = mapped_column(String(50), default="limited", nullable=False)
+    capabilities: Mapped[list[Any]] = mapped_column(JSON, default=list, nullable=False)
+    health: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    resources: Mapped[list[Any]] = mapped_column(JSON, default=list, nullable=False)
+    scopes: Mapped[list[Any]] = mapped_column(JSON, default=list, nullable=False)
+    events: Mapped[list[Any]] = mapped_column(JSON, default=list, nullable=False)
+    limits: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
     )

@@ -75,6 +75,9 @@ vi.mock('@/api/saasRegistry', () => ({
     status: 'connected',
     health: 'healthy',
   }),
+  listCapabilityManifests: vi.fn().mockResolvedValue([]),
+  getCapabilityManifest: vi.fn().mockResolvedValue(null),
+  upsertCapabilityManifest: vi.fn(),
 }));
 
 vi.mock('@/api/access', () => ({

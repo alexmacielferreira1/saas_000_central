@@ -221,6 +221,76 @@ def test_viewer_cannot_read_audit_log(registry_client):
     assert response.json()["error_code"] == "AUDIT_READ_FORBIDDEN"
 
 
+def test_superadmin_can_publish_and_read_capability_manifest(registry_client):
+    client, _ = registry_client
+    login(client)
+    product = client.post("/api/v1/saas", json=product_payload()).json()
+    payload = {
+        "version": "1.2.0",
+        "admin_api_version": "v1",
+        "compatibility": "native",
+        "capabilities": ["users.read", "configuration.write"],
+        "health": {"endpoint": "/health", "interval_seconds": 60},
+        "resources": [{"name": "users", "operations": ["list", "update"]}],
+        "scopes": ["central:read", "central:write"],
+        "events": ["user.updated"],
+        "limits": {"requests_per_minute": 120},
+    }
+
+    published = client.put(f"/api/v1/manifests/{product['id']}", json=payload)
+
+    assert published.status_code == 200
+    assert published.json()["saas_product_id"] == product["id"]
+    assert published.json()["capabilities"] == payload["capabilities"]
+    assert client.get(f"/api/v1/manifests/{product['id']}").json()["version"] == "1.2.0"
+    listed = client.get("/api/v1/manifests")
+    assert listed.status_code == 200
+    assert [item["saas_product_id"] for item in listed.json()] == [product["id"]]
+
+    audit = client.get("/api/v1/audit").json()[0]
+    assert audit["action"] == "manifest.upsert"
+    assert audit["resource_id"] == published.json()["id"]
+    assert audit["correlation_id"] == published.headers["X-Correlation-ID"]
+
+
+def test_manifest_update_persists_one_current_record(registry_client):
+    client, _ = registry_client
+    login(client)
+    product = client.post("/api/v1/saas", json=product_payload()).json()
+    first = client.put(
+        f"/api/v1/manifests/{product['id']}",
+        json={"version": "1.0.0", "capabilities": ["users.read"]},
+    ).json()
+
+    updated = client.put(
+        f"/api/v1/manifests/{product['id']}",
+        json={"version": "1.1.0", "capabilities": ["users.read", "users.write"]},
+    )
+
+    assert updated.status_code == 200
+    assert updated.json()["id"] == first["id"]
+    assert updated.json()["version"] == "1.1.0"
+    assert len(client.get("/api/v1/manifests").json()) == 1
+
+
+def test_viewer_cannot_publish_capability_manifest(registry_client):
+    client, factory = registry_client
+    login(client)
+    product = client.post("/api/v1/saas", json=product_payload()).json()
+    with factory() as session:
+        membership = session.scalar(select(Membership))
+        membership.role = "viewer"
+        session.commit()
+
+    response = client.put(
+        f"/api/v1/manifests/{product['id']}",
+        json={"version": "1.0.0", "capabilities": []},
+    )
+
+    assert response.status_code == 403
+    assert response.json()["error_code"] == "MANIFEST_WRITE_FORBIDDEN"
+
+
 def test_home_summary_uses_only_selected_tenant_data(registry_client):
     client, factory = registry_client
     login(client)

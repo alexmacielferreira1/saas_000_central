@@ -241,6 +241,7 @@ Objetivo: registrar os produtos e suas capacidades sem fingir que já estão int
 - [ ] Criar ambientes por produto: local, test, staging e production quando existentes.
 - [ ] Criar versões do produto, frontend, backend e Admin API.
 - [ ] Criar Capability Manifest versionado.
+  - Parcial em 26/09/2026: contrato atual estruturado, persistido, tenant-scoped, editável e auditado; falta histórico imutável de versões e ingestão assinada pelo SaaS.
 - [ ] Criar níveis de integração: inventário, leitura, administração limitada e completa.
 - [ ] Criar compatibilidade: supported, deprecated, limited e incompatible.
 - [ ] Criar catálogo de dependências compartilhadas e dedicadas.

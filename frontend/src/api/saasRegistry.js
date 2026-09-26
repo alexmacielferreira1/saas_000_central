@@ -19,3 +19,15 @@ export function updateSaas(id, values) {
 export function listAuditLogs() {
   return request('/audit');
 }
+
+export function listCapabilityManifests() {
+  return request('/manifests');
+}
+
+export function getCapabilityManifest(productId) {
+  return request(`/manifests/${productId}`);
+}
+
+export function upsertCapabilityManifest(productId, values) {
+  return request(`/manifests/${productId}`, { method: 'PUT', body: values });
+}

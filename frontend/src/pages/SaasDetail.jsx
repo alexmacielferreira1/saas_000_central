@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { getSaas } from "@/api/saasRegistry";
+import { getCapabilityManifest, getSaas } from "@/api/saasRegistry";
 import PageHeader from "@/components/PageHeader";
 import { Card, CardBody, EmptyState, ErrorState } from "@/components/ui-primitives";
 import StatusBadge from "@/components/StatusBadge";
 import EditSaasDialog from "@/components/saas/EditSaasDialog";
+import EditManifestDialog from "@/components/saas/EditManifestDialog";
 import { SAAS_STATUS, HEALTH, COMPATIBILITY, OP_STATUS, PRODUCT_USER_STATUS, fmtDate } from "@/lib/adminHelpers";
 import { Boxes, ArrowLeft, Activity, Users, Settings2, TerminalSquare, FileJson, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ export default function SaasDetail() {
   const [error, setError] = useState(false);
   const [tab, setTab] = useState("overview");
   const [editOpen, setEditOpen] = useState(false);
+  const [manifestOpen, setManifestOpen] = useState(false);
 
   const load = async () => {
     try {
@@ -31,12 +33,15 @@ export default function SaasDetail() {
       const s = await getSaas(id);
       setSaas(s);
       const [m, u, c, o] = await Promise.all([
-        base44.entities.CapabilityManifest.filter({ saas_id: id }, "-version", 1).catch(() => []),
+        getCapabilityManifest(id).catch((err) => {
+          if (err?.status === 404) return null;
+          throw err;
+        }),
         base44.entities.ProductUser.filter({ saas_id: id }, "-last_sync", 10).catch(() => []),
         base44.entities.Configuration.filter({ saas_id: id }, "-created_date", 10).catch(() => []),
         base44.entities.AdminCommand.filter({ saas: s?.name }, "-created_date", 10).catch(() => []),
       ]);
-      setManifest((m && m[0]) || null);
+      setManifest(m || null);
       setUsers(u || []);
       setConfigs(c || []);
       setOps(o || []);
@@ -125,10 +130,17 @@ export default function SaasDetail() {
 
       {tab === "manifest" && (
         <Card><CardBody>
+          {can("saas") && (
+            <div className="mb-4 flex justify-end">
+              <Button size="sm" variant="outline" className="gap-2" onClick={() => setManifestOpen(true)}>
+                <Pencil className="h-4 w-4" /> {manifest ? "Editar manifesto" : "Publicar manifesto"}
+              </Button>
+            </div>
+          )}
           {manifest ? (
             <pre className="overflow-x-auto rounded-lg bg-slate-900 p-4 text-xs leading-relaxed text-slate-200">
 {JSON.stringify({
-  saas_id: manifest.saas_id,
+  saas_product_id: manifest.saas_product_id,
   version: manifest.version,
   admin_api_version: manifest.admin_api_version,
   compatibility: manifest.compatibility,
@@ -196,6 +208,13 @@ export default function SaasDetail() {
         product={saas}
         onOpenChange={setEditOpen}
         onUpdated={setSaas}
+      />
+      <EditManifestDialog
+        open={manifestOpen}
+        productId={saas.id}
+        manifest={manifest}
+        onOpenChange={setManifestOpen}
+        onPublished={setManifest}
       />
     </div>
   );

@@ -4,13 +4,13 @@
 - Revalidação de 26/09/2026: backend lint/format, 51 testes de backend, migrations, integração PostgreSQL, consistência de dependências, frontend build/lint/typecheck, smoke HTTP e integridade do export estão verdes. O PostgreSQL de validação roda temporariamente no WSL local porque o Docker Desktop 4.86 falha antes do engine ao criar o socket do Model Runner; nenhum dado publicado foi acessado.
 - O build ainda emite aviso de configuração Base44 ausente e bundle principal elevado; isso não comprova funcionamento local.
 - C0 em andamento: autenticação/sessão, catálogo de SaaS e administradores já usam a API nativa; 39 alterações frontend estão classificadas no registro de integridade.
-- Cobertura do frontend: 57 testes em 11 arquivos; 26,81% statements, 18,98% branches, 20,52% functions e 27,70% lines. A Home possui 81,48% de linhas cobertas. As 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. Não declarar paridade completa.
+- Cobertura do frontend: 62 testes em 12 arquivos; 27,91% statements, 19,78% branches, 21,67% functions e 28,79% lines. A Home possui 81,48% de linhas cobertas. As 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. Não declarar paridade completa.
 - Dependências: correções compatíveis do `npm audit` aplicadas; restaram 2 vulnerabilidades baixas e 2 moderadas ligadas a React Router/Quill, cuja correção automática é incompatível e não deve ser forçada.
 - Base técnica local existe; login, restauração de sessão, logout, lista/criação/detalhe de SaaS e lista/criação de administradores possuem contratos nativos. As demais telas de domínio ainda precisam ser classificadas e migradas.
 - Padrão de entrada: `../../_documentacao/HUB_PLATFORM_STANDARD.md`.
 - Plano executável: `CENTRAL_IMPLEMENTATION_PLAN.md`.
 - Inventário C0 concluído em `FRONTEND_ROUTE_JOURNEY_INVENTORY.md`: 15 rotas declaradas, um componente histórico não roteado e os componentes transversais foram classificados como nativos, híbridos ou Base44.
-- Próximo bloco desbloqueado: registrar screenshots/evidências das telas históricas e validar manualmente a jornada de catálogo/edição. Não iniciar C1 antes do aceite de C0.
+- Próximo bloco desbloqueado: migrar a aba `Usuários` do detalhe do SaaS para contrato nativo e continuar as evidências visuais. Não iniciar C1 antes do aceite de C0.
 - Preservar independência de bancos e não copiar o domínio audiovisual do MediaMind.
 - Git remoto confirmado: `origin` aponta para `alexmacielferreira1/saas_000_central`, branch `main`. Commit/push não equivalem a deploy; Render/Neon continuam fora de escopo sem autorização explícita.
 
@@ -60,3 +60,13 @@
 - Testes: 52 backend e 58 frontend aprovados; migration, integração PostgreSQL, build, lint, typecheck, smoke e integridade do frontend aprovados. Cobertura frontend: 27,66% de linhas; Auditoria possui 81,25%.
 - Limites: faltam auditoria de login/logout/acesso/configurações/comandos, filtros avançados, detalhe, exportação controlada, retenção e evidência visual autenticada. M0 continua bloqueado e não houve deploy.
 - Rollback: reverter este bloco e executar downgrade de `0004_audit_logs` remove somente a trilha nativa; o catálogo e a identidade permanecem.
+
+## Bloco SCR-003/SCR-011/SCR-034 parcial executado em 26/09/2026
+
+- Estado anterior: o detalhe e o Guia de APIs dependiam do Base44 para ler um manifesto de integração sem persistência nativa, permissão central ou auditoria transacional.
+- Estado novo: migration `0005_capability_manifests`, modelo isolado por tenant e produto, endpoints nativos de leitura/listagem/publicação, validação estruturada, permissão administrativa e `AuditLog` na mesma transação. O detalhe preservado permite publicar/editar e o Guia de APIs exibe capacidades, recursos, escopos, eventos, health check e limites vindos da API.
+- Testes: 56 backend e 62 frontend aprovados; lint, format, typecheck, build, migrations, integração PostgreSQL, smoke HTTP e integridade do frontend aprovados. Cobertura frontend: 28,79% de linhas.
+- Jornada manual: login local, abertura do MediaMind AI, publicação do manifesto, reabertura como edição e conferência do conteúdo estruturado no Guia de APIs foram validados no navegador. Nenhum ambiente Render/Neon foi alterado.
+- Limites: existe uma versão corrente por produto; histórico imutável, assinatura do SaaS e ingestão automática continuam pendentes. As abas `Usuários`, `Configurações` e `Operações` ainda usam Base44. M0 permanece bloqueado.
+- Rollback: reverter este bloco e executar downgrade de `0005_capability_manifests` remove o contrato nativo e seus dados locais sem alterar catálogo, identidade ou auditoria existente.
+- Próximo item desbloqueado: migrar a aba `Usuários` do detalhe do SaaS mantendo o layout atual.
