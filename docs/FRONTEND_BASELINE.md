@@ -10,11 +10,11 @@ Esta seção registra a primeira verificação do export, antes das correções 
 
 ## Estado atual da Central
 
-Depois desse baseline, 25 arquivos receberam correções de tipos ou imports sem intenção de alterar a interface. Os hashes e motivos estão em `docs/history/frontend-approved-changes.json`; a tag `base44-export` continua preservando o original. Build, lint e typecheck agora passam. A validação funcional continua bloqueada porque a configuração Base44 não foi fornecida.
+Depois desse baseline, 39 arquivos possuem alterações aprovadas e registradas em `docs/history/frontend-approved-changes.json`; a tag `base44-export` continua preservando o original. Build, lint e typecheck passam. Login/sessão/logout, catálogo/detalhe inicial de SaaS e administradores começaram a usar a API nativa, mas a validação funcional total continua bloqueada pelas páginas ainda dependentes do Base44.
 
 O Vite carrega essa configuração a partir de `frontend/.env.local`. O arquivo versionado `frontend/.env.example` contém apenas os nomes esperados e placeholders vazios; valores reais e credenciais permanecem locais.
 
-Não foram fornecidas credenciais, feitas publicações ou alterados dados externos. Não foi desligada autenticação para contornar o erro. A ligação das telas às APIs FastAPI ainda não foi implementada.
+Não foram feitas publicações nem alterados dados externos neste baseline. Não foi desligada autenticação para contornar erros. A classificação por rota, fonte de dados e jornada está em `FRONTEND_ROUTE_JOURNEY_INVENTORY.md`.
 
 ## Tratamento
 

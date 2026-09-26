@@ -9,7 +9,8 @@
 - Base técnica local existe; login, restauração de sessão, logout, lista/criação/detalhe de SaaS e lista/criação de administradores possuem contratos nativos. As demais telas de domínio ainda precisam ser classificadas e migradas.
 - Padrão de entrada: `../../_documentacao/HUB_PLATFORM_STANDARD.md`.
 - Plano executável: `CENTRAL_IMPLEMENTATION_PLAN.md`.
-- Próximo bloco desbloqueado: atualizar o inventário de rotas e jornadas e mapear, por tela, Base44, mocks, `localStorage`, botões e efeitos; depois ampliar testes de acesso/renderização e evidência visual. Não iniciar C1 antes do aceite de C0.
+- Inventário C0 concluído em `FRONTEND_ROUTE_JOURNEY_INVENTORY.md`: 15 rotas declaradas, um componente histórico não roteado e os componentes transversais foram classificados como nativos, híbridos ou Base44.
+- Próximo bloco desbloqueado: registrar screenshots/evidências das telas históricas e ampliar testes de acesso/renderização. Não iniciar C1 antes do aceite de C0.
 - Preservar independência de bancos e não copiar o domínio audiovisual do MediaMind.
 - Git remoto confirmado: `origin` aponta para `alexmacielferreira1/saas_000_central`, branch `main`. Commit/push não equivalem a deploy; Render/Neon continuam fora de escopo sem autorização explícita.
 
@@ -21,3 +22,12 @@
 - Testes: `scripts/check.ps1` executado com todos os checks automáticos aprovados; o comando encerra com código 1 porque o gate manual de paridade permanece corretamente `blocked`. `npm run test:coverage` foi aprovado com 27 testes.
 - Jornada manual: não repetida neste bloco; a validação anterior de login/sessão/logout permanece registrada, sem ser promovida a paridade geral.
 - Rollback: reverter o commit deste bloco restaura somente teste, documentação, status e registro de integridade; não há alteração de schema ou produção.
+
+## Bloco de inventário C0 executado em 26/09/2026
+
+- Estado anterior: havia inventário por ocorrência, sem matriz por rota e sem decisão explícita de manutenção/adaptação.
+- Estado novo: rotas públicas e administrativas, AppShell, persistência, ações e jornadas foram classificadas; o layout histórico permanece preservado.
+- Migration: nenhuma.
+- Testes: mudança documental; JSON e diff serão validados antes do commit, seguidos pelo gate do projeto.
+- Risco principal: operações, incidentes, configurações, auditoria, resolução, recuperação e cadastro público ainda dependem do Base44.
+- Próximo item: evidência visual e testes de acesso/renderização.

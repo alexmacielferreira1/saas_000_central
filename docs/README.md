@@ -28,6 +28,7 @@ Use este índice para localizar rapidamente a fonte correta. Não execute docume
 
 - [`BASE44_MIGRATION_MAP.md`](BASE44_MIGRATION_MAP.md) — inventário e substituição progressiva do Base44.
 - [`FRONTEND_BASELINE.md`](FRONTEND_BASELINE.md) — baseline visual/funcional preservado.
+- [`FRONTEND_ROUTE_JOURNEY_INVENTORY.md`](FRONTEND_ROUTE_JOURNEY_INVENTORY.md) — matriz atual de rotas, jornadas, fontes, ações e dependências Base44.
 - [`history/base44-manifest.json`](history/base44-manifest.json) — manifesto histórico.
 - [`history/frontend-approved-changes.json`](history/frontend-approved-changes.json) — alterações aprovadas sobre o frontend original.
 

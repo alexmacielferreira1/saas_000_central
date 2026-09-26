@@ -4,8 +4,8 @@ Python 3.12.10 e Node 24.19.0 usados nesta máquina. PostgreSQL 16 via Docker Co
 
 Backend: FastAPI, Uvicorn, SQLAlchemy 2, Pydantic Settings, psycopg e Alembic. Testes/verificação: pytest, httpx e ruff. Ver lock para versões e transitivas.
 
-Frontend: `package.json` e `package-lock.json` originais; 629 pacotes instalados com npm ci --ignore-scripts. SDK/plugin Base44 preservados. Instalação e build locais verificados; não foi executado npm audit fix nem atualização do export.
+Frontend: `package.json` e `package-lock.json` preservam o SDK/plugin Base44 durante a migração progressiva. Instalação, build, lint, typecheck e Vitest foram verificados. Correções compatíveis do `npm audit` removeram severidades altas; permanecem 2 vulnerabilidades baixas e 2 moderadas ligadas à atualização potencialmente incompatível de React Router e `react-quill-new`. Não executar correção forçada sem revisão isolada de regressão.
 
-Limitações: TestClient/Starlette emitem dois avisos de depreciação ligados a httpx/anyio; testes passaram. Build frontend relata ausência de configuração Base44, bundles grandes e outros avisos registrados nos logs. A cadeia de dependências não recebeu auditoria completa de segurança neste M0; não é aprovação de produção.
+Limitações: TestClient/Starlette emitem dois avisos de depreciação ligados a httpx/anyio; testes passaram. Build frontend relata ausência de configuração Base44 e bundle principal elevado. A auditoria de dependências não constitui aprovação de produção.
 
-Workflow CI preparado, mas ainda não executado no GitHub (sem remoto). Não alegar CI verde com base em teste local.
+O remoto Git está configurado, mas teste local não prova CI verde nem publicação. Render/Neon permanecem fora do escopo sem autorização explícita.

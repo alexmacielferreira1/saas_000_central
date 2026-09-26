@@ -97,13 +97,13 @@ Objetivo: eliminar ambiguidades sobre o que já funciona, preservar o frontend e
 - [x] Executar o gate completo e registrar o resultado atual, sem reutilizar números antigos.
 - [x] Conferir `git status` e separar alterações da sessão de alterações preexistentes.
 - [x] Atualizar `ARCHITECTURE.md` para refletir auth, sessão, tenancy e `SaasProduct` já presentes.
-- [ ] Atualizar o inventário de rotas e jornadas do frontend.
+- [x] Atualizar o inventário de rotas e jornadas do frontend.
 - [ ] Registrar screenshots das telas históricas ainda relevantes.
-- [ ] Mapear por tela: origem dos dados, chamadas Base44, mocks, `localStorage`, botões e efeitos.
+- [x] Mapear por tela: origem dos dados, chamadas Base44, mocks, `localStorage`, botões e efeitos.
 - [ ] Aumentar cobertura do frontend começando por autenticação, proteção de rota, menu e cadastro/listagem de SaaS.
 - [ ] Manter a verificação de integridade do frontend original.
-- [ ] Registrar dependências vulneráveis sem aplicar atualização incompatível às cegas.
-- [ ] Definir quais páginas históricas serão mantidas, adaptadas ou substituídas.
+- [x] Registrar dependências vulneráveis sem aplicar atualização incompatível às cegas.
+- [x] Definir quais páginas históricas serão mantidas, adaptadas ou substituídas.
 
 Aceite da fase:
 
