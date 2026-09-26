@@ -41,7 +41,9 @@ class Settings(BaseSettings):
                 raise ValueError("SESSION_COOKIE_SECURE deve ser true em production")
             if not self.frontend_url.startswith("https://"):
                 raise ValueError("FRONTEND_URL deve usar HTTPS em production")
-            if (self.google_client_id or self.google_client_secret) and not self.google_redirect_uri.startswith("https://"):
+            if (
+                self.google_client_id or self.google_client_secret
+            ) and not self.google_redirect_uri.startswith("https://"):
                 raise ValueError("GOOGLE_REDIRECT_URI deve usar HTTPS em production")
         return self
 

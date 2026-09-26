@@ -5,10 +5,10 @@ from uuid import uuid4
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from starlette.exceptions import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1.router import router as api_router
+from starlette.exceptions import HTTPException
 
+from app.api.v1.router import router as api_router
 from app.core.config import get_settings
 from app.core.errors import error_response
 from app.db.session import database_available, engine
@@ -27,7 +27,13 @@ def create_app() -> FastAPI:
     settings = get_settings()
     logger = configure_logging()
     app = FastAPI(title=settings.app_name, version=settings.version, lifespan=lifespan)
-    app.add_middleware(CORSMiddleware, allow_origins=[settings.frontend_url], allow_credentials=True, allow_methods=["GET", "POST", "OPTIONS"], allow_headers=["Content-Type", "X-Correlation-ID"])
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[settings.frontend_url],
+        allow_credentials=True,
+        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_headers=["Content-Type", "X-Correlation-ID"],
+    )
     app.include_router(api_router, prefix="/api/v1")
 
     @app.middleware("http")

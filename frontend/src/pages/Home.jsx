@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
+import { listSaas } from "@/api/saasRegistry";
 import PageHeader from "@/components/PageHeader";
 import { Card, CardBody, KpiCard, ErrorState } from "@/components/ui-primitives";
 import StatusBadge from "@/components/StatusBadge";
@@ -19,10 +20,11 @@ export default function Home() {
   const load = async () => {
     try {
       setLoading(true); setError(false);
+      const optional = (promise) => promise.catch(() => []);
       const [s, o, i] = await Promise.all([
-        base44.entities.Saas.list(),
-        base44.entities.AdminCommand.list("-created_date", 5),
-        base44.entities.Incident.list("-opened_at", 200),
+        listSaas(),
+        optional(base44.entities.AdminCommand.list("-created_date", 5)),
+        optional(base44.entities.Incident.list("-opened_at", 200)),
       ]);
       setSaas(s || []);
       setOps(o || []);

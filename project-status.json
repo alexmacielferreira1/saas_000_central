@@ -1,6 +1,13 @@
 {
   "product": "central",
   "current_milestone": "M0",
+  "manual_checks": {
+    "frontend_functional_validation": {
+      "status": "blocked",
+      "updated_at": "2026-09-26T00:45:44.8610148Z",
+      "notes": "Autenticação nativa validada localmente: login 200, restauração 200 com superadmin, logout 204 e nova sessão 401; Google sem credenciais retorna aviso amigável. Paridade funcional total continua bloqueada pelas telas de domínio ainda dependentes do Base44."
+    }
+  },
   "milestones": {
     "M0": {
       "name": "bootstrap",
@@ -8,86 +15,71 @@
       "checks": {
         "backend_lint": {
           "status": "passed",
-          "updated_at": "2026-09-19T19:54:15.447716+00:00",
+          "updated_at": "2026-09-26T00:46:06.796114+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/backend_lint.log"
         },
         "backend_format": {
           "status": "passed",
-          "updated_at": "2026-09-19T19:54:15.710286+00:00",
+          "updated_at": "2026-09-26T00:46:07.515180+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/backend_format.log"
         },
         "unit_tests": {
           "status": "passed",
-          "updated_at": "2026-09-19T19:54:15.956301+00:00",
+          "updated_at": "2026-09-26T00:46:09.065072+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/unit_tests.log"
         },
         "migration": {
           "status": "passed",
-          "updated_at": "2026-09-19T19:54:18.839467+00:00",
+          "updated_at": "2026-09-26T00:46:17.316292+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/migration.log"
         },
         "database_integration": {
           "status": "passed",
-          "updated_at": "2026-09-19T19:54:20.638211+00:00",
+          "updated_at": "2026-09-26T00:46:20.559914+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/database_integration.log"
         },
         "dependency_consistency": {
           "status": "passed",
-          "updated_at": "2026-09-19T19:54:22.591997+00:00",
+          "updated_at": "2026-09-26T00:46:23.964016+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/dependency_consistency.log"
         },
         "frontend_build": {
           "status": "passed",
-          "updated_at": "2026-09-19T19:54:23.712496+00:00",
+          "updated_at": "2026-09-26T00:46:26.498774+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_build.log"
         },
         "frontend_lint": {
           "status": "passed",
-          "updated_at": "2026-09-19T19:54:28.609206+00:00",
+          "updated_at": "2026-09-26T00:46:32.331964+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_lint.log"
         },
         "frontend_typecheck": {
           "status": "passed",
-          "updated_at": "2026-09-19T19:54:35.473971+00:00",
+          "updated_at": "2026-09-26T00:46:40.141254+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_typecheck.log"
-        },
-        "frontend_tests": {
-          "status": "passed",
-          "updated_at": "2026-09-22T23:51:23.1612973-03:00",
-          "notes": "Vitest/jsdom: 1 suite and 3 route-contract tests passed. Full functional coverage is not yet achieved."
-        },
-        "frontend_coverage": {
-          "status": "blocked",
-          "updated_at": "2026-09-22T23:51:23.1612973-03:00",
-          "notes": "Baseline: 4.05% statements, 0.18% branches, 0.27% functions and 4.42% lines. Expand progressively toward the HUB target."
-        },
-        "frontend_dependency_audit": {
-          "status": "blocked",
-          "updated_at": "2026-09-22T23:51:23.1612973-03:00",
-          "notes": "Compatible npm audit fixes applied; 2 low and 2 moderate findings remain in React Router/Quill and require isolated compatibility work."
         },
         "http_smoke": {
           "status": "passed",
-          "updated_at": "2026-09-19T19:54:41.041044+00:00",
+          "updated_at": "2026-09-26T00:46:46.366433+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/http_smoke.log"
         },
         "original_frontend_integrity": {
           "status": "passed",
-          "updated_at": "2026-09-19T19:54:41.953179+00:00",
-          "notes": "147 original files; 25 approved typed corrections; 0 unapproved changes or missing. "
+          "updated_at": "2026-09-26T00:46:47.775314+00:00",
+          "notes": "147 original files; 34 approved typed corrections; 0 unapproved changes or missing. "
         },
         "frontend_functional_validation": {
           "status": "blocked",
-          "updated_at": "2026-09-19T19:54:41.953179+00:00",
-          "notes": "Original export requires Base44 configuration; frontend not validated in browser. See docs/BASE44_MIGRATION_MAP.md. HTTP/build alone is insufficient."
+          "updated_at": "2026-09-26T00:45:44.8610148Z",
+          "notes": "Autenticação nativa validada localmente: login 200, restauração 200 com superadmin, logout 204 e nova sessão 401; Google sem credenciais retorna aviso amigável. Paridade funcional total continua bloqueada pelas telas de domínio ainda dependentes do Base44."
         },
         "git_clean_at_check": {
-          "status": "passed",
-          "updated_at": "2026-09-19T19:54:41.953179+00:00",
+          "status": "pending",
+          "updated_at": "2026-09-26T00:46:47.775314+00:00",
           "notes": "Snapshot before writing this report. Verify and commit reviewed work separately."
         }
       },
-      "updated_at": "2026-09-19T19:54:41.953179+00:00",
+      "updated_at": "2026-09-26T00:46:47.775314+00:00",
       "notes": "Partial M0; unresolved gates. Do not advance to M1."
     },
     "M1": {

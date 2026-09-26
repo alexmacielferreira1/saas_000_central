@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { listSaas } from "@/api/saasRegistry";
 import PageHeader from "@/components/PageHeader";
 import { Card, CardBody, EmptyState, ErrorState, KpiCard } from "@/components/ui-primitives";
 import StatusBadge from "@/components/StatusBadge";
@@ -17,7 +17,7 @@ export default function Integrations() {
   const load = async () => {
     try {
       setError(false);
-      const data = await base44.entities.Saas.list();
+      const data = await listSaas();
       setItems(data || []);
     } catch { setError(true); } finally { setLoading(false); }
   };

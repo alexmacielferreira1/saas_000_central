@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
+import { listSaas } from "@/api/saasRegistry";
 import PageHeader from "@/components/PageHeader";
 import { Card, CardBody, EmptyState, ErrorState } from "@/components/ui-primitives";
 import StatusBadge from "@/components/StatusBadge";
@@ -64,7 +65,7 @@ export default function ApiGuides() {
     try {
       const safe = (p) => p.then((r) => r || []).catch(() => []);
       const [s, m] = await Promise.all([
-        safe(base44.entities.Saas.list("-updated_date", 100)),
+        listSaas(),
         safe(base44.entities.CapabilityManifest.list("-updated_date", 100)),
       ]);
       setSaas(s);

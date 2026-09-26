@@ -27,18 +27,35 @@ def normalize_email(email: str) -> str:
     return email.strip().casefold()
 
 
-def create_session_for_user(session: Session, user: User, *, session_hours: int, now=None) -> LoginResult:
+def create_session_for_user(
+    session: Session, user: User, *, session_hours: int, now=None
+) -> LoginResult:
     memberships = list_active_memberships(session, user.id)
     if not user.is_active or not memberships:
         raise AccountNotAllowed
     now = now or datetime.now(UTC)
     token = new_session_token()
-    auth_session = AuthSession(user_id=user.id, token_hash=hash_session_token(token), selected_tenant_id=memberships[0][0].tenant_id, expires_at=now + timedelta(hours=session_hours))
-    session.add(auth_session); session.commit()
+    auth_session = AuthSession(
+        user_id=user.id,
+        token_hash=hash_session_token(token),
+        selected_tenant_id=memberships[0][0].tenant_id,
+        expires_at=now + timedelta(hours=session_hours),
+    )
+    session.add(auth_session)
+    session.commit()
     return LoginResult(user, memberships, token, auth_session)
 
 
-def authenticate(session: Session, email: str, password: str, *, session_hours: int, max_attempts: int = 5, lockout_minutes: int = 15, now=None) -> LoginResult | None:
+def authenticate(
+    session: Session,
+    email: str,
+    password: str,
+    *,
+    session_hours: int,
+    max_attempts: int = 5,
+    lockout_minutes: int = 15,
+    now=None,
+) -> LoginResult | None:
     now = now or datetime.now(UTC)
     user = get_user_by_email(session, normalize_email(email))
     valid = verify_password(password, user.password_hash if user else DUMMY_PASSWORD_HASH)
@@ -55,7 +72,8 @@ def authenticate(session: Session, email: str, password: str, *, session_hours: 
             user.locked_until = now + timedelta(minutes=lockout_minutes)
         session.commit()
         return None
-    user.failed_login_attempts = 0; user.locked_until = None
+    user.failed_login_attempts = 0
+    user.locked_until = None
     try:
         return create_session_for_user(session, user, session_hours=session_hours, now=now)
     except AccountNotAllowed:

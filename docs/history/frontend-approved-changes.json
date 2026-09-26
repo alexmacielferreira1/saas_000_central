@@ -1,5 +1,5 @@
 {
-  "reason": "Static type/unused-import correction or safe tracking of the empty Base44 environment template; no intended change to rendered behavior.",
+  "reason": "Reviewed correction or incremental replacement of Base44 infrastructure with native Central tooling, tests, session auth and tenant data; the approved visual structure is preserved.",
   "changes": [
   ["jsconfig.json","e73e9adf0fcd9194c496670efb5251825685314475c9548c3ec4d74056ccc75b","88f592af159674189821fa36088590245d27af63dd8062d2773e55d7b9299026"],
   ["src/components/AdminLayout.jsx","b96200b9e01e673da1b4cf0a25b74397c6357fe8c7d3126425e3f379287f49cb","b5408fffdd95b70346f895113ffb6e2f9ca8cd9e74b821d593af8ec3abc47996"],
@@ -8,14 +8,14 @@
   ["src/components/PageHeader.jsx","7b762ca26b5367d1fe49802cbc0343388085e07ecc64a3467b3c59f5cbaade67","40c6fe78513f68bd84a2b27e9d3df46d0c6b40e84a5f448b2d47e284d984cf92"],
   ["src/components/QuickActionsMenu.jsx","a7fb0664f86d81c154fddefbf029a487dbe7d9e56d40617cddf0b9383b0e4c7b","a3e493ec56e833c0a546a5e81cd01245954a3a718f13ed1b605538317f1d9dfc"],
   ["src/components/StatusBadge.jsx","d8ebe31fa60f891916debfb59a96f53de0e16ad798d3734541b1873b6d1a1c87","64e3c347bf2e6693db4dc96ad7f4ea81a9c48991514edd43c4218778a4be66e9"],
-  ["src/components/TenantSwitcher.jsx","74b3187741d11edd4a274aab3f2a444b09a0dac45a1b60da36ffc8b5c0b99cc4","d7662ad8e680d9fec14c34f13c2e959f32e95ccb6a2644cae8e58067d54e597c"],
+  ["src/components/TenantSwitcher.jsx","74b3187741d11edd4a274aab3f2a444b09a0dac45a1b60da36ffc8b5c0b99cc4","5c5b7b6f856957c8a1d7dcc3d6a8c677ef873cc48e275abe63eaf55e8a8f0f8d"],
   ["src/components/ui-primitives.jsx","d00330ba3a510a8e2fe94a8aa3ef2931655d010af0db03b4ac85e2798ef6bb97","123b11a30ae770961e40866ee20a7d8c0e1ce602890b8ea83ba64be8f5232f4f"],
   ["src/components/ui/button.jsx","6c28699c64ff8c36ec5a2baf835d6bfa141cedeaf472b97d64671dac6cf7cbf8","e3f41260438ec0bb6c663f935fe3d2de84e6a3ca05350e2a0b64e47f0fde9a71"],
   ["src/components/ui/dialog.jsx","50a7cc4ae5ce0f2527662ed9742d35b8c4933d1629a2740b26890793aee00742","37546fcc33f41f8435a9933c86d58c9d987ae583f68740d85b7ed4c8d60c5bf8"],
   ["src/components/ui/input-otp.jsx","78a437a82203c1d9d22d47db830bdc67d49d6473c5c28ad77634eeb8c399a649","aa40a7b8be1e30b7a4935f4b27310f3fde5f07b48f1eed3a747ef0ee34c041a1"],
   ["src/components/ui/input.jsx","4455aea152904f128df0ecd82047bbceb23e06ffcc9ccc7cbb3bcc87df5bcc4f","64801e66f8a12685df2318c78c97299e5f7ab6de31cc0de5f47cb7261cc3f8a9"],
   ["src/components/ui/label.jsx","37c6425d2a5c798ade4e60f89f86054d703433a8977e12d796de2b5bb4e3d0b7","f3397d28aaf175f3a785d4385523cf2b7e23834026c8eb71dbb5d5a808576f16"],
-  ["src/lib/AuthContext.jsx","2ac2133bc9448d8e8c0f12d3ccef7287f20efddfe0f4c90d0b517bbdc25c0fc0","e0d7ef47db1180bcb23238c735577021f51fe3e749254a33ace7386d7c57f73a"],
+  ["src/lib/AuthContext.jsx","2ac2133bc9448d8e8c0f12d3ccef7287f20efddfe0f4c90d0b517bbdc25c0fc0","84ec6163be92e00d8288078ce1d6745fd8f2a6ba56cf67f2b03058f67b591a10"],
   ["src/lib/audit.js","2677e06059170609d9aa2eecd753e989ed0397e4df7bfd90290ceba10993a9f2","77144b4d639a0c882c2cd4811e994c2db6a2d87f7a11c04edad8b0c2e0a1a301"],
   ["src/lib/problems.js","0d306a8ddf767369c720aebce03b687d3e9de2cb90c3b7162342518dfeb36ca8","3a25f2f3bdb5010634ae283c79cee56d9bbcea1ed0619f1547ace87ae4e8b2e8"],
   ["src/pages/Configurations.jsx","fabde59742d9ad40d6574b8e3154e909306729fbcd78dfe2b8849a7f2b7f798d","84d123d9a41e2eb5981d584fdbe764f3065bbdf019241cddb3605115d2391dd6"],
@@ -26,6 +26,14 @@
   ["src/pages/OperationCenter.jsx","87cec4508293d810d79f6b859a1e9da9472371480ab36377957372ff5383b608","004aaa6f23ade64672aa7aff71735a121b5ffb77f119261582f17dbd23dc967d"],
   ["src/pages/SaasList.jsx","34b43afab2c90d8093ea2a878864469743ad8032da75f3a730414769f4a68bd6","499da66e74d0b23c141f4e5be26da37aee03d4fd8df5e08b5b19e246d8eb2a5c"],
   ["src/pages/UsersAccess.jsx","8607d62100a6bfa8ba1fadf3c185ae69051d3d787153c0f1392675a199b668ef","f3cb211340b5aedde4925ed852b293f0d004d52bf5c7f1ea49bc58024f539a94"],
-  [".gitignore","b36d13652aad88703a8f230b884fd93c01fbbb7d7e0d4a7752ae214bb5b6cb2d","3a0dfda6ef0ef07ad8cde5c5e1320ea71fc1900aa639526055fd671780318865"]
+  ["vite.config.js","d92e1eb3037080aa2a643aa3e7fd23b26ba946db9b78ce17e31e2dfc0bb1a586","28b1bfa4e1502df8e1173f051df0f4ccd81b1828e9e1860e893a63c95a694968"],
+  ["package-lock.json","e4e7e32aa00f957921982078a7ed565ab4655d07f926045b516142e2ab643eeb","1ee95cb2cb59a9973a682ae5ee9f3d5208eec1ad75df3fa3600a655308b08efd"],
+  ["package.json","78410957c760074be6844b2f3774493cd57c42d83b62c481a3a0d3782e338790","05af205119eb8980ed1166c542a3bde941de25f6ee66df6b225ae0865bde6c56"],
+  ["src/App.jsx","77ce7737af63a6505986f974633c5b58840fdb14cb9fbd93f504079ae80576ee","9ba35ce5fe7ad323718c854731bff9865212c1563a924a060a943da4673c9a68"],
+  ["src/components/ProtectedRoute.jsx","f1121449bc7f8f31b2ed2d4a6e0211c8d300319efd58919efdd313dc7b586068","eb04b29534fab049b4157a39953ea976465b662bd99f71957dc16a5ff9dd86b6"],
+  ["src/pages/Login.jsx","041529e220537152d1aaab51ca3c2ce46229415cc8d7e9effa4ad13a3f498379","35f19fb7bb3dd621c822f52c053babc8e44ff7555145357902335b9dc2590b29"],
+  ["src/lib/TenantContext.jsx","fa8849a3e1f1ba68055906fdf4b0b75cb1829b214fe6cfd0d580571e1e5ecbe9","ca674373155868dbbb78189ef83436d3e1973ebbf41eea9d7da4e799b513fd49"],
+  ["src/lib/authReturnTo.js","945e12ab4a68e6166ddefbb9c91983d04e7b55db7bb2a3af628a192b95de01c9","98d222ba9c976ee8504eb2f0bbd9fae469051276d6e7775894fa1fa1f2c54aa8"],
+  [".gitignore","b36d13652aad88703a8f230b884fd93c01fbbb7d7e0d4a7752ae214bb5b6cb2d","0c642ec9fb6e170c9c1ef2e82c9dfe54820f5f81c8183fcf07d55a868d85f331"]
   ]
 }

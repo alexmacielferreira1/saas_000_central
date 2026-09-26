@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
+import { getSaas } from "@/api/saasRegistry";
 import PageHeader from "@/components/PageHeader";
 import { Card, CardBody, EmptyState, ErrorState } from "@/components/ui-primitives";
 import StatusBadge from "@/components/StatusBadge";
@@ -23,7 +24,7 @@ export default function SaasDetail() {
   const load = async () => {
     try {
       setLoading(true); setError(false);
-      const s = await base44.entities.Saas.get(id);
+      const s = await getSaas(id);
       setSaas(s);
       const [m, u, c, o] = await Promise.all([
         base44.entities.CapabilityManifest.filter({ saas_id: id }, "-version", 1).catch(() => []),

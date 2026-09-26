@@ -12,7 +12,11 @@ def list_active_memberships(session: Session, user_id: str):
     return session.execute(
         select(Membership, Tenant)
         .join(Tenant, Tenant.id == Membership.tenant_id)
-        .where(Membership.user_id == user_id, Membership.is_active.is_(True), Tenant.is_active.is_(True))
+        .where(
+            Membership.user_id == user_id,
+            Membership.is_active.is_(True),
+            Tenant.is_active.is_(True),
+        )
         .order_by(Membership.id)
     ).all()
 

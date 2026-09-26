@@ -1,15 +1,14 @@
 from datetime import UTC, datetime, timedelta
 
 import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import StaticPool
-
 from app.db.session import Base
 from app.models.identity import AuthSession, Membership, Tenant, User
 from app.security.passwords import hash_password
 from app.security.sessions import hash_session_token
 from app.services.auth import AccountNotAllowed, authenticate, create_session_for_user
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 
 @pytest.fixture
@@ -23,9 +22,16 @@ def db_session():
 
 
 def seed_user(db_session, *, active=True, membership=True):
-    user = User(email="alex@example.com", email_normalized="alex@example.com", password_hash=hash_password("secret-value"), full_name="Alex", is_active=active)
+    user = User(
+        email="alex@example.com",
+        email_normalized="alex@example.com",
+        password_hash=hash_password("secret-value"),
+        full_name="Alex",
+        is_active=active,
+    )
     tenant = Tenant(name="Central", slug="central")
-    db_session.add_all([user, tenant]); db_session.flush()
+    db_session.add_all([user, tenant])
+    db_session.flush()
     if membership:
         db_session.add(Membership(user_id=user.id, tenant_id=tenant.id, role="superadmin"))
     db_session.commit()
@@ -47,7 +53,9 @@ def test_user_without_active_membership_gets_no_session(db_session):
     assert db_session.query(AuthSession).count() == 0
 
 
-@pytest.mark.parametrize("email,password", [("missing@example.com", "secret-value"), ("alex@example.com", "wrong")])
+@pytest.mark.parametrize(
+    "email,password", [("missing@example.com", "secret-value"), ("alex@example.com", "wrong")]
+)
 def test_wrong_or_unknown_credentials_return_same_result(db_session, email, password):
     seed_user(db_session)
     assert authenticate(db_session, email, password, session_hours=8) is None
@@ -61,7 +69,23 @@ def test_inactive_user_cannot_authenticate(db_session):
 def test_failed_attempts_lock_account(db_session):
     user = seed_user(db_session)
     now = datetime.now(UTC)
-    authenticate(db_session, user.email, "wrong", session_hours=8, max_attempts=2, lockout_minutes=15, now=now)
-    authenticate(db_session, user.email, "wrong", session_hours=8, max_attempts=2, lockout_minutes=15, now=now)
+    authenticate(
+        db_session,
+        user.email,
+        "wrong",
+        session_hours=8,
+        max_attempts=2,
+        lockout_minutes=15,
+        now=now,
+    )
+    authenticate(
+        db_session,
+        user.email,
+        "wrong",
+        session_hours=8,
+        max_attempts=2,
+        lockout_minutes=15,
+        now=now,
+    )
     assert user.locked_until == now + timedelta(minutes=15)
     assert authenticate(db_session, user.email, "secret-value", session_hours=8, now=now) is None

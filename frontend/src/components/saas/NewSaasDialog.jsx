@@ -1,20 +1,17 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { createSaas } from "@/api/saasRegistry";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { SAAS_STATUS, HEALTH, COMPATIBILITY } from "@/lib/adminHelpers";
-import { writeAudit } from "@/lib/audit";
-import { useOrgId } from "@/lib/TenantContext";
 
 const STATUSES = Object.keys(SAAS_STATUS);
 const HEALTHS = Object.keys(HEALTH);
 const COMPATS = Object.keys(COMPATIBILITY);
 
 export default function NewSaasDialog({ open, onOpenChange, onCreated }) {
-  const orgId = useOrgId();
   const [form, setForm] = useState({ name: "", slug: "", description: "", version: "1.0.0", base_url: "", color: "#6366f1", icon: "Boxes", status: "unavailable", health: "unknown", compatibility: "limited", integration_level: "inventory" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -26,8 +23,7 @@ export default function NewSaasDialog({ open, onOpenChange, onCreated }) {
     if (!form.name.trim()) { setError("Nome é obrigatório."); return; }
     setSaving(true); setError("");
     try {
-      const created = await base44.entities.Saas.create({
-        organization_id: orgId,
+      await createSaas({
         name: form.name.trim(),
         slug: form.slug.trim() || form.name.trim().toLowerCase().replace(/\s+/g, "-"),
         description: form.description.trim(),
@@ -40,7 +36,6 @@ export default function NewSaasDialog({ open, onOpenChange, onCreated }) {
         compatibility: form.compatibility,
         integration_level: form.integration_level,
       });
-      writeAudit({ action: "saas.register", saas: created.name, entity: "Saas", entityId: created.id, after: JSON.stringify({ slug: created.slug, status: created.status, integration_level: created.integration_level }), reason: "Registro via Control Plane" });
       onCreated?.();
       onOpenChange(false);
       setForm({ name: "", slug: "", description: "", version: "1.0.0", base_url: "", color: "#6366f1", icon: "Boxes", status: "unavailable", health: "unknown", compatibility: "limited", integration_level: "inventory" });

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
-import { useOrgId } from "@/lib/TenantContext";
+import { listSaas } from "@/api/saasRegistry";
 import PageHeader from "@/components/PageHeader";
 import { Card, EmptyState, ErrorState } from "@/components/ui-primitives";
 import StatusBadge from "@/components/StatusBadge";
@@ -19,7 +18,6 @@ export default function SaasList() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [error, setError] = useState(false);
 
-  const orgId = useOrgId();
   const [searchParams, setSearchParams] = useSearchParams();
   const { can } = usePermissions();
 
@@ -27,11 +25,11 @@ export default function SaasList() {
     try {
       setError(false);
       setLoading(true);
-      const data = await base44.entities.Saas.filter({ organization_id: orgId }, "-updated_date", 100);
+      const data = await listSaas();
       setItems(data || []);
     } catch { setError(true); } finally { setLoading(false); }
   };
-  useEffect(() => { load(); }, [orgId]);
+  useEffect(() => { load(); }, []);
 
   // Abre o drawer de criação quando vier da Busca Global / Topbar (?novo=saas)
   useEffect(() => {

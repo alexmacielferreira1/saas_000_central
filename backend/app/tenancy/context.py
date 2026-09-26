@@ -17,7 +17,10 @@ class CurrentSession:
     auth_session: AuthSession
 
 
-def get_current_session(session: Annotated[Session, Depends(get_session)], central_session: Annotated[str | None, Cookie()] = None) -> CurrentSession:
+def get_current_session(
+    session: Annotated[Session, Depends(get_session)],
+    central_session: Annotated[str | None, Cookie()] = None,
+) -> CurrentSession:
     if not central_session:
         raise HTTPException(401)
     auth_session = get_auth_session(session, hash_session_token(central_session))
