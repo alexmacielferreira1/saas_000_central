@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
-import { useOrgId } from "@/lib/TenantContext";
+import { listOperations, updateOperationStatus } from "@/api/operations";
 import { useSearchParams } from "react-router-dom";
 import PageHeader from "@/components/PageHeader";
 import { Card, EmptyState, ErrorState } from "@/components/ui-primitives";
 import StatusBadge from "@/components/StatusBadge";
 import { OP_STATUS, fmtDate, isSensitiveAction } from "@/lib/adminHelpers";
-import { writeAudit } from "@/lib/audit";
 import { TerminalSquare, Plus, Search, ShieldAlert, Check, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import NewOperationDialog from "@/components/operations/NewOperationDialog";
@@ -21,7 +19,6 @@ export default function OperationCenter() {
   const [error, setError] = useState(false);
   const [actionError, setActionError] = useState("");
 
-  const orgId = useOrgId();
   const [searchParams, setSearchParams] = useSearchParams();
   const { can } = usePermissions();
 
@@ -29,11 +26,11 @@ export default function OperationCenter() {
     try {
       setError(false);
       setLoading(true);
-      const data = await base44.entities.AdminCommand.filter({ organization_id: orgId }, "-created_date", 100);
+      const data = await listOperations();
       setItems(data || []);
     } catch { setError(true); } finally { setLoading(false); }
   };
-  useEffect(() => { load(); }, [orgId]);
+  useEffect(() => { load(); }, []);
 
   useEffect(() => {
     if (searchParams.get("novo") === "operation" && can("operation")) {
@@ -42,13 +39,12 @@ export default function OperationCenter() {
     }
   }, [searchParams]);
 
-  const filtered = items.filter((o) => !q || (o.action || "").toLowerCase().includes(q.toLowerCase()) || (o.saas || "").toLowerCase().includes(q.toLowerCase()) || (o.operation_id || "").toLowerCase().includes(q.toLowerCase()));
+  const filtered = items.filter((o) => !q || (o.action || "").toLowerCase().includes(q.toLowerCase()) || (o.saas || "").toLowerCase().includes(q.toLowerCase()) || (o.id || "").toLowerCase().includes(q.toLowerCase()));
 
   const setStatus = async (o, status) => {
     setBusyId(o.id); setActionError("");
     try {
-      await base44.entities.AdminCommand.update(o.id, { status });
-      writeAudit({ action: status === "queued" ? "operation.approve" : "operation.reject", saas: o.saas, tenant: o.tenant, entity: "AdminCommand", entityId: o.id, before: JSON.stringify({ status: o.status }), after: JSON.stringify({ status }), reason: status === "queued" ? "Operação aprovada via Operation Center" : "Operação rejeitada via Operation Center" });
+      await updateOperationStatus(o.id, status, status === "queued" ? "Operação aprovada via Central" : "Operação rejeitada via Central");
       await load();
     } catch { setActionError(`Não foi possível atualizar a operação "${o.action}". Tente novamente.`); } finally { setBusyId(null); }
   };
@@ -109,12 +105,12 @@ export default function OperationCenter() {
                           )}
                           {o.dry_run && <span className="inline-block rounded bg-sky-50 px-1.5 py-0.5 text-[10px] font-medium text-sky-700">dry run</span>}
                         </div>
-                        {o.operation_id && <p className="font-mono text-[11px] text-slate-400">{o.operation_id}</p>}
+                        <p className="font-mono text-[11px] text-slate-400">{o.id}</p>
                       </td>
-                      <td className="px-4 py-3 text-slate-600">{o.saas}<br /><span className="text-xs text-slate-400">{o.tenant || "—"}</span></td>
+                      <td className="px-4 py-3 text-slate-600">{o.saas}<br /><span className="text-xs text-slate-400">{o.product_tenant || "—"}</span></td>
                       <td className="px-4 py-3 text-slate-600">{o.requested_by || "—"}</td>
                       <td className="px-4 py-3"><StatusBadge map={OP_STATUS} value={o.status} /></td>
-                      <td className="px-4 py-3 text-xs text-slate-400">{fmtDate(o.created_date)}</td>
+                      <td className="px-4 py-3 text-xs text-slate-400">{fmtDate(o.created_at)}</td>
                       <td className="px-4 py-3 text-slate-600">{o.retry_count || 0}</td>
                       <td className="px-4 py-3">
                         {pending ? (

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
 import { getCapabilityManifest, getSaas, listConfigurations, listProductUsers } from "@/api/saasRegistry";
+import { listOperations } from "@/api/operations";
 import PageHeader from "@/components/PageHeader";
 import { Card, CardBody, EmptyState, ErrorState } from "@/components/ui-primitives";
 import StatusBadge from "@/components/StatusBadge";
@@ -41,7 +41,7 @@ export default function SaasDetail() {
         }),
         listProductUsers(id),
         listConfigurations(id),
-        base44.entities.AdminCommand.filter({ saas: s?.name }, "-created_date", 10).catch(() => []),
+        listOperations(s?.name).catch(() => []),
       ]);
       setManifest(m || null);
       setUsers(u || []);
@@ -203,7 +203,7 @@ export default function SaasDetail() {
             <div className="space-y-2">
               {ops.map((o) => (
                 <div key={o.id} className="flex items-center justify-between rounded-lg border border-slate-100 p-3">
-                  <div><p className="text-sm font-medium text-slate-800">{o.action} · {o.resource}</p><p className="text-xs text-slate-400">{fmtDate(o.created_date)}</p></div>
+                  <div><p className="text-sm font-medium text-slate-800">{o.action} · {o.resource}</p><p className="text-xs text-slate-400">{fmtDate(o.created_at)}</p></div>
                   <StatusBadge map={OP_STATUS} value={o.status} />
                 </div>
               ))}

@@ -93,6 +93,12 @@ vi.mock('@/api/access', () => ({
   createProfile: vi.fn(),
 }));
 
+vi.mock('@/api/operations', () => ({
+  listOperations: vi.fn().mockResolvedValue([]),
+  createOperation: vi.fn(),
+  updateOperationStatus: vi.fn(),
+}));
+
 vi.mock('@/lib/AuthContext', () => ({
   useAuth: () => authState.current,
 }));

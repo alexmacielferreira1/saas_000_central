@@ -7,9 +7,11 @@ from app.models.identity import (
     Tenant,
     User,
 )
+from app.models.operation import AdminOperation
 from app.models.saas import CapabilityManifest, Configuration, ProductUser, SaasProduct
 
 __all__ = [
+    "AdminOperation",
     "AuditLog",
     "AccessProfile",
     "AuthSession",

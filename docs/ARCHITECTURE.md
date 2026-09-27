@@ -12,6 +12,7 @@ O backend usa FastAPI com app factory, Pydantic Settings, SQLAlchemy 2, PostgreS
 - `0004_audit_logs`: cria a trilha append-only por tenant, ator, recurso e correlação.
 - `0005_capability_manifests`, `0006_product_users` e `0007_configurations`: migram manifesto, projeções de usuários e configurações para contratos nativos.
 - `0008_access_profiles`: cria o catálogo de permissões e perfis de acesso por tenant.
+- `0009_admin_operations`: cria comandos administrativos rastreáveis, com decisão humana para ações sensíveis.
 
 As rotas operacionais `/health`, `/version` e `/ready` cobrem liveness, versão e conexão com o banco. Toda requisição recebe correlation/request ID validado ou gerado. Erros públicos usam código, mensagem segura, referência pública, correlation ID e indicação de retry; logs estruturados não registram corpo, query, credenciais ou texto bruto de exceções.
 

@@ -7,6 +7,7 @@ Para execução em outro chat, usar `CENTRAL_MASTER_IMPLEMENTATION_CHECKLIST.md`
 ## Agora — C0
 
 0. **Em andamento — Administração:** `/administration` possui catálogo de SaaS, administradores, usuários de produto, perfis e permissões nativos. Próximas fatias: atribuição de perfil e acesso efetivo; depois pessoas, funções, equipes, setores, unidades e sessões.
+0. **Em andamento — Operações:** criação, listagem, aprovação e rejeição agora são nativas e persistidas. Falta o executor assíncrono Central ↔ SaaS, idempotência, progresso, retries e rollback.
 
 1. **Concluído neste bloco:** executar o gate completo, corrigir o teste de integração para a migration `0003_saas_registry` e registrar 39 alterações frontend aprovadas sem desligar a verificação de integridade.
 2. **Em andamento:** ampliar a suíte frontend; há 65 testes em 13 arquivos e cobertura de 29,57% de linhas. Home, Auditoria, Integrações e Usuários possuem mais de 81% de linhas cobertas; as 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. A meta continua progressiva e não autoriza declarar paridade.

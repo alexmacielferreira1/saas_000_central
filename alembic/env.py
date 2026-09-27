@@ -2,6 +2,7 @@ from app.core.config import get_settings
 from app.db.session import Base, engine
 from app.models import (  # noqa: F401
     AccessProfile,
+    AdminOperation,
     AuditLog,
     AuthSession,
     CapabilityManifest,

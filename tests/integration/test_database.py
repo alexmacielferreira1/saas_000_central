@@ -18,7 +18,7 @@ def test_database_and_migration_revision():
         assert connection.scalar(text("select 1")) == 1
         assert (
             connection.scalar(text("select version_num from alembic_version"))
-            == "0008_access_profiles"
+            == "0009_admin_operations"
         )
         tables = set(
             connection.scalars(text("select tablename from pg_tables where schemaname = 'public'"))
@@ -35,4 +35,5 @@ def test_database_and_migration_revision():
             "configurations",
             "permission_definitions",
             "access_profiles",
+            "admin_operations",
         } <= tables

@@ -102,3 +102,10 @@
 - A migration `0008_access_profiles` cria `permission_definitions` e `access_profiles` por tenant. `GET/POST /api/v1/access/permissions` e `GET/POST /api/v1/access/profiles` persistem dados reais; escrita exige superadmin, valida permissões desconhecidas e grava auditoria.
 - A migration foi aplicada no PostgreSQL local. A jornada local autenticada criou duas permissões e o perfil `Administrador de SaaS`, confirmando leitura e persistência pela API.
 - Verificação do bloco: 62 testes backend, integração PostgreSQL e 72 testes frontend aprovados; lint, typecheck e build aprovados. Ainda faltam atribuição/edição de perfis, pessoas, funções, equipes, setores, unidades, sessões, acesso efetivo e RBAC/ABAC definitivo.
+
+## Bloco SCR-103/SCR-105 parcial executado em 27/09/2026
+
+- `AdminOperation` e a migration `0009_admin_operations` substituem o Base44 no Centro de Operações e na aba Operações do SaaS.
+- A API nativa lista por tenant/SaaS, registra comandos, classifica ações sensíveis como `awaiting_confirmation` e permite aprovação/rejeição auditada somente por administradores autorizados.
+- A migration foi aplicada no PostgreSQL local e uma operação dry-run foi criada e relida pela API. O login local também foi desbloqueado e revalidado com sessão/cookie.
+- Permanecem pendentes execução assíncrona real no SaaS remoto, idempotência, progresso, retry, cancelamento, resultado por registro e rollback/compensação.

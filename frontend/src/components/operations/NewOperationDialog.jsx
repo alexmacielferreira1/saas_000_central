@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { createOperation } from "@/api/operations";
 import { isSensitiveAction } from "@/lib/adminHelpers";
-import { writeAudit } from "@/lib/audit";
-import { useOrgId } from "@/lib/TenantContext";
 import { Button } from "@/components/ui/button";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription,
@@ -14,7 +12,6 @@ import { ShieldAlert, Loader2 } from "lucide-react";
 const SENSITIVE_NOTE = "Ações sensíveis (delete, suspend, reset, rotate...) entram como 'aguardando confirmação' e exigem aprovação manual antes de serem processadas.";
 
 export default function NewOperationDialog({ open, onOpenChange, onCreated }) {
-  const orgId = useOrgId();
   const [form, setForm] = useState({
     saas: "", tenant: "", resource: "", action: "", requested_by: "", dry_run: false,
   });
@@ -37,19 +34,14 @@ export default function NewOperationDialog({ open, onOpenChange, onCreated }) {
     setSaving(true);
     setError("");
     try {
-      const status = sensitive ? "awaiting_confirmation" : "queued";
-      const created = await base44.entities.AdminCommand.create({
-        organization_id: orgId,
+      const created = await createOperation({
         saas: form.saas,
-        tenant: form.tenant,
+        product_tenant: form.tenant,
         resource: form.resource,
         action: form.action,
         requested_by: form.requested_by,
         dry_run: form.dry_run,
-        operation_id: `op-${Date.now()}`,
-        status,
       });
-      writeAudit({ action: "operation.create", saas: created.saas, tenant: created.tenant, entity: "AdminCommand", entityId: created.id, after: JSON.stringify({ action: created.action, resource: created.resource, status: created.status, dry_run: created.dry_run }), reason: created.requested_by ? `Solicitado por ${created.requested_by}` : "Criação via Control Plane" });
       onCreated?.(created);
       setForm({ saas: "", tenant: "", resource: "", action: "", requested_by: "", dry_run: false });
       onOpenChange(false);
