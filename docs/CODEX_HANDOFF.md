@@ -109,3 +109,11 @@
 - A API nativa lista por tenant/SaaS, registra comandos, classifica ações sensíveis como `awaiting_confirmation` e permite aprovação/rejeição auditada somente por administradores autorizados.
 - A migration foi aplicada no PostgreSQL local e uma operação dry-run foi criada e relida pela API. O login local também foi desbloqueado e revalidado com sessão/cookie.
 - Permanecem pendentes execução assíncrona real no SaaS remoto, idempotência, progresso, retry, cancelamento, resultado por registro e rollback/compensação.
+
+## Bloco Central ↔ SaaS — conexão e evidência parcial em 27/09/2026
+
+- Foram adicionados `SaasConnection`, `SaasEnvironment` e `IntegrationObservation`, com migration `0010_integration_observations` e endpoints nativos de cadastro/listagem por organização.
+- A credencial é persistida somente como referência de ambiente; respostas e auditoria não expõem o valor. Escrita exige papel autorizado e dados de outra organização não ficam visíveis.
+- Observações distinguem evidência confirmada de evidência desatualizada pelo prazo de validade configurado, sem transformar ausência de dado em saúde falsa.
+- Verificação disponível: 68 testes backend e lint da fatia aprovados. O Docker Desktop não respondeu ao pipe local, portanto aplicação da migration e teste PostgreSQL permanecem pendentes; nenhum Neon/Render foi alterado.
+- Próximo bloco: cliente HTTP autenticado para manifesto/health/readiness/version do MediaMind, persistência das observações e despacho idempotente de comandos dry-run.

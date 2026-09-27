@@ -7,6 +7,7 @@ from app.models.identity import (
     Tenant,
     User,
 )
+from app.models.integration import IntegrationObservation, SaasConnection, SaasEnvironment
 from app.models.operation import AdminOperation
 from app.models.saas import CapabilityManifest, Configuration, ProductUser, SaasProduct
 
@@ -17,9 +18,12 @@ __all__ = [
     "AuthSession",
     "CapabilityManifest",
     "Configuration",
+    "IntegrationObservation",
     "ProductUser",
     "Membership",
     "PermissionDefinition",
+    "SaasConnection",
+    "SaasEnvironment",
     "SaasProduct",
     "Tenant",
     "User",

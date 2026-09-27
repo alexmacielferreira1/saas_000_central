@@ -4,8 +4,8 @@
   "manual_checks": {
     "frontend_functional_validation": {
       "status": "blocked",
-      "updated_at": "2026-09-27T12:56:33Z",
-      "notes": "Autenticação, sessão, Home, catálogo/detalhe de SaaS, administradores, auditoria, manifests, usuários, configurações, PowerQuery local, perfis/permissões e Operações possuem contratos nativos. As migrations 0008 e 0009 foram aplicadas; permissões, perfil e operação dry-run foram criados e relidos pela API local. São 64 testes backend e 72 frontend aprovados. Paridade continua bloqueada pela execução remota dos comandos, Resolução ainda dependente do Base44, motor persistente de importação e demais subtelas administrativas."
+      "updated_at": "2026-09-27T18:10:30Z",
+      "notes": "Autenticação, sessão, Home, catálogo/detalhe de SaaS, administradores, auditoria, manifests, usuários, configurações, PowerQuery local, perfis/permissões e Operações possuem contratos nativos. Conexões Central ↔ SaaS, ambientes e observações de saúde agora têm modelos e API nativos, com segredo referenciado e isolamento por organização. São 68 testes backend e 72 frontend aprovados. A migration 0010 ainda precisa ser aplicada no PostgreSQL local; execução remota dos comandos, QA integral no navegador, Resolução por logs, motor persistente de importação e subtelas administrativas continuam bloqueando a paridade."
     }
   },
   "milestones": {
@@ -70,8 +70,8 @@
         },
         "frontend_functional_validation": {
           "status": "blocked",
-          "updated_at": "2026-09-27T12:56:33Z",
-          "notes": "Autenticação, sessão, Home, catálogo/detalhe de SaaS, administradores, auditoria, manifests, usuários, configurações, PowerQuery local, perfis/permissões e Operações possuem contratos nativos. As migrations 0008 e 0009 foram aplicadas; permissões, perfil e operação dry-run foram criados e relidos pela API local. São 64 testes backend e 72 frontend aprovados. Paridade continua bloqueada pela execução remota dos comandos, Resolução ainda dependente do Base44, motor persistente de importação e demais subtelas administrativas."
+          "updated_at": "2026-09-27T18:10:30Z",
+          "notes": "Autenticação, sessão, Home, catálogo/detalhe de SaaS, administradores, auditoria, manifests, usuários, configurações, PowerQuery local, perfis/permissões e Operações possuem contratos nativos. Conexões Central ↔ SaaS, ambientes e observações de saúde agora têm modelos e API nativos, com segredo referenciado e isolamento por organização. São 68 testes backend e 72 frontend aprovados. A migration 0010 ainda precisa ser aplicada no PostgreSQL local; execução remota dos comandos, QA integral no navegador, Resolução por logs, motor persistente de importação e subtelas administrativas continuam bloqueando a paridade."
         },
         "git_clean_at_check": {
           "status": "pending",
