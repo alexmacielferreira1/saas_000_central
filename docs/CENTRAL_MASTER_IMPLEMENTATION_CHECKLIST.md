@@ -184,6 +184,8 @@ Objetivo: transformar a Central numa administração utilizável, sem misturar c
 
 ## HUB-ADM-001 — estrutura de Administração
 
+Estado parcial em 27/09/2026: `/administration` preserva a tela existente e acrescenta visão dos SaaS, administradores, usuários de produto, catálogo de permissões e perfis persistidos. A criação é tenant-scoped, restrita a superadmin e auditada. Ainda faltam atribuição/edição/versionamento completo, pessoas, funções, equipes, setores, unidades, sessões e explicação do acesso efetivo.
+
 - [ ] Criar página inicial de Administração com resumo, pendências e alertas.
 - [ ] Criar lista e detalhe lateral/página de usuários.
 - [ ] Criar gestão de pessoas separada das credenciais de acesso.

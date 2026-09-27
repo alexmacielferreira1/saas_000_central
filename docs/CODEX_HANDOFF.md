@@ -95,3 +95,10 @@
 - A bancada PowerQuery aceita CSV, cria prévia tabular editável, permite marcar colunas obrigatórias, destaca linhas inválidas, substitui valores em massa e exporta o CSV tratado.
 - Limite explícito: a confirmação persistente, histórico, receitas e importação assíncrona no backend ainda não foram implementados; a tela não declara escrita definitiva.
 - Verificação: parser/edição/substituição/validação cobertos por testes; rota coberta por renderização, lint e build.
+
+## Bloco SCR-060/SCR-066/SCR-067 parcial executado em 27/09/2026
+
+- A navegação agora usa `/administration`, mantendo `/users` como alias. A página preservada ganhou visão dos SaaS com acesso direto ao detalhe, além de administradores, usuários de produto, perfis e permissões.
+- A migration `0008_access_profiles` cria `permission_definitions` e `access_profiles` por tenant. `GET/POST /api/v1/access/permissions` e `GET/POST /api/v1/access/profiles` persistem dados reais; escrita exige superadmin, valida permissões desconhecidas e grava auditoria.
+- A migration foi aplicada no PostgreSQL local. A jornada local autenticada criou duas permissões e o perfil `Administrador de SaaS`, confirmando leitura e persistência pela API.
+- Verificação do bloco: 62 testes backend, integração PostgreSQL e 72 testes frontend aprovados; lint, typecheck e build aprovados. Ainda faltam atribuição/edição de perfis, pessoas, funções, equipes, setores, unidades, sessões, acesso efetivo e RBAC/ABAC definitivo.

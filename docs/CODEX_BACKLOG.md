@@ -6,6 +6,8 @@ Para execução em outro chat, usar `CENTRAL_MASTER_IMPLEMENTATION_CHECKLIST.md`
 
 ## Agora — C0
 
+0. **Em andamento — Administração:** `/administration` possui catálogo de SaaS, administradores, usuários de produto, perfis e permissões nativos. Próximas fatias: atribuição de perfil e acesso efetivo; depois pessoas, funções, equipes, setores, unidades e sessões.
+
 1. **Concluído neste bloco:** executar o gate completo, corrigir o teste de integração para a migration `0003_saas_registry` e registrar 39 alterações frontend aprovadas sem desligar a verificação de integridade.
 2. **Em andamento:** ampliar a suíte frontend; há 65 testes em 13 arquivos e cobertura de 29,57% de linhas. Home, Auditoria, Integrações e Usuários possuem mais de 81% de linhas cobertas; as 15 rotas declaradas renderizam em teste e as 11 administrativas negam acesso anônimo. A meta continua progressiva e não autoriza declarar paridade.
 3. **Concluído:** inventário das 15 rotas, jornadas, fontes, persistência, ações e dependências Base44 registrado em `FRONTEND_ROUTE_JOURNEY_INVENTORY.md`.

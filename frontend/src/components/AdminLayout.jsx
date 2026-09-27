@@ -18,7 +18,7 @@ const NAV = [
   { to: "/resolution", label: "Central de Resolução", icon: Activity },
   { to: "/api-guides", label: "Guias das APIs", icon: BookOpen },
   { to: "/saas", label: "SaaS 360", icon: Boxes },
-  { to: "/users", label: "Usuários & Acesso", icon: Users },
+  { to: "/administration", label: "Administração", icon: Users },
   { to: "/configurations", label: "Configurações & Flags", icon: Settings2 },
   { to: "/operations", label: "Centro de Operações", icon: TerminalSquare },
   { to: "/audit", label: "Auditoria", icon: ScrollText },

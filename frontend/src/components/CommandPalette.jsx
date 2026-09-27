@@ -20,7 +20,7 @@ const NAV_SHORTCUTS = [
   { to: "/resolution", label: "Central de Resolução", icon: Activity, keywords: "resolver corrigir solucao solucoes consertar arrumar problema problemas fix repair" },
   { to: "/api-guides", label: "Guias das APIs", icon: BookOpen, keywords: "api guia guias documentacao docs endpoints integracao referencia" },
   { to: "/saas", label: "SaaS 360", icon: Boxes, keywords: "saas produtos app aplicativo inventario 360 ecossistema" },
-  { to: "/users", label: "Usuários & Acesso", icon: Users, keywords: "usuarios acesso identidade roles permissoes gestores admins pessoas" },
+  { to: "/administration", label: "Administração", icon: Users, keywords: "saas usuarios acesso identidade perfis permissoes gestores admins pessoas" },
   { to: "/configurations", label: "Configurações & Flags", icon: Settings2, keywords: "configuracoes flags feature flag ajustes limites parametros" },
   { to: "/operations", label: "Centro de Operações", icon: TerminalSquare, keywords: "operacoes centro comando acoes remota escrita execucao" },
   { to: "/audit", label: "Auditoria", icon: ScrollText, keywords: "auditoria audit log trilha eventos historico rastro registros" },

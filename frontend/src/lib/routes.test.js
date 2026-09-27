@@ -25,6 +25,7 @@ describe('route contract', () => {
       '/api-guides',
       '/saas',
       '/saas/:id',
+      '/administration',
       '/users',
       '/configurations',
       '/operations',

@@ -2,9 +2,17 @@ from typing import Annotated
 
 from app.core.errors import error_response
 from app.db.session import get_session
-from app.models.identity import Membership, User
+from app.models.identity import AccessProfile, Membership, PermissionDefinition, User
+from app.repositories.audit import append_audit
 from app.repositories.identity import get_user_by_email
-from app.schemas.access import ManagerCreate, ManagerResponse
+from app.schemas.access import (
+    ManagerCreate,
+    ManagerResponse,
+    PermissionCreate,
+    PermissionResponse,
+    ProfileCreate,
+    ProfileResponse,
+)
 from app.security.passwords import hash_password
 from app.services.auth import normalize_email
 from app.tenancy.context import CurrentSession, get_current_session
@@ -80,3 +88,106 @@ def create_manager(
     session.add(membership)
     session.commit()
     return response_for(user, membership)
+
+
+@router.get("/permissions", response_model=list[PermissionResponse])
+def permissions(
+    current: Annotated[CurrentSession, Depends(get_current_session)],
+    session: Annotated[Session, Depends(get_session)],
+):
+    return list(
+        session.scalars(
+            select(PermissionDefinition)
+            .where(PermissionDefinition.tenant_id == tenant_id(current))
+            .order_by(PermissionDefinition.code)
+        )
+    )
+
+
+@router.post("/permissions", response_model=PermissionResponse, status_code=201)
+def create_permission(
+    body: PermissionCreate,
+    request: Request,
+    current: Annotated[CurrentSession, Depends(get_current_session)],
+    session: Annotated[Session, Depends(get_session)],
+):
+    selected = tenant_id(current)
+    if role_for(session, current) != "superadmin":
+        return error_response(request, 403, "PERMISSION_WRITE_FORBIDDEN", "Ação não autorizada.")
+    if session.scalar(
+        select(PermissionDefinition).where(
+            PermissionDefinition.tenant_id == selected, PermissionDefinition.code == body.code
+        )
+    ):
+        return error_response(request, 409, "PERMISSION_EXISTS", "Permissão já cadastrada.")
+    item = PermissionDefinition(tenant_id=selected, **body.model_dump())
+    session.add(item)
+    session.flush()
+    append_audit(
+        session,
+        tenant_id=selected,
+        actor_user_id=current.user.id,
+        actor_email=current.user.email,
+        action="permission.create",
+        resource_type="permission",
+        resource_id=item.id,
+        correlation_id=request.state.correlation_id,
+        after_data=body.model_dump(),
+    )
+    session.commit()
+    return item
+
+
+@router.get("/profiles", response_model=list[ProfileResponse])
+def profiles(
+    current: Annotated[CurrentSession, Depends(get_current_session)],
+    session: Annotated[Session, Depends(get_session)],
+):
+    return list(
+        session.scalars(
+            select(AccessProfile)
+            .where(AccessProfile.tenant_id == tenant_id(current))
+            .order_by(AccessProfile.name)
+        )
+    )
+
+
+@router.post("/profiles", response_model=ProfileResponse, status_code=201)
+def create_profile(
+    body: ProfileCreate,
+    request: Request,
+    current: Annotated[CurrentSession, Depends(get_current_session)],
+    session: Annotated[Session, Depends(get_session)],
+):
+    selected = tenant_id(current)
+    if role_for(session, current) != "superadmin":
+        return error_response(request, 403, "PROFILE_WRITE_FORBIDDEN", "Ação não autorizada.")
+    known = set(
+        session.scalars(
+            select(PermissionDefinition.code).where(PermissionDefinition.tenant_id == selected)
+        )
+    )
+    unknown = sorted(set(body.permissions) - known)
+    if unknown:
+        return error_response(
+            request,
+            422,
+            "UNKNOWN_PERMISSION",
+            f"Permissões não cadastradas: {', '.join(unknown)}.",
+        )
+    item = AccessProfile(tenant_id=selected, **body.model_dump())
+    session.add(item)
+    session.flush()
+    append_audit(
+        session,
+        tenant_id=selected,
+        actor_user_id=current.user.id,
+        actor_email=current.user.email,
+        action="profile.create",
+        resource_type="access_profile",
+        resource_id=item.id,
+        correlation_id=request.state.correlation_id,
+        after_data=body.model_dump(),
+    )
+    session.commit()
+    return item

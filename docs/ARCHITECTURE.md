@@ -10,6 +10,8 @@ O backend usa FastAPI com app factory, Pydantic Settings, SQLAlchemy 2, PostgreS
 - `0002_identity_auth`: cria `users`, `tenants`, `memberships` e `auth_sessions`;
 - `0003_saas_registry`: cria `saas_products` e o registro inicial dos produtos do ecossistema.
 - `0004_audit_logs`: cria a trilha append-only por tenant, ator, recurso e correlação.
+- `0005_capability_manifests`, `0006_product_users` e `0007_configurations`: migram manifesto, projeções de usuários e configurações para contratos nativos.
+- `0008_access_profiles`: cria o catálogo de permissões e perfis de acesso por tenant.
 
 As rotas operacionais `/health`, `/version` e `/ready` cobrem liveness, versão e conexão com o banco. Toda requisição recebe correlation/request ID validado ou gerado. Erros públicos usam código, mensagem segura, referência pública, correlation ID e indicação de retry; logs estruturados não registram corpo, query, credenciais ou texto bruto de exceções.
 
@@ -29,7 +31,7 @@ O Google OAuth é opcional e usa `/api/v1/auth/google/start` e `/api/v1/auth/goo
 
 `ProductUser` registra somente uma projeção administrativa da conta existente em um produto, separada da identidade global e sem armazenar credencial. `GET/POST /api/v1/product-users` lista e cria projeções isoladas por tenant/produto, atualiza a contagem do catálogo e audita a mutação. A migration `0006_product_users` cria a tabela; vínculo com pessoa global, edição/revogação e sincronização assinada continuam pendentes.
 
-`/api/v1/access/managers` lista e cadastra administradores vinculados à Central. A interface de Usuários & Acesso já consome esse contrato. A matriz completa de pessoas, perfis, funções, permissões, equipes e exceções permanece pendente.
+`/api/v1/access/managers` lista e cadastra administradores vinculados à Central. `/api/v1/access/permissions` e `/api/v1/access/profiles` listam e criam permissões e pacotes versionados por tenant, com escrita restrita ao superadmin e auditoria transacional. A interface `/administration` reúne o catálogo de SaaS, administradores, usuários dos produtos, perfis e permissões; `/users` permanece como alias compatível. A atribuição dos perfis, explicação de acesso efetivo, pessoas, equipes, setores, unidades, sessões e exceções ainda permanecem pendentes.
 
 ## Frontend e migração do Base44
 

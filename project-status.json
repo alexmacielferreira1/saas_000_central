@@ -4,82 +4,82 @@
   "manual_checks": {
     "frontend_functional_validation": {
       "status": "blocked",
-      "updated_at": "2026-09-26T17:45:00Z",
-      "notes": "Autenticação, sessão, logout, Home, catálogo/detalhe/edição de SaaS, administradores, auditoria, Capability Manifest, usuários do produto e Configurações possuem contratos nativos. Configurações têm listagem/criação por tenant, escopo Central ou SaaS, ambiente, autorização, unicidade e auditoria. As 15 rotas renderizam em teste e as 11 administrativas negam acesso anônimo; 65 testes frontend passam. Paridade continua bloqueada pelas jornadas Base44, pela aba Operações, pelos complementos de usuários/configurações e pela aplicação/validação local das migrations 0006 e 0007, impedida enquanto PostgreSQL/API locais estão indisponíveis."
+      "updated_at": "2026-09-27T12:56:33Z",
+      "notes": "Autenticação, sessão, Home, catálogo/detalhe de SaaS, administradores, auditoria, manifests, usuários, configurações, PowerQuery local e Administração de perfis/permissões possuem contratos nativos. A migration 0008 foi aplicada; a API local criou e releu permissões e perfil auditados. As 17 rotas renderizam em teste, as 13 administrativas negam acesso anônimo e 72 testes frontend passam. Paridade continua bloqueada por Operações/Resolução ainda dependentes do Base44, pelo motor persistente de importação e pelas demais subtelas administrativas."
     }
   },
   "milestones": {
     "M0": {
       "name": "bootstrap",
-      "status": "failed",
+      "status": "blocked",
       "checks": {
         "backend_lint": {
           "status": "passed",
-          "updated_at": "2026-09-26T22:49:46.149452+00:00",
+          "updated_at": "2026-09-27T12:55:40.716276+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/backend_lint.log"
         },
         "backend_format": {
           "status": "passed",
-          "updated_at": "2026-09-26T22:49:46.760456+00:00",
+          "updated_at": "2026-09-27T12:55:41.363149+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/backend_format.log"
         },
         "unit_tests": {
           "status": "passed",
-          "updated_at": "2026-09-26T22:49:48.265728+00:00",
+          "updated_at": "2026-09-27T12:55:42.859363+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/unit_tests.log"
         },
         "migration": {
-          "status": "failed",
-          "updated_at": "2026-09-26T22:50:06.065340+00:00",
-          "notes": "Exit 1; evidence: .runtime/checks/migration.log"
+          "status": "passed",
+          "updated_at": "2026-09-27T12:56:01.853108+00:00",
+          "notes": "Exit 0; evidence: .runtime/checks/migration.log"
         },
         "database_integration": {
-          "status": "failed",
-          "updated_at": "2026-09-26T22:50:12.187070+00:00",
-          "notes": "Exit 1; evidence: .runtime/checks/database_integration.log"
+          "status": "passed",
+          "updated_at": "2026-09-27T12:56:05.015637+00:00",
+          "notes": "Exit 0; evidence: .runtime/checks/database_integration.log"
         },
         "dependency_consistency": {
           "status": "passed",
-          "updated_at": "2026-09-26T22:50:19.233075+00:00",
+          "updated_at": "2026-09-27T12:56:08.459524+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/dependency_consistency.log"
         },
         "frontend_build": {
           "status": "passed",
-          "updated_at": "2026-09-26T22:50:23.171946+00:00",
+          "updated_at": "2026-09-27T12:56:12.590887+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_build.log"
         },
         "frontend_lint": {
           "status": "passed",
-          "updated_at": "2026-09-26T22:50:29.323759+00:00",
+          "updated_at": "2026-09-27T12:56:18.777967+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_lint.log"
         },
         "frontend_typecheck": {
           "status": "passed",
-          "updated_at": "2026-09-26T22:50:36.948219+00:00",
+          "updated_at": "2026-09-27T12:56:25.874571+00:00",
           "notes": "Exit 0; evidence: .runtime/checks/frontend_typecheck.log"
         },
         "http_smoke": {
-          "status": "failed",
-          "updated_at": "2026-09-26T22:50:43.301168+00:00",
-          "notes": "Exit 1; evidence: .runtime/checks/http_smoke.log"
+          "status": "passed",
+          "updated_at": "2026-09-27T12:56:32.435771+00:00",
+          "notes": "Exit 0; evidence: .runtime/checks/http_smoke.log"
         },
         "original_frontend_integrity": {
           "status": "passed",
-          "updated_at": "2026-09-26T22:50:46.667559+00:00",
-          "notes": "147 original files; 40 approved typed corrections; 0 unapproved changes or missing. "
+          "updated_at": "2026-09-27T12:56:33.622882+00:00",
+          "notes": "147 original files; 41 approved typed corrections; 0 unapproved changes or missing. "
         },
         "frontend_functional_validation": {
           "status": "blocked",
-          "updated_at": "2026-09-26T17:45:00Z",
-          "notes": "Autenticação, sessão, logout, Home, catálogo/detalhe/edição de SaaS, administradores, auditoria, Capability Manifest, usuários do produto e Configurações possuem contratos nativos. Configurações têm listagem/criação por tenant, escopo Central ou SaaS, ambiente, autorização, unicidade e auditoria. As 15 rotas renderizam em teste e as 11 administrativas negam acesso anônimo; 65 testes frontend passam. Paridade continua bloqueada pelas jornadas Base44, pela aba Operações, pelos complementos de usuários/configurações e pela aplicação/validação local das migrations 0006 e 0007, impedida enquanto PostgreSQL/API locais estão indisponíveis."
+          "updated_at": "2026-09-27T12:56:33Z",
+          "notes": "Autenticação, sessão, Home, catálogo/detalhe de SaaS, administradores, auditoria, manifests, usuários, configurações, PowerQuery local e Administração de perfis/permissões possuem contratos nativos. A migration 0008 foi aplicada; a API local criou e releu permissões e perfil auditados. As 17 rotas renderizam em teste, as 13 administrativas negam acesso anônimo e 72 testes frontend passam. Paridade continua bloqueada por Operações/Resolução ainda dependentes do Base44, pelo motor persistente de importação e pelas demais subtelas administrativas."
         },
         "git_clean_at_check": {
           "status": "pending",
-          "updated_at": "2026-09-26T22:50:46.667559+00:00",
+          "updated_at": "2026-09-27T12:56:33.622882+00:00",
           "notes": "Snapshot before writing this report. Verify and commit reviewed work separately."
         }
       },
-      "updated_at": "2026-09-26T22:50:46.667559+00:00",
+      "updated_at": "2026-09-27T12:56:33.622882+00:00",
       "notes": "Partial M0; unresolved gates. Do not advance to M1."
     },
     "M1": {

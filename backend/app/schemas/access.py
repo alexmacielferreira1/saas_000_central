@@ -16,3 +16,27 @@ class ManagerResponse(BaseModel):
     scope_saas: str = "*"
     status: str
     two_factor_enabled: bool = False
+
+
+class PermissionCreate(BaseModel):
+    code: str = Field(min_length=3, max_length=160, pattern=r"^[a-z0-9_.-]+$")
+    resource: str = Field(min_length=1, max_length=100)
+    action: str = Field(min_length=1, max_length=100)
+    scope: str = Field(default="tenant", pattern=r"^(global|tenant|product|own)$")
+    description: str = Field(default="", max_length=1000)
+
+
+class PermissionResponse(PermissionCreate):
+    id: str
+
+
+class ProfileCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=160)
+    description: str = Field(default="", max_length=1000)
+    permissions: list[str] = Field(default_factory=list, max_length=500)
+
+
+class ProfileResponse(ProfileCreate):
+    id: str
+    version: int
+    is_active: bool

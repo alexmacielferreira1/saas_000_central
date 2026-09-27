@@ -120,6 +120,8 @@ Estado parcial em 26/09/2026: `SCR-040` possui projeção administrativa tenant-
 | SCR-074 | `/administration/temporary-access` | Acesso temporário | Escopo, justificativa, aprovação e expiração |
 | SCR-075 | `/administration/break-glass` | Break glass | Acesso emergencial, dupla confirmação e revisão posterior |
 
+Estado parcial em 27/09/2026: `SCR-060`, `SCR-066` e `SCR-067` possuem uma primeira fatia vertical em `/administration`: catálogo real de SaaS, listagem/criação de permissões e perfis por tenant, persistência PostgreSQL, autorização de escrita para superadmin, auditoria e testes. As subtelas dedicadas e os critérios restantes continuam abertos.
+
 ## Governança de telas, módulos e configurações
 
 | ID | Rota sugerida | Tela | Entrega funcional |

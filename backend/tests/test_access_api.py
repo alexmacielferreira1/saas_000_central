@@ -80,3 +80,41 @@ def test_superadmin_creates_administrator_with_login(access_client):
     assert response.json()["email"] == "gestora@example.com"
     listed = access_client.get("/api/v1/access/managers").json()
     assert [item["email"] for item in listed] == ["alex@example.com", "gestora@example.com"]
+
+
+def test_superadmin_creates_permission_and_versioned_profile(access_client):
+    permission = access_client.post(
+        "/api/v1/access/permissions",
+        json={
+            "code": "saas.read",
+            "resource": "saas",
+            "action": "read",
+            "scope": "tenant",
+            "description": "Visualizar produtos do tenant",
+        },
+    )
+    assert permission.status_code == 201
+
+    profile = access_client.post(
+        "/api/v1/access/profiles",
+        json={
+            "name": "Gestor de produto",
+            "description": "Acesso de leitura ao catálogo",
+            "permissions": ["saas.read"],
+        },
+    )
+    assert profile.status_code == 201
+    assert profile.json()["version"] == 1
+    assert profile.json()["permissions"] == ["saas.read"]
+    assert access_client.get("/api/v1/access/permissions").json()[0]["code"] == "saas.read"
+    assert access_client.get("/api/v1/access/profiles").json()[0]["name"] == "Gestor de produto"
+
+
+def test_profile_rejects_unknown_permission(access_client):
+    response = access_client.post(
+        "/api/v1/access/profiles",
+        json={"name": "Inválido", "permissions": ["missing.permission"]},
+    )
+
+    assert response.status_code == 422
+    assert response.json()["error_code"] == "UNKNOWN_PERMISSION"

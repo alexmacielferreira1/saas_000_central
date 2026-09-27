@@ -1,11 +1,13 @@
 from app.core.config import get_settings
 from app.db.session import Base, engine
 from app.models import (  # noqa: F401
+    AccessProfile,
     AuditLog,
     AuthSession,
     CapabilityManifest,
     Configuration,
     Membership,
+    PermissionDefinition,
     ProductUser,
     SaasProduct,
     Tenant,

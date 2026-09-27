@@ -87,6 +87,10 @@ vi.mock('@/api/saasRegistry', () => ({
 vi.mock('@/api/access', () => ({
   listManagers: vi.fn().mockResolvedValue([]),
   createManager: vi.fn(),
+  listPermissions: vi.fn().mockResolvedValue([]),
+  createPermission: vi.fn(),
+  listProfiles: vi.fn().mockResolvedValue([]),
+  createProfile: vi.fn(),
 }));
 
 vi.mock('@/lib/AuthContext', () => ({
@@ -113,7 +117,8 @@ const ADMIN_CASES = [
   ['/api-guides', 'Guias das APIs (Guarda-chuva)'],
   ['/saas', 'SaaS 360'],
   ['/saas/saas-1', 'Produto de teste'],
-  ['/users', 'Usuários & Acesso'],
+  ['/administration', 'Administração'],
+  ['/users', 'Administração'],
   ['/configurations', 'Configurações & Feature Flags'],
   ['/operations', 'Centro de Operações'],
   ['/audit', 'Auditoria distribuída'],

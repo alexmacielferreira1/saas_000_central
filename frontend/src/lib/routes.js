@@ -28,6 +28,7 @@ export const ADMIN_ROUTES = [
   { path: '/api-guides', Component: ApiGuides },
   { path: '/saas', Component: SaasList },
   { path: '/saas/:id', Component: SaasDetail },
+  { path: '/administration', Component: UsersAccess },
   { path: '/users', Component: UsersAccess },
   { path: '/configurations', Component: Configurations },
   { path: '/operations', Component: OperationCenter },
