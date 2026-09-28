@@ -118,3 +118,60 @@ def test_profile_rejects_unknown_permission(access_client):
 
     assert response.status_code == 422
     assert response.json()["error_code"] == "UNKNOWN_PERMISSION"
+
+
+def test_superadmin_builds_organization_and_effective_user_access(access_client):
+    permission = access_client.post(
+        "/api/v1/access/permissions",
+        json={"code": "saas.read", "resource": "saas", "action": "read", "scope": "tenant"},
+    ).json()
+    profile = access_client.post(
+        "/api/v1/access/profiles",
+        json={"name": "Gestor", "permissions": [permission["code"]]},
+    ).json()
+    department = access_client.post(
+        "/api/v1/access/organization-units",
+        json={"kind": "department", "name": "Conteúdo"},
+    )
+    assert department.status_code == 201
+    team = access_client.post(
+        "/api/v1/access/organization-units",
+        json={"kind": "team", "name": "Redes sociais", "parent_id": department.json()["id"]},
+    )
+    assert team.status_code == 201
+
+    user = access_client.get("/api/v1/access/managers").json()[0]
+    assigned = access_client.put(
+        f"/api/v1/access/users/{user['id']}/assignment",
+        json={
+            "profile_id": profile["id"],
+            "organization_unit_id": team.json()["id"],
+            "job_title": "Diretor de conteúdo",
+            "function_name": "Aprovador",
+            "scope": {"products": ["mediamind-ai"]},
+            "allow_permissions": ["content.publish"],
+            "deny_permissions": ["saas.delete"],
+        },
+    )
+    assert assigned.status_code == 200
+
+    effective = access_client.get(f"/api/v1/access/users/{user['id']}/effective-access")
+    assert effective.status_code == 200
+    assert effective.json()["profile"]["name"] == "Gestor"
+    assert effective.json()["organization_path"] == ["Conteúdo", "Redes sociais"]
+    assert effective.json()["permissions"] == ["content.publish", "saas.read"]
+    assert effective.json()["denied_permissions"] == ["saas.delete"]
+    assert effective.json()["scope"] == {"products": ["mediamind-ai"]}
+
+
+def test_organization_parent_must_belong_to_selected_tenant(access_client):
+    response = access_client.post(
+        "/api/v1/access/organization-units",
+        json={
+            "kind": "team",
+            "name": "Equipe inválida",
+            "parent_id": "00000000-0000-0000-0000-000000000000",
+        },
+    )
+    assert response.status_code == 422
+    assert response.json()["error_code"] == "ORGANIZATION_PARENT_INVALID"

@@ -1,4 +1,6 @@
-from pydantic import BaseModel, Field
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ManagerCreate(BaseModel):
@@ -40,3 +42,52 @@ class ProfileResponse(ProfileCreate):
     id: str
     version: int
     is_active: bool
+
+
+class OrganizationUnitCreate(BaseModel):
+    kind: str = Field(pattern=r"^(department|sector|team|unit)$")
+    name: str = Field(min_length=2, max_length=160)
+    parent_id: str | None = None
+    manager_user_id: str | None = None
+
+
+class OrganizationUnitResponse(OrganizationUnitCreate):
+    model_config = ConfigDict(from_attributes=True)
+    id: str
+    is_active: bool
+
+
+class UserAccessAssignmentUpdate(BaseModel):
+    profile_id: str | None = None
+    organization_unit_id: str | None = None
+    job_title: str = Field(default="", max_length=160)
+    function_name: str = Field(default="", max_length=160)
+    scope: dict[str, Any] = Field(default_factory=dict)
+    allow_permissions: list[str] = Field(default_factory=list, max_length=500)
+    deny_permissions: list[str] = Field(default_factory=list, max_length=500)
+
+
+class UserAccessAssignmentResponse(UserAccessAssignmentUpdate):
+    model_config = ConfigDict(from_attributes=True)
+    id: str
+    user_id: str
+    is_active: bool
+
+
+class EffectiveProfile(BaseModel):
+    id: str
+    name: str
+    version: int
+
+
+class EffectiveAccessResponse(BaseModel):
+    user_id: str
+    membership_role: str
+    profile: EffectiveProfile | None
+    organization_path: list[str]
+    job_title: str
+    function_name: str
+    scope: dict[str, Any]
+    permissions: list[str]
+    denied_permissions: list[str]
+    sources: list[str]

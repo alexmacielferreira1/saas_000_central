@@ -75,3 +75,43 @@ class AccessProfile(Base):
     version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     permissions: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+
+class OrganizationUnit(Base):
+    __tablename__ = "organization_units"
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "kind", "name", name="uq_org_unit_tenant_kind_name"),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id", ondelete="CASCADE"), index=True)
+    kind: Mapped[str] = mapped_column(String(40), nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(160), nullable=False)
+    parent_id: Mapped[str | None] = mapped_column(
+        ForeignKey("organization_units.id", ondelete="SET NULL"), index=True
+    )
+    manager_user_id: Mapped[str | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), index=True
+    )
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+
+class UserAccessAssignment(Base):
+    __tablename__ = "user_access_assignments"
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "user_id", name="uq_assignment_tenant_user"),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id", ondelete="CASCADE"), index=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    profile_id: Mapped[str | None] = mapped_column(
+        ForeignKey("access_profiles.id", ondelete="SET NULL"), index=True
+    )
+    organization_unit_id: Mapped[str | None] = mapped_column(
+        ForeignKey("organization_units.id", ondelete="SET NULL"), index=True
+    )
+    job_title: Mapped[str] = mapped_column(String(160), default="", nullable=False)
+    function_name: Mapped[str] = mapped_column(String(160), default="", nullable=False)
+    scope: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    allow_permissions: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
+    deny_permissions: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)

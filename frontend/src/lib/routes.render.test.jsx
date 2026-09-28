@@ -92,6 +92,11 @@ vi.mock('@/api/access', () => ({
   createPermission: vi.fn(),
   listProfiles: vi.fn().mockResolvedValue([]),
   createProfile: vi.fn(),
+  listOrganizationUnits: vi.fn().mockResolvedValue([]),
+  createOrganizationUnit: vi.fn(),
+  listAccessAssignments: vi.fn().mockResolvedValue([]),
+  updateAccessAssignment: vi.fn(),
+  getEffectiveAccess: vi.fn(),
 }));
 
 vi.mock('@/api/operations', () => ({

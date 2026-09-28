@@ -23,3 +23,23 @@ export function listProfiles() {
 export function createProfile(values) {
   return request('/access/profiles', { method: 'POST', body: values });
 }
+
+export function listOrganizationUnits() {
+  return request('/access/organization-units');
+}
+
+export function createOrganizationUnit(values) {
+  return request('/access/organization-units', { method: 'POST', body: values });
+}
+
+export function listAccessAssignments() {
+  return request('/access/assignments');
+}
+
+export function updateAccessAssignment(userId, values) {
+  return request(`/access/users/${userId}/assignment`, { method: 'PUT', body: values });
+}
+
+export function getEffectiveAccess(userId) {
+  return request(`/access/users/${userId}/effective-access`);
+}

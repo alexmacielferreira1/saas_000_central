@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { listManagers, listPermissions, listProfiles } from "@/api/access";
+import {
+  createOrganizationUnit, getEffectiveAccess, listAccessAssignments, listManagers,
+  listOrganizationUnits, listPermissions, listProfiles, updateAccessAssignment,
+} from "@/api/access";
 import { listProductUsers, listSaas } from "@/api/saasRegistry";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import PageHeader from "@/components/PageHeader";
 import { Card, EmptyState, ErrorState } from "@/components/ui-primitives";
 import StatusBadge from "@/components/StatusBadge";
 import { MANAGER_ROLE, MANAGER_STATUS, PRODUCT_USER_STATUS, fmtDate } from "@/lib/adminHelpers";
-import { Users, ShieldCheck, Search, Plus, Boxes, ArrowRight } from "lucide-react";
+import { Users, ShieldCheck, Search, Plus, Boxes, ArrowRight, Building2, KeyRound, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import NewManagerDialog from "@/components/users/NewManagerDialog";
 import NewProductUserDialog from "@/components/users/NewProductUserDialog";
@@ -22,9 +25,11 @@ export default function UsersAccess() {
   const [profiles, setProfiles] = useState([]);
   const [permissions, setPermissions] = useState([]);
   const [products, setProducts] = useState([]);
+  const [units, setUnits] = useState([]);
+  const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
-  const allowedViews = ["saas", "managers", "product", "profiles", "permissions"];
+  const allowedViews = ["saas", "managers", "product", "profiles", "permissions", "structure", "effective"];
   const requestedView = searchParams.get("view");
   const [view, setView] = useState(allowedViews.includes(requestedView) ? requestedView : "managers");
   const [error, setError] = useState(false);
@@ -32,23 +37,32 @@ export default function UsersAccess() {
   const [productOpen, setProductOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [permissionOpen, setPermissionOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [effective, setEffective] = useState(null);
+  const [accessForm, setAccessForm] = useState({ profile_id: "", organization_unit_id: "", job_title: "", function_name: "", scope_products: "", allow_permissions: "", deny_permissions: "" });
+  const [unitForm, setUnitForm] = useState({ kind: "department", name: "", parent_id: "" });
+  const [contextMessage, setContextMessage] = useState("");
 
   const load = async () => {
     try {
       setError(false);
       setLoading(true);
-      const [m, u, p, catalog, productsResponse] = await Promise.all([
+      const [m, u, p, catalog, productsResponse, organizationResponse, assignmentResponse] = await Promise.all([
         listManagers(),
         listProductUsers(),
         listProfiles(),
         listPermissions(),
         listSaas(),
+        listOrganizationUnits(),
+        listAccessAssignments(),
       ]);
       setManagers(m || []);
       setUsers(u || []);
       setProfiles(p || []);
       setPermissions(catalog || []);
       setProducts(productsResponse || []);
+      setUnits(organizationResponse || []);
+      setAssignments(assignmentResponse || []);
     } catch { setError(true); } finally { setLoading(false); }
   };
   useEffect(() => { load(); }, []);
@@ -71,11 +85,54 @@ export default function UsersAccess() {
   const filteredPermissions = permissions.filter((p) => !q || `${p.code} ${p.resource} ${p.action}`.toLowerCase().includes(q.toLowerCase()));
   const filteredProducts = products.filter((product) => !q || `${product.name} ${product.slug}`.toLowerCase().includes(q.toLowerCase()));
 
+  const openEffectiveAccess = async (manager) => {
+    const assignment = assignments.find((item) => item.user_id === manager.id);
+    setSelectedUser(manager);
+    setAccessForm({
+      profile_id: assignment?.profile_id || "",
+      organization_unit_id: assignment?.organization_unit_id || "",
+      job_title: assignment?.job_title || "",
+      function_name: assignment?.function_name || "",
+      scope_products: (assignment?.scope?.products || []).join(", "),
+      allow_permissions: (assignment?.allow_permissions || []).join(", "),
+      deny_permissions: (assignment?.deny_permissions || []).join(", "),
+    });
+    setEffective(await getEffectiveAccess(manager.id));
+    setContextMessage("");
+    requestAnimationFrame(() => document.getElementById("effective-access-workspace")?.scrollIntoView?.({ behavior: "smooth", block: "start" }));
+  };
+
+  const saveAssignment = async (event) => {
+    event.preventDefault();
+    const split = (value) => value.split(",").map((item) => item.trim()).filter(Boolean);
+    await updateAccessAssignment(selectedUser.id, {
+      profile_id: accessForm.profile_id || null,
+      organization_unit_id: accessForm.organization_unit_id || null,
+      job_title: accessForm.job_title,
+      function_name: accessForm.function_name,
+      scope: { products: split(accessForm.scope_products) },
+      allow_permissions: split(accessForm.allow_permissions),
+      deny_permissions: split(accessForm.deny_permissions),
+    });
+    await load();
+    setEffective(await getEffectiveAccess(selectedUser.id));
+    setContextMessage("Vínculo salvo; acesso efetivo recalculado e auditado.");
+  };
+
+  const saveUnit = async (event) => {
+    event.preventDefault();
+    await createOrganizationUnit({ ...unitForm, parent_id: unitForm.parent_id || null });
+    setUnitForm({ kind: "department", name: "", parent_id: "" });
+    setContextMessage("Estrutura criada e auditada.");
+    await load();
+  };
+
   const openCreate = () => {
     if (view === "saas") navigate("/saas");
     else if (view === "managers") setManagerOpen(true);
     else if (view === "product") setProductOpen(true);
     else if (view === "profiles") setProfileOpen(true);
+    else if (view === "structure" || view === "effective") return;
     else setPermissionOpen(true);
   };
 
@@ -86,7 +143,7 @@ export default function UsersAccess() {
         description="Administração de contas, perfis versionados e catálogo de permissões por tenant."
         icon={Users}
         actions={
-          can(view === "product" ? "product-user" : view === "saas" ? "saas" : "manager") ? (
+          !["structure", "effective"].includes(view) && can(view === "product" ? "product-user" : view === "saas" ? "saas" : "manager") ? (
             <Button size="sm" className="gap-2" onClick={openCreate}>
               {view === "saas" ? <ArrowRight className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
               {view === "saas" ? "Gerenciar catálogo" : <>Novo {view === "managers" ? "administrador" : view === "product" ? "usuário SaaS" : view === "profiles" ? "perfil" : "permissão"}</>}
@@ -102,6 +159,8 @@ export default function UsersAccess() {
           <button onClick={() => setView("product")} className={`rounded-md px-3 py-1.5 text-sm font-medium ${view === "product" ? "bg-slate-900 text-white" : "text-slate-500"}`}>Usuários dos SaaS</button>
           <button onClick={() => setView("profiles")} className={`rounded-md px-3 py-1.5 text-sm font-medium ${view === "profiles" ? "bg-slate-900 text-white" : "text-slate-500"}`}>Perfis</button>
           <button onClick={() => setView("permissions")} className={`rounded-md px-3 py-1.5 text-sm font-medium ${view === "permissions" ? "bg-slate-900 text-white" : "text-slate-500"}`}>Permissões</button>
+          <button onClick={() => setView("structure")} className={`rounded-md px-3 py-1.5 text-sm font-medium ${view === "structure" ? "bg-slate-900 text-white" : "text-slate-500"}`}>Estrutura</button>
+          <button onClick={() => setView("effective")} className={`rounded-md px-3 py-1.5 text-sm font-medium ${view === "effective" ? "bg-slate-900 text-white" : "text-slate-500"}`}>Acesso efetivo</button>
         </div>
         <div className="relative max-w-xs">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -133,6 +192,15 @@ export default function UsersAccess() {
               </button>
             </Card>
           )) : <Card><EmptyState icon={Boxes} title="Nenhum SaaS cadastrado" description="Cadastre o primeiro produto no catálogo da Central." /></Card>}
+        </div>
+      ) : view === "structure" ? (
+        <div className="grid gap-4 lg:grid-cols-[360px_1fr]">
+          <Card><form onSubmit={saveUnit} className="space-y-3 p-4"><div><p className="font-semibold text-slate-900">Nova estrutura</p><p className="text-xs text-slate-500">Departamento → setor → equipe → unidade.</p></div><label className="block text-sm">Tipo<select value={unitForm.kind} onChange={(e) => setUnitForm({ ...unitForm, kind: e.target.value })} className="mt-1 h-9 w-full rounded-lg border px-3"><option value="department">Departamento</option><option value="sector">Setor</option><option value="team">Equipe</option><option value="unit">Unidade</option></select></label><label className="block text-sm">Nome<input required value={unitForm.name} onChange={(e) => setUnitForm({ ...unitForm, name: e.target.value })} className="mt-1 h-9 w-full rounded-lg border px-3" /></label><label className="block text-sm">Estrutura superior<select value={unitForm.parent_id} onChange={(e) => setUnitForm({ ...unitForm, parent_id: e.target.value })} className="mt-1 h-9 w-full rounded-lg border px-3"><option value="">Nenhuma</option>{units.map((unit) => <option key={unit.id} value={unit.id}>{unit.name}</option>)}</select></label><Button type="submit" className="w-full"><Plus className="h-4 w-4" />Criar estrutura</Button>{contextMessage && <p role="status" className="text-xs text-emerald-700">{contextMessage}</p>}</form></Card>
+          <Card><div className="divide-y">{units.length ? units.map((unit) => <div key={unit.id} className="flex items-center gap-3 p-4"><Building2 className="h-5 w-5 text-indigo-600" /><div className="flex-1"><p className="font-medium">{unit.name}</p><p className="text-xs capitalize text-slate-500">{unit.kind} {unit.parent_id ? "· vinculada" : "· raiz"}</p></div><StatusBadge map={{ active: { label: "Ativa", tone: "green" } }} value={unit.is_active ? "active" : "inactive"} /></div>) : <EmptyState icon={Building2} title="Nenhuma estrutura cadastrada" description="Crie departamentos, setores, equipes e unidades." />}</div></Card>
+        </div>
+      ) : view === "effective" ? (
+        <div className="space-y-4"><Card><div className="divide-y">{filteredM.map((manager) => <button key={manager.id} type="button" onClick={() => openEffectiveAccess(manager)} className="flex w-full items-center gap-3 p-4 text-left hover:bg-slate-50"><div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-50 font-semibold text-indigo-700">{manager.full_name[0]}</div><div className="flex-1"><p className="font-medium">{manager.full_name}</p><p className="text-xs text-slate-500">{manager.email} · {manager.role}</p></div><span className="text-sm text-indigo-600">Abrir e resolver aqui</span><ChevronDown className="h-4 w-4 text-indigo-600" /></button>)}</div></Card>
+          {selectedUser && <Card id="effective-access-workspace" className="scroll-mt-6 border-indigo-300"><div className="p-5"><div className="mb-4"><p className="text-xs font-semibold uppercase text-indigo-600">Acesso efetivo</p><h2 className="text-xl font-semibold">{selectedUser.full_name}</h2><p className="text-sm text-slate-500">Configure o vínculo e confira abaixo o resultado herdado.</p></div><form onSubmit={saveAssignment} className="grid gap-3 md:grid-cols-2"><label className="text-sm">Perfil<select value={accessForm.profile_id} onChange={(e) => setAccessForm({ ...accessForm, profile_id: e.target.value })} className="mt-1 h-9 w-full rounded-lg border px-3"><option value="">Sem perfil</option>{profiles.map((profile) => <option key={profile.id} value={profile.id}>{profile.name} · v{profile.version}</option>)}</select></label><label className="text-sm">Equipe / setor / unidade<select value={accessForm.organization_unit_id} onChange={(e) => setAccessForm({ ...accessForm, organization_unit_id: e.target.value })} className="mt-1 h-9 w-full rounded-lg border px-3"><option value="">Sem vínculo</option>{units.map((unit) => <option key={unit.id} value={unit.id}>{unit.name} ({unit.kind})</option>)}</select></label><label className="text-sm">Cargo<input value={accessForm.job_title} onChange={(e) => setAccessForm({ ...accessForm, job_title: e.target.value })} className="mt-1 h-9 w-full rounded-lg border px-3" /></label><label className="text-sm">Função<input value={accessForm.function_name} onChange={(e) => setAccessForm({ ...accessForm, function_name: e.target.value })} className="mt-1 h-9 w-full rounded-lg border px-3" /></label><label className="text-sm">Escopo de produtos<input value={accessForm.scope_products} onChange={(e) => setAccessForm({ ...accessForm, scope_products: e.target.value })} placeholder="mediamind-ai, produto-2" className="mt-1 h-9 w-full rounded-lg border px-3" /></label><label className="text-sm">Permissões adicionais<input value={accessForm.allow_permissions} onChange={(e) => setAccessForm({ ...accessForm, allow_permissions: e.target.value })} placeholder="conteudo.publicar" className="mt-1 h-9 w-full rounded-lg border px-3" /></label><label className="text-sm md:col-span-2">Permissões bloqueadas<input value={accessForm.deny_permissions} onChange={(e) => setAccessForm({ ...accessForm, deny_permissions: e.target.value })} placeholder="saas.excluir" className="mt-1 h-9 w-full rounded-lg border px-3" /></label><div className="md:col-span-2"><Button type="submit"><KeyRound className="h-4 w-4" />Salvar e recalcular acesso</Button></div></form>{effective && <div className="mt-5 grid gap-3 border-t pt-4 md:grid-cols-2"><div><p className="text-xs font-semibold uppercase text-slate-500">Origem e herança</p><p className="mt-1 text-sm">Papel: {effective.membership_role}</p><p className="text-sm">Perfil: {effective.profile?.name || "—"}</p><p className="text-sm">Estrutura: {effective.organization_path.join(" → ") || "—"}</p><div className="mt-2 flex flex-wrap gap-1">{effective.sources.map((source) => <span key={source} className="rounded bg-slate-100 px-2 py-1 text-xs">{source}</span>)}</div></div><div><p className="text-xs font-semibold uppercase text-slate-500">Resultado</p><div className="mt-2 flex flex-wrap gap-1">{effective.permissions.map((permission) => <span key={permission} className="rounded bg-emerald-50 px-2 py-1 text-xs text-emerald-700">{permission}</span>)}{effective.denied_permissions.map((permission) => <span key={permission} className="rounded bg-rose-50 px-2 py-1 text-xs text-rose-700">Bloqueada: {permission}</span>)}</div></div></div>}{contextMessage && <p role="status" className="mt-3 text-sm text-emerald-700">{contextMessage}</p>}</div></Card>}
         </div>
       ) : view === "managers" ? (
         <Card>
