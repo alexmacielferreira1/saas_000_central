@@ -110,6 +110,7 @@ vi.mock('@/api/integrations', () => ({
 vi.mock('@/api/controlResources', () => ({
   listControlResources: vi.fn().mockResolvedValue([]),
   createControlResource: vi.fn(),
+  updateControlResource: vi.fn(),
 }));
 
 vi.mock('@/lib/AuthContext', () => ({

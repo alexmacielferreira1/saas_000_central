@@ -1,5 +1,14 @@
 # Handoff da Central
 
+## Atualização 27/09/2026 — operação no mesmo contexto
+
+- Os onze centros de capacidade deixaram de repetir conteúdo genérico e agora possuem formulários e indicadores do próprio domínio.
+- Criar e editar `ControlResource` funciona na mesma página; a edição usa PATCH, incrementa versão e audita antes/depois.
+- QA manual comprovou o fluxo em `/commercial/plans`, incluindo login, criação, seleção contextual, atualização e releitura da versão 2.
+- `engine_options` agora impede opções exclusivas do PostgreSQL no SQLite de QA, corrigindo o login após reinício local.
+- Próxima fatia: especializar Administração conforme Pessoa → Conta → Membership → Perfil → Função → Equipe → Setor → Unidade → Escopo → Exceção, começando por atribuição/acesso efetivo e sessões.
+- O anexo de controle do MediaMind foi incorporado ao backlog: Tenant/User 360, permissões de telas e ações, chaves/roteamento/custos de IA, arquivos, import/export, logs, incidentes, playbooks e aprovações. Não marcar nenhum item como concluído sem ponte, persistência, autorização e auditoria.
+
 - Estado: segundo produto do HUB, ainda em M0 e sem publicação em Render/Neon autorizada nesta sessão.
 - Revalidação de 26/09/2026: backend lint/format, 59 testes de backend, 65 testes frontend, consistência de dependências, frontend build/lint/typecheck e integridade do export estão verdes. Migration, integração PostgreSQL e smoke estão falhando porque Docker Desktop e o PostgreSQL temporário local não estão ativos; nenhum dado publicado foi acessado. A migration `0006` gerou SQL PostgreSQL válido em modo offline, mas ainda precisa ser aplicada localmente.
 - O build ainda emite aviso de configuração Base44 ausente e bundle principal elevado; isso não comprova funcionamento local.

@@ -5,7 +5,12 @@ from app.core.errors import error_response
 from app.db.session import get_session
 from app.models.control import ControlResource
 from app.repositories.audit import append_audit
-from app.schemas.control import ALLOWED_KINDS, ControlResourceCreate, ControlResourceResponse
+from app.schemas.control import (
+    ALLOWED_KINDS,
+    ControlResourceCreate,
+    ControlResourceResponse,
+    ControlResourceUpdate,
+)
 from app.tenancy.context import CurrentSession, get_current_session
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy import select
@@ -66,6 +71,64 @@ def create_resource(
         resource_id=item.id,
         correlation_id=request.state.correlation_id,
         after_data={"key": body.key, "name": body.name, "status": body.status},
+    )
+    session.commit()
+    session.refresh(item)
+    return item
+
+
+@router.patch("/{resource_id}", response_model=ControlResourceResponse)
+def update_resource(
+    resource_id: str,
+    body: ControlResourceUpdate,
+    request: Request,
+    current: Annotated[CurrentSession, Depends(get_current_session)],
+    session: Annotated[Session, Depends(get_session)],
+):
+    selected = tenant_id(current)
+    if role_for(session, current) != "superadmin":
+        return error_response(
+            request, 403, "CONTROL_RESOURCE_WRITE_FORBIDDEN", "Ação não autorizada."
+        )
+    item = session.scalar(
+        select(ControlResource).where(
+            ControlResource.id == resource_id,
+            ControlResource.tenant_id == selected,
+        )
+    )
+    if not item:
+        return error_response(
+            request, 404, "CONTROL_RESOURCE_NOT_FOUND", "Registro administrativo não encontrado."
+        )
+    before = {
+        "name": item.name,
+        "description": item.description,
+        "status": item.status,
+        "data": item.data,
+        "version": item.version,
+    }
+    changes = body.model_dump(exclude_unset=True)
+    for field, value in changes.items():
+        setattr(item, field, value)
+    item.version += 1
+    session.flush()
+    append_audit(
+        session,
+        tenant_id=selected,
+        actor_user_id=current.user.id,
+        actor_email=current.user.email,
+        action=f"control.{item.kind}.update",
+        resource_type=item.kind,
+        resource_id=item.id,
+        correlation_id=request.state.correlation_id,
+        before_data=before,
+        after_data={
+            "name": item.name,
+            "description": item.description,
+            "status": item.status,
+            "data": item.data,
+            "version": item.version,
+        },
     )
     session.commit()
     session.refresh(item)

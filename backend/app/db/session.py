@@ -9,15 +9,21 @@ class Base(DeclarativeBase):
     pass
 
 
-engine = create_engine(
-    get_settings().database_url.get_secret_value(),
-    pool_pre_ping=True,
-    pool_size=5,
-    max_overflow=5,
-    pool_timeout=3,
-    connect_args={"connect_timeout": 3, "options": "-c statement_timeout=3000"},
-    hide_parameters=True,
-)
+def engine_options(database_url: str) -> dict:
+    common = {"pool_pre_ping": True, "hide_parameters": True}
+    if database_url.startswith("sqlite"):
+        return {**common, "connect_args": {}}
+    return {
+        **common,
+        "pool_size": 5,
+        "max_overflow": 5,
+        "pool_timeout": 3,
+        "connect_args": {"connect_timeout": 3, "options": "-c statement_timeout=3000"},
+    }
+
+
+database_url = get_settings().database_url.get_secret_value()
+engine = create_engine(database_url, **engine_options(database_url))
 SessionLocal = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 
 

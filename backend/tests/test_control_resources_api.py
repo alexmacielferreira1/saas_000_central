@@ -31,3 +31,37 @@ def test_control_resource_rejects_unknown_kind_and_duplicate(registry_client):  
     assert client.post("/api/v1/control-resources", json=payload(kind="unknown")).status_code == 422
     assert client.post("/api/v1/control-resources", json=payload()).status_code == 201
     assert client.post("/api/v1/control-resources", json=payload()).status_code == 409
+
+
+def test_superadmin_updates_resource_in_context_and_audits_change(registry_client):  # noqa: F811
+    client, _ = registry_client
+    login(client)
+    created = client.post("/api/v1/control-resources", json=payload()).json()
+
+    response = client.patch(
+        f"/api/v1/control-resources/{created['id']}",
+        json={
+            "name": "Administração central",
+            "status": "active",
+            "data": {"route": "/administration", "owner": "Plataforma"},
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["name"] == "Administração central"
+    assert response.json()["data"]["owner"] == "Plataforma"
+    assert response.json()["version"] == 2
+    audit = client.get("/api/v1/audit").json()[0]
+    assert audit["action"] == "control.product_module.update"
+    assert audit["before_data"]["name"] == "Administração de usuários"
+    assert audit["after_data"]["name"] == "Administração central"
+
+
+def test_update_returns_not_found_for_resource_outside_tenant(registry_client):  # noqa: F811
+    client, _ = registry_client
+    login(client)
+    response = client.patch(
+        "/api/v1/control-resources/00000000-0000-0000-0000-000000000000",
+        json={"status": "paused"},
+    )
+    assert response.status_code == 404

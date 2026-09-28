@@ -40,6 +40,15 @@ class ControlResourceCreate(BaseModel):
     data: dict[str, Any] = Field(default_factory=dict)
 
 
+class ControlResourceUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=2, max_length=200)
+    description: str | None = Field(default=None, max_length=2000)
+    status: str | None = Field(
+        default=None, pattern=r"^(draft|active|paused|archived|review)$"
+    )
+    data: dict[str, Any] | None = None
+
+
 class ControlResourceResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: str
