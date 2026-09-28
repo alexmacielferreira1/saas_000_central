@@ -3,7 +3,8 @@ import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Boxes, Users, Settings2, ScrollText, TerminalSquare,
   AlertTriangle, Plug, Search, Menu, ShieldCheck, LogOut,
-  Activity, BookOpen, DatabaseZap,
+  Activity, BookOpen, DatabaseZap, Network, HeartPulse, Bug, ListTodo,
+  Workflow, Coins, BrainCircuit, HardDrive, Rocket, Scale,
 } from "lucide-react";
 import CommandPalette from "@/components/CommandPalette";
 import { TenantProvider } from "@/lib/TenantContext";
@@ -15,16 +16,30 @@ import { Button } from "@/components/ui/button";
 
 const NAV = [
   { to: "/", label: "Home do ecossistema", icon: LayoutDashboard, end: true },
+  { to: "/control-map", label: "Mapa de controle", icon: Network },
   { to: "/resolution", label: "Central de Resolução", icon: Activity },
   { to: "/api-guides", label: "Guias das APIs", icon: BookOpen },
   { to: "/saas", label: "SaaS 360", icon: Boxes },
   { to: "/administration", label: "Administração", icon: Users },
+  { to: "/experience/screens", label: "Governança de telas", icon: Workflow },
   { to: "/configurations", label: "Configurações & Flags", icon: Settings2 },
   { to: "/operations", label: "Centro de Operações", icon: TerminalSquare },
+  { to: "/operations/jobs", label: "Jobs e execuções", icon: ListTodo },
   { to: "/audit", label: "Auditoria", icon: ScrollText },
   { to: "/incidents", label: "Incidentes", icon: AlertTriangle },
   { to: "/integrations", label: "Integrações & Saúde", icon: Plug },
+  { to: "/health", label: "Saúde operacional", icon: HeartPulse },
+  { to: "/errors", label: "Erros e evidências", icon: Bug },
   { to: "/data/imports/new", label: "Importar dados", icon: DatabaseZap },
+  { to: "/commercial/plans", label: "Planos e produtos", icon: Boxes },
+  { to: "/usage", label: "Uso e custos", icon: Coins },
+  { to: "/ai/governance", label: "Governança de IA", icon: BrainCircuit },
+  { to: "/storage", label: "Storage e arquivos", icon: HardDrive },
+  { to: "/operations/releases", label: "Versões e publicações", icon: Rocket },
+  { to: "/security", label: "Segurança", icon: ShieldCheck },
+  { to: "/privacy/data-inventory", label: "Privacidade e LGPD", icon: Scale },
+  { to: "/continuity/backups", label: "Continuidade e backups", icon: DatabaseZap },
+  { to: "/docs", label: "Documentação", icon: BookOpen },
 ];
 
 export default function AdminLayout() {
@@ -61,7 +76,7 @@ export default function AdminLayout() {
         </div>
       </div>
 
-      <nav className="flex-1 space-y-0.5 px-3 py-2">
+      <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
         {NAV.map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}

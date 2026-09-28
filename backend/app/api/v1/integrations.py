@@ -1,3 +1,4 @@
+import os
 from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
@@ -14,6 +15,7 @@ from app.schemas.integration import (
     ConnectionResponse,
     ObservationResponse,
 )
+from app.services.connectors import connector_for
 from app.tenancy.context import CurrentSession, get_current_session
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy import select
@@ -190,3 +192,95 @@ def list_observations(
         )
         for observation, environment in rows
     ]
+
+
+@router.post("/connections/{connection_id}/probe", response_model=ObservationResponse)
+def probe_connection(
+    connection_id: str,
+    request: Request,
+    current: Authenticated,
+    session: DbSession,
+):
+    """Executa uma verificacao administrativa e persiste a evidencia observada."""
+    tenant_id = selected_tenant(current)
+    if not can_write_saas(session, current, tenant_id):
+        return error_response(
+            request,
+            403,
+            "INTEGRATION_PROBE_FORBIDDEN",
+            "Seu perfil nao pode verificar integracoes.",
+        )
+    row = session.execute(
+        select(SaasConnection, SaasEnvironment, SaasProduct)
+        .join(SaasEnvironment, SaasEnvironment.connection_id == SaasConnection.id)
+        .join(SaasProduct, SaasProduct.id == SaasConnection.saas_product_id)
+        .where(
+            SaasConnection.id == connection_id,
+            SaasConnection.tenant_id == tenant_id,
+            SaasEnvironment.tenant_id == tenant_id,
+            SaasProduct.tenant_id == tenant_id,
+        )
+    ).first()
+    if row is None:
+        return error_response(request, 404, "INTEGRATION_NOT_FOUND", "Integracao nao encontrada.")
+
+    connection, environment, product = row
+    token = os.getenv(connection.credential_ref)
+    observed_at = datetime.now(UTC)
+    status = "unavailable"
+    failure_code = None
+    evidence: dict = {"product": product.slug, "environment": environment.name}
+
+    if not token:
+        status = "not_configured"
+        failure_code = "CREDENTIAL_REFERENCE_UNAVAILABLE"
+        evidence["message"] = "Configure a credencial no ambiente do backend da Central."
+    else:
+        result = connector_for(product.slug, environment.base_url, token).probe(
+            request.state.correlation_id
+        )
+        status = result.status
+        failure_code = result.failure_code
+        evidence.update(result.evidence)
+
+    latency_ms = 0 if not token else result.latency_ms
+    observation = IntegrationObservation(
+        tenant_id=tenant_id,
+        connection_id=connection.id,
+        environment_id=environment.id,
+        status=status,
+        source=f"central-probe:{product.slug}",
+        evidence=evidence,
+        latency_ms=latency_ms,
+        failure_code=failure_code,
+        observed_at=observed_at,
+    )
+    connection.status = status
+    session.add(observation)
+    session.flush()
+    append_audit(
+        session,
+        tenant_id=tenant_id,
+        actor_user_id=current.user.id,
+        actor_email=current.user.email,
+        action="integration.connection.probe",
+        resource_type="saas_connection",
+        resource_id=connection.id,
+        correlation_id=request.state.correlation_id,
+        after_data={"status": status, "failure_code": failure_code, "latency_ms": latency_ms},
+    )
+    session.commit()
+    session.refresh(observation)
+    return ObservationResponse(
+        id=observation.id,
+        connection_id=observation.connection_id,
+        environment_id=observation.environment_id,
+        environment=environment.name,
+        status=observation.status,
+        freshness="confirmed",
+        source=observation.source,
+        evidence=observation.evidence,
+        latency_ms=observation.latency_ms,
+        failure_code=observation.failure_code,
+        observed_at=aware_utc(observation.observed_at),
+    )

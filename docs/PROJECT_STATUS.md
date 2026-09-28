@@ -2,7 +2,7 @@
 
 Marco atual: **M0 — blocked**.
 
-Verificado em 2026-09-27T13:12:48.061952+00:00.
+Verificado em 2026-09-28T00:38:00+00:00.
 
 | Verificação | Estado | Evidência |
 |---|---|---|
@@ -17,7 +17,7 @@ Verificado em 2026-09-27T13:12:48.061952+00:00.
 | frontend_typecheck | passed | Exit 0; evidence: .runtime/checks/frontend_typecheck.log |
 | http_smoke | passed | Exit 0; evidence: .runtime/checks/http_smoke.log |
 | original_frontend_integrity | passed | 147 original files; 42 approved typed corrections; 0 unapproved changes or missing.  |
-| frontend_functional_validation | blocked | Autenticação, sessão, Home, catálogo/detalhe de SaaS, administradores, auditoria, manifests, usuários, configurações, PowerQuery local, perfis/permissões e Operações possuem contratos nativos. Conexões Central ↔ SaaS, ambientes e observações de saúde agora têm modelos e API nativos, com segredo referenciado e isolamento por organização. São 68 testes backend e 72 frontend aprovados. A migration 0010 ainda precisa ser aplicada no PostgreSQL local; execução remota dos comandos, QA integral no navegador, Resolução por logs, motor persistente de importação e subtelas administrativas continuam bloqueando a paridade. |
+| frontend_functional_validation | blocked | Integrações usa conexões/ambientes/observações nativas; probe Health+Manifest, MediaMindConnector e catálogo administrativo persistente foram implementados. Mapa, Saúde, Erros, Jobs, Governança de telas, Comercial, Custos, IA, Storage, Releases, Segurança, LGPD, Continuidade e Documentação estão navegáveis. São 72 testes backend e 106 frontend aprovados. A migration 0011 foi validada offline e em SQLite QA, mas o PostgreSQL configurado expirou; executor remoto, Incidentes/Resolução nativos e Import Engine persistente ainda bloqueiam paridade. |
 | git_clean_at_check | pending | Snapshot before writing this report. Verify and commit reviewed work separately. |
 
 M1–M7 continuam pendentes. Os relatórios não comprovam paridade nem uso em produção.

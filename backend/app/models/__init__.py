@@ -1,4 +1,5 @@
 from app.models.audit import AuditLog
+from app.models.control import ControlResource
 from app.models.identity import (
     AccessProfile,
     AuthSession,
@@ -18,6 +19,7 @@ __all__ = [
     "AuthSession",
     "CapabilityManifest",
     "Configuration",
+    "ControlResource",
     "IntegrationObservation",
     "ProductUser",
     "Membership",

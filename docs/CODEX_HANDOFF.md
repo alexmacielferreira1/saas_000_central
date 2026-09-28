@@ -117,3 +117,12 @@
 - Observações distinguem evidência confirmada de evidência desatualizada pelo prazo de validade configurado, sem transformar ausência de dado em saúde falsa.
 - Verificação disponível: 68 testes backend e lint da fatia aprovados. O Docker Desktop não respondeu ao pipe local, portanto aplicação da migration e teste PostgreSQL permanecem pendentes; nenhum Neon/Render foi alterado.
 - Próximo bloco: cliente HTTP autenticado para manifesto/health/readiness/version do MediaMind, persistência das observações e despacho idempotente de comandos dry-run.
+
+## Bloco Control Plane expandido em 27/09/2026
+
+- `Integrations.jsx` passou a consumir conexões, ambientes e observações nativas. O botão `Verificar agora` executa `POST /api/v1/integrations/connections/{id}/probe`, persiste evidência e auditoria e atualiza o estado exibido.
+- Foi criada a interface `BaseSaasConnector` e o primeiro `MediaMindConnector`, que consulta Health e Capability Manifest com timeout, correlação, segredo somente no backend e classificação de falha.
+- Novas telas navegáveis e conectadas: Mapa de controle, Saúde operacional, Erros e evidências, Jobs e execuções, Visão da administração, Governança de telas, Planos e produtos, Uso e custos, Governança de IA, Storage, Versões, Segurança, LGPD, Continuidade e Documentação.
+- A migration `0011_control_resources` e `GET/POST /api/v1/control-resources` criam a primeira persistência tenant-scoped e auditada para módulos, telas, planos, políticas, releases, inventários, backups e demais registros administrativos. A jornada real no navegador criou e releu `Administração Central` em Governança de telas.
+- Validação: 72 testes backend (incluindo probe/connector e catálogo), 106 frontend, Ruff, lint e build aprovados. O SQL da migration foi gerado; aplicação no PostgreSQL configurado falhou por timeout de conexão. A base SQLite de QA criou a tabela e validou a jornada.
+- Limites ainda abertos: executor remoto de AdminOperation, incidentes e Resolution nativos, importação persistente, especialização dos domínios comerciais/Screen Registry e administração completa de pessoas/acesso efetivo. Nenhum Render/Neon foi alterado.

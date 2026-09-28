@@ -82,6 +82,7 @@ vi.mock('@/api/saasRegistry', () => ({
   createProductUser: vi.fn(),
   listConfigurations: vi.fn().mockResolvedValue([]),
   createConfiguration: vi.fn(),
+  listAuditLogs: vi.fn().mockResolvedValue([]),
 }));
 
 vi.mock('@/api/access', () => ({
@@ -97,6 +98,18 @@ vi.mock('@/api/operations', () => ({
   listOperations: vi.fn().mockResolvedValue([]),
   createOperation: vi.fn(),
   updateOperationStatus: vi.fn(),
+}));
+
+vi.mock('@/api/integrations', () => ({
+  listConnections: vi.fn().mockResolvedValue([]),
+  listObservations: vi.fn().mockResolvedValue([]),
+  createConnection: vi.fn(),
+  probeConnection: vi.fn(),
+}));
+
+vi.mock('@/api/controlResources', () => ({
+  listControlResources: vi.fn().mockResolvedValue([]),
+  createControlResource: vi.fn(),
 }));
 
 vi.mock('@/lib/AuthContext', () => ({
@@ -118,18 +131,35 @@ authState.current = authenticatedState();
 
 const ADMIN_CASES = [
   ['/', 'Home do ecossistema'],
+  ['/control-map', 'Mapa de controle'],
   ['/resolution', 'Central de Resolução'],
   ['/data/imports/new', 'PowerQuery de importação'],
   ['/api-guides', 'Guias das APIs (Guarda-chuva)'],
   ['/saas', 'SaaS 360'],
   ['/saas/saas-1', 'Produto de teste'],
   ['/administration', 'Administração'],
+  ['/administration/overview', 'Visão da administração'],
+  ['/experience/screens', 'Governança de telas'],
+  ['/experience/feature-flags', 'Módulos e feature flags'],
   ['/users', 'Administração'],
   ['/configurations', 'Configurações & Feature Flags'],
   ['/operations', 'Centro de Operações'],
+  ['/operations/jobs', 'Jobs e execuções'],
   ['/audit', 'Auditoria distribuída'],
   ['/incidents', 'Incidentes & Problemas'],
-  ['/integrations', 'Integrações & Health Center'],
+  ['/integrations', 'Integrações e saúde'],
+  ['/health', 'Saúde operacional'],
+  ['/errors', 'Erros e evidências'],
+  ['/commercial/plans', 'Planos e produtos'],
+  ['/usage', 'Uso e custos'],
+  ['/costs', 'Uso e custos'],
+  ['/ai/governance', 'Governança de IA'],
+  ['/storage', 'Storage e arquivos'],
+  ['/operations/releases', 'Versões e publicações'],
+  ['/security', 'Segurança e acessos'],
+  ['/privacy/data-inventory', 'Privacidade e LGPD'],
+  ['/continuity/backups', 'Continuidade e backups'],
+  ['/docs', 'Documentação operacional'],
 ];
 
 describe('administrative route rendering', () => {

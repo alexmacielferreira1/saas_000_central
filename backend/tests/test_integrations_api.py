@@ -180,3 +180,65 @@ def test_observation_freshness_distinguishes_confirmed_and_stale_naive_timestamp
     assert by_state["confirmed"]["status"] == "healthy"
     assert by_state["stale"]["status"] == "healthy"
     assert by_state["confirmed"]["source"] == "mediamind-ai"
+
+
+def test_probe_persists_actionable_failure_when_credential_is_not_configured(
+    registry_client, monkeypatch,  # noqa: F811
+):
+    client, _ = registry_client
+    login(client)
+    product = create_product(client)
+    connection = client.post(
+        "/api/v1/integrations/connections",
+        json=connection_payload(product["id"]),
+    ).json()
+    monkeypatch.delenv("MEDIAMIND_HUB_ADMIN_TOKEN", raising=False)
+
+    response = client.post(f"/api/v1/integrations/connections/{connection['id']}/probe")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["status"] == "not_configured"
+    assert payload["failure_code"] == "CREDENTIAL_REFERENCE_UNAVAILABLE"
+    assert payload["freshness"] == "confirmed"
+    listed = client.get("/api/v1/integrations/observations").json()
+    assert listed[0]["id"] == payload["id"]
+    audit = client.get("/api/v1/audit").json()[0]
+    assert audit["action"] == "integration.connection.probe"
+
+
+def test_probe_uses_connector_and_persists_manifest_and_health(
+    registry_client, monkeypatch,  # noqa: F811
+):
+    client, _ = registry_client
+    login(client)
+    product = create_product(client)
+    connection = client.post(
+        "/api/v1/integrations/connections", json=connection_payload(product["id"])
+    ).json()
+    monkeypatch.setenv("MEDIAMIND_HUB_ADMIN_TOKEN", "secret-test-token")
+
+    from app.services.connectors.base import ProbeResult
+
+    class Connector:
+        def probe(self, correlation_id):
+            assert correlation_id
+            return ProbeResult(
+                status="healthy",
+                latency_ms=12,
+                evidence={
+                    "health": {"status": "healthy"},
+                    "manifest": {"admin_api_version": "v1"},
+                },
+            )
+
+    monkeypatch.setattr(
+        "app.api.v1.integrations.connector_for", lambda product_slug, base_url, token: Connector()
+    )
+
+    response = client.post(f"/api/v1/integrations/connections/{connection['id']}/probe")
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "healthy"
+    assert response.json()["latency_ms"] == 12
+    assert response.json()["evidence"]["manifest"]["admin_api_version"] == "v1"

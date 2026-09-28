@@ -24,7 +24,9 @@ export default function UsersAccess() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
-  const [view, setView] = useState("managers");
+  const allowedViews = ["saas", "managers", "product", "profiles", "permissions"];
+  const requestedView = searchParams.get("view");
+  const [view, setView] = useState(allowedViews.includes(requestedView) ? requestedView : "managers");
   const [error, setError] = useState(false);
   const [managerOpen, setManagerOpen] = useState(false);
   const [productOpen, setProductOpen] = useState(false);
@@ -56,6 +58,11 @@ export default function UsersAccess() {
     const novo = searchParams.get("novo");
     if (novo === "manager" && can("manager")) { setView("managers"); setManagerOpen(true); setSearchParams({}, { replace: true }); }
     else if (novo === "product" && can("product-user")) { setView("product"); setProductOpen(true); setSearchParams({}, { replace: true }); }
+  }, [searchParams]);
+
+  useEffect(() => {
+    const nextView = searchParams.get("view");
+    if (allowedViews.includes(nextView)) setView(nextView);
   }, [searchParams]);
 
   const filteredM = managers.filter((m) => !q || (m.full_name || "").toLowerCase().includes(q.toLowerCase()) || (m.email || "").toLowerCase().includes(q.toLowerCase()));

@@ -4,8 +4,8 @@
   "manual_checks": {
     "frontend_functional_validation": {
       "status": "blocked",
-      "updated_at": "2026-09-27T18:10:30Z",
-      "notes": "Autenticação, sessão, Home, catálogo/detalhe de SaaS, administradores, auditoria, manifests, usuários, configurações, PowerQuery local, perfis/permissões e Operações possuem contratos nativos. Conexões Central ↔ SaaS, ambientes e observações de saúde agora têm modelos e API nativos, com segredo referenciado e isolamento por organização. São 68 testes backend e 72 frontend aprovados. A migration 0010 ainda precisa ser aplicada no PostgreSQL local; execução remota dos comandos, QA integral no navegador, Resolução por logs, motor persistente de importação e subtelas administrativas continuam bloqueando a paridade."
+      "updated_at": "2026-09-28T00:38:00Z",
+      "notes": "Integrações usa conexões/ambientes/observações nativas; probe Health+Manifest, MediaMindConnector e catálogo administrativo persistente foram implementados. Mapa, Saúde, Erros, Jobs, Governança de telas, Comercial, Custos, IA, Storage, Releases, Segurança, LGPD, Continuidade e Documentação estão navegáveis. São 72 testes backend e 106 frontend aprovados. A migration 0011 foi validada offline e em SQLite QA, mas o PostgreSQL configurado expirou; executor remoto, Incidentes/Resolução nativos e Import Engine persistente ainda bloqueiam paridade."
     }
   },
   "milestones": {
@@ -70,8 +70,8 @@
         },
         "frontend_functional_validation": {
           "status": "blocked",
-          "updated_at": "2026-09-27T18:10:30Z",
-          "notes": "Autenticação, sessão, Home, catálogo/detalhe de SaaS, administradores, auditoria, manifests, usuários, configurações, PowerQuery local, perfis/permissões e Operações possuem contratos nativos. Conexões Central ↔ SaaS, ambientes e observações de saúde agora têm modelos e API nativos, com segredo referenciado e isolamento por organização. São 68 testes backend e 72 frontend aprovados. A migration 0010 ainda precisa ser aplicada no PostgreSQL local; execução remota dos comandos, QA integral no navegador, Resolução por logs, motor persistente de importação e subtelas administrativas continuam bloqueando a paridade."
+          "updated_at": "2026-09-28T00:38:00Z",
+          "notes": "Integrações usa conexões/ambientes/observações nativas; probe Health+Manifest, MediaMindConnector e catálogo administrativo persistente foram implementados. Mapa, Saúde, Erros, Jobs, Governança de telas, Comercial, Custos, IA, Storage, Releases, Segurança, LGPD, Continuidade e Documentação estão navegáveis. São 72 testes backend e 106 frontend aprovados. A migration 0011 foi validada offline e em SQLite QA, mas o PostgreSQL configurado expirou; executor remoto, Incidentes/Resolução nativos e Import Engine persistente ainda bloqueiam paridade."
         },
         "git_clean_at_check": {
           "status": "pending",
