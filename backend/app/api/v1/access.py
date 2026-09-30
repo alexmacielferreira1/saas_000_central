@@ -17,6 +17,7 @@ from app.schemas.access import (
     EffectiveProfile,
     ManagerCreate,
     ManagerResponse,
+    ManagerUpdate,
     OrganizationUnitCreate,
     OrganizationUnitResponse,
     PermissionCreate,
@@ -101,6 +102,58 @@ def create_manager(
     session.add(membership)
     session.commit()
     return response_for(user, membership)
+
+
+@router.patch("/managers/{user_id}", response_model=ManagerResponse)
+def update_manager(
+    user_id: str,
+    body: ManagerUpdate,
+    request: Request,
+    current: Annotated[CurrentSession, Depends(get_current_session)],
+    session: Annotated[Session, Depends(get_session)],
+):
+    selected = tenant_id(current)
+    if role_for(session, current) != "superadmin":
+        return error_response(request, 403, "MANAGER_WRITE_FORBIDDEN", "Ação não autorizada.")
+    row = session.execute(
+        select(User, Membership)
+        .join(Membership, Membership.user_id == User.id)
+        .where(Membership.tenant_id == selected, User.id == user_id)
+    ).one_or_none()
+    if row is None:
+        return error_response(request, 404, "MANAGER_NOT_FOUND", "Usuário não encontrado.")
+    user, membership = row
+    changes = body.model_dump(exclude_unset=True)
+    before = response_for(user, membership).model_dump()
+    if "full_name" in changes:
+        user.full_name = changes["full_name"].strip()
+    if "role" in changes:
+        membership.role = changes["role"]
+    if "status" in changes:
+        if user.id == current.user.id and changes["status"] == "suspended":
+            return error_response(
+                request,
+                422,
+                "SELF_SUSPENSION_FORBIDDEN",
+                "Não é possível suspender a própria conta.",
+            )
+        membership.is_active = changes["status"] == "active"
+    session.flush()
+    after = response_for(user, membership)
+    append_audit(
+        session,
+        tenant_id=selected,
+        actor_user_id=current.user.id,
+        actor_email=current.user.email,
+        action="manager.update",
+        resource_type="manager",
+        resource_id=user.id,
+        correlation_id=request.state.correlation_id,
+        before_data=before,
+        after_data=after.model_dump(),
+    )
+    session.commit()
+    return after
 
 
 @router.get("/permissions", response_model=list[PermissionResponse])

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   createOrganizationUnit, getEffectiveAccess, listAccessAssignments, listManagers,
-  listOrganizationUnits, listPermissions, listProfiles, updateAccessAssignment,
+  listOrganizationUnits, listPermissions, listProfiles, updateAccessAssignment, updateManager,
 } from "@/api/access";
 import { listProductUsers, listSaas } from "@/api/saasRegistry";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -38,6 +38,8 @@ export default function UsersAccess() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [permissionOpen, setPermissionOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedManager, setSelectedManager] = useState(null);
+  const [managerForm, setManagerForm] = useState({ full_name: "", role: "viewer", status: "active" });
   const [effective, setEffective] = useState(null);
   const [accessForm, setAccessForm] = useState({ profile_id: "", organization_unit_id: "", job_title: "", function_name: "", scope_products: "", allow_permissions: "", deny_permissions: "" });
   const [unitForm, setUnitForm] = useState({ kind: "department", name: "", parent_id: "" });
@@ -87,6 +89,7 @@ export default function UsersAccess() {
 
   const openEffectiveAccess = async (manager) => {
     const assignment = assignments.find((item) => item.user_id === manager.id);
+    setView("effective");
     setSelectedUser(manager);
     setAccessForm({
       profile_id: assignment?.profile_id || "",
@@ -124,6 +127,22 @@ export default function UsersAccess() {
     await createOrganizationUnit({ ...unitForm, parent_id: unitForm.parent_id || null });
     setUnitForm({ kind: "department", name: "", parent_id: "" });
     setContextMessage("Estrutura criada e auditada.");
+    await load();
+  };
+
+  const openManagerWorkspace = (manager) => {
+    setSelectedManager(manager);
+    setManagerForm({ full_name: manager.full_name, role: manager.role, status: manager.status });
+    setContextMessage("");
+    requestAnimationFrame(() => document.getElementById("manager-workspace")?.scrollIntoView?.({ behavior: "smooth", block: "start" }));
+  };
+
+  const saveManager = async (event) => {
+    event.preventDefault();
+    const updated = await updateManager(selectedManager.id, managerForm);
+    setSelectedManager(updated);
+    setManagerForm({ full_name: updated.full_name, role: updated.role, status: updated.status });
+    setContextMessage("Conta atualizada e alteração registrada na auditoria.");
     await load();
   };
 
@@ -203,7 +222,7 @@ export default function UsersAccess() {
           {selectedUser && <Card id="effective-access-workspace" className="scroll-mt-6 border-indigo-300"><div className="p-5"><div className="mb-4"><p className="text-xs font-semibold uppercase text-indigo-600">Acesso efetivo</p><h2 className="text-xl font-semibold">{selectedUser.full_name}</h2><p className="text-sm text-slate-500">Configure o vínculo e confira abaixo o resultado herdado.</p></div><form onSubmit={saveAssignment} className="grid gap-3 md:grid-cols-2"><label className="text-sm">Perfil<select value={accessForm.profile_id} onChange={(e) => setAccessForm({ ...accessForm, profile_id: e.target.value })} className="mt-1 h-9 w-full rounded-lg border px-3"><option value="">Sem perfil</option>{profiles.map((profile) => <option key={profile.id} value={profile.id}>{profile.name} · v{profile.version}</option>)}</select></label><label className="text-sm">Equipe / setor / unidade<select value={accessForm.organization_unit_id} onChange={(e) => setAccessForm({ ...accessForm, organization_unit_id: e.target.value })} className="mt-1 h-9 w-full rounded-lg border px-3"><option value="">Sem vínculo</option>{units.map((unit) => <option key={unit.id} value={unit.id}>{unit.name} ({unit.kind})</option>)}</select></label><label className="text-sm">Cargo<input value={accessForm.job_title} onChange={(e) => setAccessForm({ ...accessForm, job_title: e.target.value })} className="mt-1 h-9 w-full rounded-lg border px-3" /></label><label className="text-sm">Função<input value={accessForm.function_name} onChange={(e) => setAccessForm({ ...accessForm, function_name: e.target.value })} className="mt-1 h-9 w-full rounded-lg border px-3" /></label><label className="text-sm">Escopo de produtos<input value={accessForm.scope_products} onChange={(e) => setAccessForm({ ...accessForm, scope_products: e.target.value })} placeholder="mediamind-ai, produto-2" className="mt-1 h-9 w-full rounded-lg border px-3" /></label><label className="text-sm">Permissões adicionais<input value={accessForm.allow_permissions} onChange={(e) => setAccessForm({ ...accessForm, allow_permissions: e.target.value })} placeholder="conteudo.publicar" className="mt-1 h-9 w-full rounded-lg border px-3" /></label><label className="text-sm md:col-span-2">Permissões bloqueadas<input value={accessForm.deny_permissions} onChange={(e) => setAccessForm({ ...accessForm, deny_permissions: e.target.value })} placeholder="saas.excluir" className="mt-1 h-9 w-full rounded-lg border px-3" /></label><div className="md:col-span-2"><Button type="submit"><KeyRound className="h-4 w-4" />Salvar e recalcular acesso</Button></div></form>{effective && <div className="mt-5 grid gap-3 border-t pt-4 md:grid-cols-2"><div><p className="text-xs font-semibold uppercase text-slate-500">Origem e herança</p><p className="mt-1 text-sm">Papel: {effective.membership_role}</p><p className="text-sm">Perfil: {effective.profile?.name || "—"}</p><p className="text-sm">Estrutura: {effective.organization_path.join(" → ") || "—"}</p><div className="mt-2 flex flex-wrap gap-1">{effective.sources.map((source) => <span key={source} className="rounded bg-slate-100 px-2 py-1 text-xs">{source}</span>)}</div></div><div><p className="text-xs font-semibold uppercase text-slate-500">Resultado</p><div className="mt-2 flex flex-wrap gap-1">{effective.permissions.map((permission) => <span key={permission} className="rounded bg-emerald-50 px-2 py-1 text-xs text-emerald-700">{permission}</span>)}{effective.denied_permissions.map((permission) => <span key={permission} className="rounded bg-rose-50 px-2 py-1 text-xs text-rose-700">Bloqueada: {permission}</span>)}</div></div></div>}{contextMessage && <p role="status" className="mt-3 text-sm text-emerald-700">{contextMessage}</p>}</div></Card>}
         </div>
       ) : view === "managers" ? (
-        <Card>
+        <div className="space-y-4"><Card>
           {filteredM.length === 0 ? <EmptyState icon={ShieldCheck} title="Nenhum administrador" /> : (
             <div className="divide-y divide-slate-100">
               {filteredM.map((m) => (
@@ -216,11 +235,12 @@ export default function UsersAccess() {
                   <div className="hidden text-xs text-slate-400 sm:block">{m.scope_saas || "—"}</div>
                   <StatusBadge map={MANAGER_ROLE} value={m.role} />
                   <StatusBadge map={MANAGER_STATUS} value={m.status} />
+                  <Button type="button" variant="outline" size="sm" onClick={() => openManagerWorkspace(m)}>Administrar aqui</Button>
                 </div>
               ))}
             </div>
           )}
-        </Card>
+        </Card>{selectedManager && <Card id="manager-workspace" className="scroll-mt-6 border-indigo-300"><form onSubmit={saveManager} className="grid gap-4 p-5 md:grid-cols-3"><div className="md:col-span-3"><p className="text-xs font-semibold uppercase text-indigo-600">Conta e acesso</p><h2 className="text-xl font-semibold">{selectedManager.email}</h2><p className="text-sm text-slate-500">Edite e suspenda sem sair da Administração.</p></div><label className="text-sm">Nome<input required value={managerForm.full_name} onChange={(e) => setManagerForm({ ...managerForm, full_name: e.target.value })} className="mt-1 h-9 w-full rounded-lg border px-3" /></label><label className="text-sm">Perfil operacional<select value={managerForm.role} onChange={(e) => setManagerForm({ ...managerForm, role: e.target.value })} className="mt-1 h-9 w-full rounded-lg border px-3">{Object.entries(MANAGER_ROLE).map(([value, item]) => <option key={value} value={value}>{item.label}</option>)}</select></label><label className="text-sm">Status<select value={managerForm.status} onChange={(e) => setManagerForm({ ...managerForm, status: e.target.value })} className="mt-1 h-9 w-full rounded-lg border px-3"><option value="active">Ativo</option><option value="suspended">Suspenso</option></select></label><div className="flex items-center gap-3 md:col-span-3"><Button type="submit">Salvar alterações</Button><Button type="button" variant="outline" onClick={() => openEffectiveAccess(selectedManager)}>Configurar acesso efetivo</Button>{contextMessage && <p role="status" className="text-sm text-emerald-700">{contextMessage}</p>}</div></form></Card>}</div>
       ) : view === "product" ? (
         <Card>
           {filteredU.length === 0 ? <EmptyState icon={Users} title="Nenhum usuário sincronizado" /> : (

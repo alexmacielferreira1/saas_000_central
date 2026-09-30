@@ -17,7 +17,7 @@ Verificado em 2026-09-29T21:55:00-03:00.
 | frontend_typecheck | passed | Exit 0; evidence: .runtime/checks/frontend_typecheck.log |
 | http_smoke | passed | Exit 0; evidence: .runtime/checks/http_smoke.log |
 | original_frontend_integrity | passed | 147 original files; 42 approved typed corrections; 0 unapproved changes or missing.  |
-| frontend_functional_validation | blocked | Os centros administrativos possuem trabalho contextual persistente. A Administração ganhou estrutura organizacional, vínculo de perfil/função/unidade e explicação do acesso efetivo. São 78 testes backend e 109 frontend aprovados. Formulários, Import Engine persistente, executor remoto, Incidentes/Resolução nativos e o restante do IAM ainda bloqueiam paridade. |
+| frontend_functional_validation | blocked | A Administração possui estrutura organizacional, acesso efetivo e ciclo de conta inicial: criação, edição de nome/papel, suspensão e reativação contextual, persistida e auditada. São 79 testes backend e 110 frontend aprovados. Formulários, Import Engine persistente, executor remoto, Incidentes/Resolução nativos e o restante do IAM ainda bloqueiam paridade. |
 | git_clean_at_check | pending | Snapshot before writing this report. Verify and commit reviewed work separately. |
 
 M1–M7 continuam pendentes. Os relatórios não comprovam paridade nem uso em produção.
@@ -36,4 +36,5 @@ Não ignorar testes nem desligar verificações. Resolver a causa e executar nov
 - `OrganizationUnit` e `UserAccessAssignment` persistem departamentos/setores/equipes/unidades e o vínculo administrativo do usuário.
 - A API lista e cria estruturas, salva atribuições e explica o acesso efetivo com perfil, origem, hierarquia e permissões negadas.
 - A Administração permite executar essas ações na própria tela. O checklist `CENTRAL_NEXT_SESSIONS_CHECKLIST.md` preserva o escopo transversal de formulários, Excel/PowerQuery, ponte com SaaS, IA operacional e governança.
-- Verificação fresca: 78 testes backend, 109 frontend, lint, typecheck e build aprovados. O marco permanece M0 bloqueado e nenhum deploy de produção foi executado.
+- Verificação fresca: 79 testes backend, 110 frontend, lint, typecheck e build aprovados. O marco permanece M0 bloqueado e nenhum deploy de produção foi executado.
+- O administrador agora edita nome e papel e suspende/reativa contas no mesmo contexto; uma conta suspensa não autentica e a alteração é auditada.

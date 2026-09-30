@@ -16,7 +16,7 @@ Uma função somente pode ser marcada como concluída quando tiver interface com
 ## P0 — Administração universal
 
 - [ ] Completar Pessoa → Conta → vínculo com empresa → Perfil → Função → Equipe → Setor → Unidade → Escopo → Exceção.
-- [ ] Usuários: criar, convidar, editar, ativar, suspender, bloquear, reativar, exclusão lógica, troca/redefinição de senha, validade e histórico.
+- [ ] Usuários: criar, convidar, editar, ativar, suspender, bloquear, reativar, exclusão lógica, troca/redefinição de senha, validade e histórico. **Parcial:** criação, edição de nome/papel, suspensão e reativação já estão persistidas, autorizadas e auditadas.
 - [ ] Perfis: criar, editar, duplicar, comparar, clonar como base e personalizar por usuário sem alterar o perfil original.
 - [ ] Matriz Perfil/Usuário × Produto × Módulo × Tela × Recurso × Ação.
 - [ ] Explicar acesso efetivo, heranças, bloqueios e exceções; incluir simulador e comparação.

@@ -5,7 +5,7 @@
     "frontend_functional_validation": {
       "status": "blocked",
       "updated_at": "2026-09-30T00:55:00Z",
-      "notes": "Centros administrativos possuem edição contextual persistente. Administração ganhou estrutura organizacional, atribuição e explicação do acesso efetivo. São 78 testes backend e 109 frontend aprovados. Formulários, Import Engine persistente, executor remoto, Incidentes/Resolução nativos e o restante do IAM ainda bloqueiam paridade."
+      "notes": "Administração possui estrutura organizacional, acesso efetivo e ciclo de conta inicial com edição, suspensão e reativação contextual e auditada. São 79 testes backend e 110 frontend aprovados. Formulários, Import Engine persistente, executor remoto, Incidentes/Resolução nativos e o restante do IAM ainda bloqueiam paridade."
     }
   },
   "milestones": {
@@ -71,7 +71,7 @@
         "frontend_functional_validation": {
           "status": "blocked",
           "updated_at": "2026-09-30T00:55:00Z",
-          "notes": "Centros administrativos possuem edição contextual persistente. Administração ganhou estrutura organizacional, atribuição e explicação do acesso efetivo. São 78 testes backend e 109 frontend aprovados. Formulários, Import Engine persistente, executor remoto, Incidentes/Resolução nativos e o restante do IAM ainda bloqueiam paridade."
+          "notes": "Administração possui estrutura organizacional, acesso efetivo e ciclo de conta inicial com edição, suspensão e reativação contextual e auditada. São 79 testes backend e 110 frontend aprovados. Formulários, Import Engine persistente, executor remoto, Incidentes/Resolução nativos e o restante do IAM ainda bloqueiam paridade."
         },
         "git_clean_at_check": {
           "status": "pending",

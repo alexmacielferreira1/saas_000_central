@@ -10,6 +10,14 @@ class ManagerCreate(BaseModel):
     password: str = Field(min_length=12, max_length=200)
 
 
+class ManagerUpdate(BaseModel):
+    full_name: str | None = Field(default=None, min_length=1, max_length=200)
+    role: str | None = Field(
+        default=None, pattern=r"^(superadmin|delegated_admin|operator|viewer)$"
+    )
+    status: str | None = Field(default=None, pattern=r"^(active|suspended)$")
+
+
 class ManagerResponse(BaseModel):
     id: str
     full_name: str

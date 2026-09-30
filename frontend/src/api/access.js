@@ -8,6 +8,10 @@ export function createManager(values) {
   return request('/access/managers', { method: 'POST', body: values });
 }
 
+export function updateManager(userId, values) {
+  return request(`/access/managers/${userId}`, { method: 'PATCH', body: values });
+}
+
 export function listPermissions() {
   return request('/access/permissions');
 }

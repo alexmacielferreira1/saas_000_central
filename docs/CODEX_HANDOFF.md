@@ -140,5 +140,6 @@
 
 - Commit-base `b7b5b38`: migration `0012_organization_access`, entidades de estrutura organizacional e atribuição, endpoints tenant-scoped e auditados e interface contextual em `/administration`.
 - O acesso efetivo agora explicita papel, perfil, caminho organizacional, fontes, permissões concedidas e bloqueadas. Esta é a primeira fatia, não a Administração completa.
-- A continuidade obrigatória está em `CENTRAL_NEXT_SESSIONS_CHECKLIST.md`. A próxima fatia funcional é completar o ciclo de vida do usuário e exceções temporárias; depois Form Builder e Import Engine persistente estilo PowerQuery.
-- Verificação fresca desta sessão: 78 testes backend, 109 frontend, lint e typecheck aprovados. Nenhum Render/Neon foi alterado.
+- A conta administrativa agora pode ter nome/papel editados e ser suspensa/reativada na própria página; suspensão bloqueia autenticação e a mutação gera `manager.update` na auditoria.
+- A continuidade obrigatória está em `CENTRAL_NEXT_SESSIONS_CHECKLIST.md`. A próxima fatia funcional é convite, validade, sessões/MFA e exceções temporárias; depois Form Builder e Import Engine persistente estilo PowerQuery.
+- Verificação fresca desta sessão: 79 testes backend, 110 frontend, lint, typecheck e build aprovados. Nenhum Render/Neon foi alterado.

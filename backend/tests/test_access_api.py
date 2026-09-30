@@ -82,6 +82,44 @@ def test_superadmin_creates_administrator_with_login(access_client):
     assert [item["email"] for item in listed] == ["alex@example.com", "gestora@example.com"]
 
 
+def test_superadmin_updates_and_suspends_administrator(access_client):
+    created = access_client.post(
+        "/api/v1/access/managers",
+        json={
+            "full_name": "Gestora Central",
+            "email": "gestora@example.com",
+            "role": "viewer",
+            "password": "Senha-temporaria-2026!",
+        },
+    ).json()
+
+    updated = access_client.patch(
+        f"/api/v1/access/managers/{created['id']}",
+        json={"full_name": "Gestora de Operações", "role": "operator", "status": "suspended"},
+    )
+
+    assert updated.status_code == 200
+    assert updated.json()["full_name"] == "Gestora de Operações"
+    assert updated.json()["role"] == "operator"
+    assert updated.json()["status"] == "suspended"
+    denied_login = access_client.post(
+        "/api/v1/auth/login",
+        json={"email": "gestora@example.com", "password": "Senha-temporaria-2026!"},
+    )
+    assert denied_login.status_code == 401
+
+    reactivated = access_client.patch(
+        f"/api/v1/access/managers/{created['id']}",
+        json={"status": "active"},
+    )
+    assert reactivated.status_code == 200
+    assert reactivated.json()["status"] == "active"
+    assert access_client.post(
+        "/api/v1/auth/login",
+        json={"email": "gestora@example.com", "password": "Senha-temporaria-2026!"},
+    ).status_code == 200
+
+
 def test_superadmin_creates_permission_and_versioned_profile(access_client):
     permission = access_client.post(
         "/api/v1/access/permissions",
