@@ -2,6 +2,8 @@
 
 Atualizado em 29/09/2026. Este documento preserva os pedidos recentes e os transforma em entregas verificáveis. Ele não declara como pronta nenhuma função ainda não implementada.
 
+Contrato transversal de referência: [`../../_documentacao/standards/21-ADMIN-FORMS-DATA-ENTRY.md`](../../_documentacao/standards/21-ADMIN-FORMS-DATA-ENTRY.md).
+
 ## Estado já entregue
 
 - Autenticação local e Google, estrutura multiempresa, catálogo de SaaS, integrações, operações, auditoria e centros administrativos iniciais.

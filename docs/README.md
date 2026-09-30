@@ -55,6 +55,7 @@ Use este índice para localizar rapidamente a fonte correta. Não execute docume
 - [`../../_documentacao/standards/10-PRODUCT-LIFECYCLE-PORTABILITY.md`](../../_documentacao/standards/10-PRODUCT-LIFECYCLE-PORTABILITY.md) — lifecycle e portabilidade.
 - [`../../_documentacao/standards/11-CENTRAL-CONTROL-PLANE.md`](../../_documentacao/standards/11-CENTRAL-CONTROL-PLANE.md) — papel e limites da Central.
 - [`../../_documentacao/standards/12-COST-ENVIRONMENT-GOVERNANCE.md`](../../_documentacao/standards/12-COST-ENVIRONMENT-GOVERNANCE.md) — ambientes, custos e governança.
+- [`../../_documentacao/standards/21-ADMIN-FORMS-DATA-ENTRY.md`](../../_documentacao/standards/21-ADMIN-FORMS-DATA-ENTRY.md) — padrão obrigatório de Administração, formulários, Excel/PowerQuery e operações de dados para todos os SaaS.
 
 ## Regra de manutenção
 
