@@ -13,16 +13,16 @@ from app.models.identity import (
 from app.repositories.audit import append_audit
 from app.repositories.identity import get_user_by_email
 from app.schemas.access import (
+    EffectiveAccessResponse,
+    EffectiveProfile,
     ManagerCreate,
     ManagerResponse,
+    OrganizationUnitCreate,
+    OrganizationUnitResponse,
     PermissionCreate,
     PermissionResponse,
     ProfileCreate,
     ProfileResponse,
-    EffectiveAccessResponse,
-    EffectiveProfile,
-    OrganizationUnitCreate,
-    OrganizationUnitResponse,
     UserAccessAssignmentResponse,
     UserAccessAssignmentUpdate,
 )
@@ -421,7 +421,11 @@ def effective_access(
     return EffectiveAccessResponse(
         user_id=user_id,
         membership_role=membership.role,
-        profile=EffectiveProfile(id=profile.id, name=profile.name, version=profile.version) if profile else None,
+        profile=(
+            EffectiveProfile(id=profile.id, name=profile.name, version=profile.version)
+            if profile
+            else None
+        ),
         organization_path=organization_path(session, unit, selected),
         job_title=assignment.job_title if assignment else "",
         function_name=assignment.function_name if assignment else "",

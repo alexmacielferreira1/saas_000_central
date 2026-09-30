@@ -135,3 +135,10 @@
 - A migration `0011_control_resources` e `GET/POST /api/v1/control-resources` criam a primeira persistência tenant-scoped e auditada para módulos, telas, planos, políticas, releases, inventários, backups e demais registros administrativos. A jornada real no navegador criou e releu `Administração Central` em Governança de telas.
 - Validação: 72 testes backend (incluindo probe/connector e catálogo), 106 frontend, Ruff, lint e build aprovados. O SQL da migration foi gerado; aplicação no PostgreSQL configurado falhou por timeout de conexão. A base SQLite de QA criou a tabela e validou a jornada.
 - Limites ainda abertos: executor remoto de AdminOperation, incidentes e Resolution nativos, importação persistente, especialização dos domínios comerciais/Screen Registry e administração completa de pessoas/acesso efetivo. Nenhum Render/Neon foi alterado.
+
+## Bloco Administração/IAM e requisitos consolidados em 29/09/2026
+
+- Commit-base `b7b5b38`: migration `0012_organization_access`, entidades de estrutura organizacional e atribuição, endpoints tenant-scoped e auditados e interface contextual em `/administration`.
+- O acesso efetivo agora explicita papel, perfil, caminho organizacional, fontes, permissões concedidas e bloqueadas. Esta é a primeira fatia, não a Administração completa.
+- A continuidade obrigatória está em `CENTRAL_NEXT_SESSIONS_CHECKLIST.md`. A próxima fatia funcional é completar o ciclo de vida do usuário e exceções temporárias; depois Form Builder e Import Engine persistente estilo PowerQuery.
+- Verificação fresca desta sessão: 78 testes backend, 109 frontend, lint e typecheck aprovados. Nenhum Render/Neon foi alterado.

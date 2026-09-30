@@ -9,6 +9,7 @@ Use este índice para localizar rapidamente a fonte correta. Não execute docume
 3. [`PROJECT_STATUS.md`](PROJECT_STATUS.md) e [`../project-status.json`](../project-status.json) — estado técnico verificado mais recente.
 4. [`CODEX_HANDOFF.md`](CODEX_HANDOFF.md) — contexto curto da última sessão.
 5. [`CODEX_BACKLOG.md`](CODEX_BACKLOG.md) — prioridades resumidas.
+6. [`CENTRAL_NEXT_SESSIONS_CHECKLIST.md`](CENTRAL_NEXT_SESSIONS_CHECKLIST.md) — pedidos recentes consolidados para execução progressiva, incluindo Administração, formulários, PowerQuery, ponte com SaaS, IA e governança.
 
 ## Planejamento e escopo
 

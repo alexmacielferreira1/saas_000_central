@@ -4,8 +4,8 @@
   "manual_checks": {
     "frontend_functional_validation": {
       "status": "blocked",
-      "updated_at": "2026-09-28T01:02:00Z",
-      "notes": "Onze centros administrativos possuem campos e ações próprios, com edição persistente, versionada e auditada na mesma página. Jornada Comercial validada no navegador. São 76 testes backend e 109 frontend aprovados. Executor remoto, Incidentes/Resolução nativos, Import Engine persistente e IAM completo ainda bloqueiam paridade."
+      "updated_at": "2026-09-30T00:55:00Z",
+      "notes": "Centros administrativos possuem edição contextual persistente. Administração ganhou estrutura organizacional, atribuição e explicação do acesso efetivo. São 78 testes backend e 109 frontend aprovados. Formulários, Import Engine persistente, executor remoto, Incidentes/Resolução nativos e o restante do IAM ainda bloqueiam paridade."
     }
   },
   "milestones": {
@@ -70,8 +70,8 @@
         },
         "frontend_functional_validation": {
           "status": "blocked",
-          "updated_at": "2026-09-28T01:02:00Z",
-          "notes": "Onze centros administrativos possuem campos e ações próprios, com edição persistente, versionada e auditada na mesma página. Jornada Comercial validada no navegador. São 76 testes backend e 109 frontend aprovados. Executor remoto, Incidentes/Resolução nativos, Import Engine persistente e IAM completo ainda bloqueiam paridade."
+          "updated_at": "2026-09-30T00:55:00Z",
+          "notes": "Centros administrativos possuem edição contextual persistente. Administração ganhou estrutura organizacional, atribuição e explicação do acesso efetivo. São 78 testes backend e 109 frontend aprovados. Formulários, Import Engine persistente, executor remoto, Incidentes/Resolução nativos e o restante do IAM ainda bloqueiam paridade."
         },
         "git_clean_at_check": {
           "status": "pending",

@@ -2,7 +2,7 @@
 
 Marco atual: **M0 — blocked**.
 
-Verificado em 2026-09-28T01:02:00+00:00.
+Verificado em 2026-09-29T21:55:00-03:00.
 
 | Verificação | Estado | Evidência |
 |---|---|---|
@@ -17,7 +17,7 @@ Verificado em 2026-09-28T01:02:00+00:00.
 | frontend_typecheck | passed | Exit 0; evidence: .runtime/checks/frontend_typecheck.log |
 | http_smoke | passed | Exit 0; evidence: .runtime/checks/http_smoke.log |
 | original_frontend_integrity | passed | 147 original files; 42 approved typed corrections; 0 unapproved changes or missing.  |
-| frontend_functional_validation | blocked | Os centros administrativos deixaram de compartilhar um formulário genérico: cada domínio possui campos, indicadores e orientação próprios, com criação/edição persistente e auditada no mesmo contexto. A jornada Comercial foi validada no navegador, incluindo rolagem contextual e atualização para a versão 2. São 76 testes backend e 109 frontend aprovados. Executor remoto, Incidentes/Resolução nativos, Import Engine persistente e a administração IAM completa ainda bloqueiam paridade. |
+| frontend_functional_validation | blocked | Os centros administrativos possuem trabalho contextual persistente. A Administração ganhou estrutura organizacional, vínculo de perfil/função/unidade e explicação do acesso efetivo. São 78 testes backend e 109 frontend aprovados. Formulários, Import Engine persistente, executor remoto, Incidentes/Resolução nativos e o restante do IAM ainda bloqueiam paridade. |
 | git_clean_at_check | pending | Snapshot before writing this report. Verify and commit reviewed work separately. |
 
 M1–M7 continuam pendentes. Os relatórios não comprovam paridade nem uso em produção.
@@ -30,3 +30,10 @@ Não ignorar testes nem desligar verificações. Resolver a causa e executar nov
 - `PATCH /api/v1/control-resources/{id}` aplica isolamento por tenant, exige superadmin, incrementa versão e grava snapshots anterior/posterior.
 - O engine de banco separa opções PostgreSQL e SQLite, corrigindo a queda do login no banco local de QA após reinício.
 - Jornada real validada: login local, criação do Plano Profissional, reabertura contextual, cobrança anual, salvamento, versão 2 e confirmação auditada. Nenhum Render/Neon foi alterado.
+
+## Bloco Administração e continuidade em 29/09/2026
+
+- `OrganizationUnit` e `UserAccessAssignment` persistem departamentos/setores/equipes/unidades e o vínculo administrativo do usuário.
+- A API lista e cria estruturas, salva atribuições e explica o acesso efetivo com perfil, origem, hierarquia e permissões negadas.
+- A Administração permite executar essas ações na própria tela. O checklist `CENTRAL_NEXT_SESSIONS_CHECKLIST.md` preserva o escopo transversal de formulários, Excel/PowerQuery, ponte com SaaS, IA operacional e governança.
+- Verificação fresca: 78 testes backend, 109 frontend, lint, typecheck e build aprovados. O marco permanece M0 bloqueado e nenhum deploy de produção foi executado.
