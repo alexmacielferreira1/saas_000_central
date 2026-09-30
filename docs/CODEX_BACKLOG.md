@@ -1,5 +1,7 @@
 # Backlog da Central
 
+> Cobertura integral dos dois PDFs mestres e regra de execução: `PDF_EXECUTION_SCOPE_2026-09-29.md`. O documento amplia rastreabilidade, mas não antecipa gates do marco vigente.
+
 Fonte geral: `../../_documentacao/CODEX_BACKLOG.md`.
 
 Para execução em outro chat, usar `CENTRAL_MASTER_IMPLEMENTATION_CHECKLIST.md` como lista mestra. Ele reúne as tarefas dispersas e aponta para as especificações de origem; este backlog continua sendo a visão curta.
@@ -13,7 +15,7 @@ Para execução em outro chat, usar `CENTRAL_MASTER_IMPLEMENTATION_CHECKLIST.md`
 0. **Em andamento — QA como usuário:** validar cada ação no navegador, inclusive painéis contextuais, persistência, estados de erro/vazio/permissão e, no MediaMind, arrasto, agulha da timeline e ordem integral da esteira de produção.
 0. **Entregue nesta sessão — centros específicos e trabalho no contexto:** onze centros deixaram de repetir o mesmo formulário; criação e edição agora ocorrem na própria página, persistem, versionam e auditam. Próximo: Administração IAM completa (pessoas, vínculos, função, equipe, setor, unidade, escopo, exceções, sessões/MFA) e especialização relacional do Screen Registry/Comercial.
 0. **Novo requisito incorporado — controle do MediaMind:** Tenant 360, usuários/equipes/perfis, matriz de telas/ações, AI Provider Manager, importação/exportação, arquivos, observabilidade, incidentes, playbooks, aprovações, assinatura e Copiloto precisam usar a ponte Central↔SaaS e autoridade final no backend. Executar em fatias verticais; não criar botões sem endpoint/persistência.
-0. **Entregue — primeira fundação organizacional:** departamentos/setores/equipes/unidades, atribuição de perfil/função/escopo e explicação do acesso efetivo possuem migration, API, persistência, autorização, auditoria, tela contextual e testes. Falta completar o ciclo de vida do usuário, sessões/MFA, exceções temporárias, revisão de acesso e visões 360°.
+0. **Entregue — primeira fundação organizacional e de contas:** departamentos/setores/equipes/unidades, atribuição de perfil/função/escopo, explicação do acesso efetivo e edição/suspensão/reativação de administrador possuem API, persistência, autorização, auditoria, tela contextual e testes. Faltam convite, exclusão lógica, senha, validade, sessões/MFA, exceções temporárias, revisão de acesso e visões 360°.
 0. **Novo escopo preservado:** Form Builder semelhante ao Google Forms e Import/Export persistente estilo PowerQuery entram logo após IAM. O detalhamento e a ordem consolidada estão em `CENTRAL_NEXT_SESSIONS_CHECKLIST.md`.
 
 1. **Concluído neste bloco:** executar o gate completo, corrigir o teste de integração para a migration `0003_saas_registry` e registrar 39 alterações frontend aprovadas sem desligar a verificação de integridade.
