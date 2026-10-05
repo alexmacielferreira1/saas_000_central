@@ -14,6 +14,11 @@ import SaasDetail from '@/pages/SaasDetail'
 import SaasList from '@/pages/SaasList'
 import UsersAccess from '@/pages/UsersAccess'
 import ImportWorkbench from '@/pages/ImportWorkbench'
+import Adm1Workspace from '@/pages/Adm1Workspace'
+import Adm2Overview from '@/pages/adm2/Adm2Overview'
+import Adm2Home from '@/pages/adm2/Adm2Home'
+import Adm2Panorama from '@/pages/adm2/Adm2Panorama'
+import Adm2Products from '@/pages/adm2/Adm2Products'
 import { AdministrationOverview, EcosystemMap, ErrorCenter, HealthCenter, JobsCenter } from '@/pages/ControlSurfaces'
 import { AiGovernance, CommercialCenter, ContinuityCenter, DocumentationCenter, FeatureCenter, PrivacyCenter, ReleaseCenter, ScreenGovernance, SecurityCenter, StorageCenter, UsageCostCenter } from '@/pages/CapabilityCenters'
 
@@ -55,4 +60,9 @@ export const ADMIN_ROUTES = [
   { path: '/continuity/backups', Component: ContinuityCenter },
   { path: '/docs', Component: DocumentationCenter },
   { path: '/data/imports/new', Component: ImportWorkbench },
+  { path: '/adm1', Component: Adm1Workspace },
+  { path: '/adm2', Component: Adm2Overview },
+  { path: '/adm2/home', Component: Adm2Home },
+  { path: '/adm2/panorama', Component: Adm2Panorama },
+  { path: '/adm2/saas', Component: Adm2Products },
 ]
