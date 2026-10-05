@@ -1,6 +1,6 @@
 # Inventário de rotas e jornadas do frontend
 
-Atualizado em 26/09/2026 para o CEN-000/C0. Este documento descreve o código existente; não declara paridade funcional nem autoriza remover o baseline visual.
+Atualizado em 04/10/2026 para o CEN-000/C0. Este documento descreve o código existente; não declara paridade funcional nem autoriza remover o baseline visual.
 
 ## Legenda
 
@@ -21,6 +21,18 @@ Atualizado em 26/09/2026 para o CEN-000/C0. Este documento descreve o código ex
 `OAuthConsent.jsx` consulta `/api/apps/{appId}/mcp/consent-info` e envia `/authorize-grant`, mas não está em `PUBLIC_ROUTES` nem `ADMIN_ROUTES`. É uma tela histórica do runtime MCP/Base44 e deve permanecer isolada até existir contrato nativo equivalente.
 
 ## Rotas administrativas
+
+### Workspaces de transição
+
+| Rota | Tela | Fonte e persistência | Estado | Decisão |
+|---|---|---|---|---|
+| `/adm1` | Adm 1 — Atual | índice das rotas atuais; não duplica componentes nem dados | Nativa de navegação | preservar até a promoção gradual encerrar a comparação |
+| `/adm2` | Adm 2 — Evolução | registry local de módulos e estados; sem números de negócio | Parcial | catálogo honesto do laboratório |
+| `/adm2/home` | Minha manhã | `GET /api/v1/home/summary` e `GET /api/v1/saas` | Nativa/parcial | tarefas, aprovações e IA permanecem planejadas e sem contadores |
+| `/adm2/panorama` | Panorama | `GET /api/v1/home/summary` | Nativa/parcial | exibir somente métricas fornecidas pela API |
+| `/adm2/saas` | SaaS e produtos | `GET /api/v1/saas`; filtro apenas local | Nativa de leitura | detalhe, criação e edição continuam nas rotas atuais |
+
+As rotas anteriores permanecem canônicas. O Adm 2 mostra `Não integrado` ou indisponibilidade quando a API não fornece um dado e não utiliza valores demonstrativos como evidência.
 
 | Rota | Tela | Leituras | Mutações/efeitos | Estado | Decisão C0 |
 |---|---|---|---|---|---|

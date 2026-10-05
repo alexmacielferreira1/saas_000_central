@@ -50,6 +50,17 @@ describe('route contract', () => {
       '/continuity/backups',
       '/docs',
       '/data/imports/new',
+      '/adm1',
+      '/adm2',
+      '/adm2/home',
+      '/adm2/panorama',
+      '/adm2/saas',
     ])
+  })
+
+  it('does not register duplicate administrative paths', () => {
+    const paths = ADMIN_ROUTES.map((route) => route.path)
+
+    expect(new Set(paths).size).toBe(paths.length)
   })
 })
