@@ -1,6 +1,6 @@
 # Requisitos da Central recuperados dos anexos do Codex
 
-Fonte consolidada: `../../_documentacao/CODEX_ATTACHMENTS_REQUIREMENTS_CONSOLIDATED_2026-09-29.md`.  
+Fonte consolidada: `../../_documentacao/CODEX_ATTACHMENTS_REQUIREMENTS_CONSOLIDATED_2026-09-29.md`.
 Manifesto: `../../_documentacao/CODEX_ATTACHMENTS_SOURCE_MANIFEST_2026-09-29.md`.
 
 Este documento é uma ponte para execução. O checklist mestre continua sendo a fila autoritativa e nenhum item abaixo está concluído sem código, API, persistência, autorização, auditoria e testes.
