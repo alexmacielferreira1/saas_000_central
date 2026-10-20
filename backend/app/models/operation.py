@@ -1,6 +1,7 @@
 from datetime import UTC, datetime
+from typing import Any
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.session import Base
@@ -21,6 +22,9 @@ class AdminOperation(Base):
     dry_run: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     status: Mapped[str] = mapped_column(String(50), nullable=False)
     retry_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    remote_operation_id: Mapped[str | None] = mapped_column(String(200))
+    result: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    failure_code: Mapped[str | None] = mapped_column(String(100))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
     )

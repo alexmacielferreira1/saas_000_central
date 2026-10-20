@@ -166,6 +166,11 @@ const ADMIN_CASES = [
   ['/privacy/data-inventory', 'Privacidade e LGPD'],
   ['/continuity/backups', 'Continuidade e backups'],
   ['/docs', 'Documentação operacional'],
+  ['/adm1', 'Adm 1 — Atual'],
+  ['/adm2', 'Adm 2 — Evolução'],
+  ['/adm2/home', 'Minha manhã'],
+  ['/adm2/panorama', 'Panorama do ecossistema'],
+  ['/adm2/saas', 'SaaS e produtos'],
 ];
 
 describe('administrative route rendering', () => {

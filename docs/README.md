@@ -18,6 +18,8 @@ Use este índice para localizar rapidamente a fonte correta. Não execute docume
 - [`DECISIONS.md`](DECISIONS.md) — decisões vigentes da Central.
 - [`../../_documentacao/ESCOPO_CENTRAL.md`](../../_documentacao/ESCOPO_CENTRAL.md) — requisitos rastreáveis HUB-071–086 e HUB-186–202.
 - [`../../_documentacao/SOURCE_INTAKE_2026-09-25_TWO_MASTER_PDFS.md`](../../_documentacao/SOURCE_INTAKE_2026-09-25_TWO_MASTER_PDFS.md) — cobertura e destino das 1.591 páginas dos dois PDFs mestres.
+- [`CODEX_ATTACHMENTS_REQUIREMENTS.md`](CODEX_ATTACHMENTS_REQUIREMENTS.md) — requisitos da Central recuperados dos 58 conteúdos únicos dos anexos do Codex, ligados às fases do checklist.
+- [`../../_documentacao/CODEX_ATTACHMENTS_SOURCE_MANIFEST_2026-09-29.md`](../../_documentacao/CODEX_ATTACHMENTS_SOURCE_MANIFEST_2026-09-29.md) — proveniência por hash e classificação do corpus.
 
 ## Arquitetura e desenvolvimento
 

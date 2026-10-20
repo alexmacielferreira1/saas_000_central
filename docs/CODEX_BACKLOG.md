@@ -4,13 +4,13 @@
 
 Fonte geral: `../../_documentacao/CODEX_BACKLOG.md`.
 
-Para execução em outro chat, usar `CENTRAL_MASTER_IMPLEMENTATION_CHECKLIST.md` como lista mestra. Ele reúne as tarefas dispersas e aponta para as especificações de origem; este backlog continua sendo a visão curta.
+Para execução em outro chat, usar `CENTRAL_MASTER_IMPLEMENTATION_CHECKLIST.md` como lista mestra. Ele reúne as tarefas dispersas e aponta para as especificações de origem; este backlog continua sendo a visão curta. Os requisitos recuperados dos anexos do Codex e sua ligação com as fases estão em `CODEX_ATTACHMENTS_REQUIREMENTS.md`; a proveniência completa por SHA-256 está no manifesto do HUB.
 
 ## Agora — C0
 
 0. **Em andamento — Administração:** `/administration` possui catálogo de SaaS, administradores, usuários de produto, perfis e permissões nativos. Próximas fatias: atribuição de perfil e acesso efetivo; depois pessoas, funções, equipes, setores, unidades e sessões.
-0. **Em andamento — Operações:** criação, listagem, aprovação e rejeição agora são nativas e persistidas. Falta o executor assíncrono Central ↔ SaaS, idempotência, progresso, retries e rollback.
-0. **Em andamento — Integração Central ↔ SaaS:** conexão, ambiente e observações de saúde têm persistência e API nativas, segredo por referência, isolamento por organização e classificação de evidência recente/desatualizada. Próximo: aplicar migration 0010 no PostgreSQL local, sondar o manifesto/health do MediaMind e ligar despacho/reconciliação às Operações.
+0. **Em andamento — Operações:** criação, listagem, aprovação e rejeição são nativas. A primeira execução remota somente leitura (`system.describe` e `media.count`, sempre dry-run) persiste ID/resultado, reaproveita idempotência do MediaMind, reconcilia replay e registra timeout como falha. Falta mover o despacho para worker durável, progresso, retries programados, cancelamento e rollback.
+0. **Em andamento — Integração Central ↔ SaaS:** conexão, ambiente e observações de saúde têm persistência e API nativas. O conector agora descobre endpoints no manifesto do MediaMind, envia identidade de serviço completa e foi provado contra a aplicação real, incluindo 401/403, readiness 503 e replay idempotente. Próximo: automatizar essa prova na CI, restringir hosts/escopos por credencial e criar reconciliador durável.
 0. **Entregue nesta sessão — expansão do Control Plane:** Integrações usa dados nativos e probe persistente; MediaMindConnector consulta health/manifest; 15 novos centros/rotas operacionais estão navegáveis. `control_resources` permite criar registros reais por tenant com permissão e auditoria. Próximo: executor remoto idempotente e migração nativa de Incidentes/Resolução.
 0. **Em andamento — QA como usuário:** validar cada ação no navegador, inclusive painéis contextuais, persistência, estados de erro/vazio/permissão e, no MediaMind, arrasto, agulha da timeline e ordem integral da esteira de produção.
 0. **Entregue nesta sessão — centros específicos e trabalho no contexto:** onze centros deixaram de repetir o mesmo formulário; criação e edição agora ocorrem na própria página, persistem, versionam e auditam. Próximo: Administração IAM completa (pessoas, vínculos, função, equipe, setor, unidade, escopo, exceções, sessões/MFA) e especialização relacional do Screen Registry/Comercial.
@@ -30,6 +30,20 @@ Para execução em outro chat, usar `CENTRAL_MASTER_IMPLEMENTATION_CHECKLIST.md`
 10. **Em andamento — SCR-007/C1.4:** a tela de Auditoria lê `AuditLog` nativo por tenant e nega viewers; ainda faltam filtros avançados, detalhe, exportação controlada, retenção e auditoria dos demais domínios.
 
 ## Próximas fases
+
+### Requisitos recuperados da auditoria de chats — 29/09/2026
+
+- **CTL-NATIVE-001 — P0, in_progress:** fechar uma fatia vertical nativa por vez — UI, API, banco, autorização, auditoria e teste — até eliminar o uso operacional de Base44. Priorizar Incidentes/Resolução depois da fatia corrente.
+- **CTL-LINK-001 — P0, in_progress:** completar manifest/health com autenticação de serviço, escopo por tenant/produto, compatibilidade de versão, dispatch idempotente, timeout, reconciliação e auditoria nos dois lados.
+- **CTL-PERM-001 — P1, in_progress:** completar permissão efetiva RBAC+ABAC e preparar defesa RLS, incluindo exceções individuais/temporárias e explicação da origem da decisão.
+- **CTL-IMPERSONATE-001 — P1, pending:** simular usuário/perfil/empresa sem assumir credenciais, em modo não destrutivo, escopado e auditado, usando a mesma engine de autorização do backend.
+- **CTL-SCREEN-001 — P1, in_progress:** especializar o Screen Registry até tela/seção/widget/card/aba/ação e ligá-lo à autorização/navegação reais.
+- **CTL-OPS-001 — P1, in_progress:** mover execução para backend durável com dry-run, válidos/inválidos/sem permissão/conflitantes, idempotência, retry, cancelamento seguro, progresso e auditoria.
+- **CTL-ERROR-001 — P1, pending:** implementar fluxo nativo ErrorEvent → Incident → Problem → causa/known error → correção → validação → regressão; telas ou entidades Base44 não contam como conclusão.
+- **CTL-HEALTH-001 — P1, in_progress:** persistir probes autenticados de health/readiness/version/capabilities/latência e histórico, com timeout e classificação de evidência.
+- **CTL-COST-001 — P1, pending:** receber consumo do MediaMind e conciliar estimativa, reserva, uso real, franquia, excedente, BYO, cache/reuso e bloqueio de cobrança duplicada.
+- **HUB-STATUS-001 — P0, pending:** após o próximo gate completo, sincronizar `PROJECT_STATUS.md`, `project-status.json`, backlog e handoff na mesma execução.
+- **HUB-AUDIT-001 — P0, in_progress:** toda mutação sensível deve gerar auditoria autoritativa no servidor; eventos do frontend permanecem apenas telemetria complementar.
 
 7. **C1:** herdar configuração por ambiente, auth/sessão, tenant, migrations, health/readiness, testes e documentação do padrão HUB.
 8. **C2:** modelar Registry de SaaS, ambientes, capacidades e versões.

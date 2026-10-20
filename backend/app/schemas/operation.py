@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -30,5 +31,8 @@ class OperationResponse(BaseModel):
     dry_run: bool
     status: str
     retry_count: int
+    remote_operation_id: str | None
+    result: dict[str, Any]
+    failure_code: str | None
     created_at: datetime
     updated_at: datetime
