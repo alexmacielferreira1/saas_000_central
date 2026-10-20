@@ -2,9 +2,9 @@
   "reason": "Reviewed correction or incremental replacement of Base44 infrastructure with native Central tooling, tests, session auth and tenant data; the approved visual structure is preserved.",
   "changes": [
   ["jsconfig.json","e73e9adf0fcd9194c496670efb5251825685314475c9548c3ec4d74056ccc75b","88f592af159674189821fa36088590245d27af63dd8062d2773e55d7b9299026"],
-  ["src/components/AdminLayout.jsx","b96200b9e01e673da1b4cf0a25b74397c6357fe8c7d3126425e3f379287f49cb","98920b8fe395a0463e38f091a1bfabdc3612a87b3fba5f1d1082d2cfd726e1b5"],
+  ["src/components/AdminLayout.jsx","b96200b9e01e673da1b4cf0a25b74397c6357fe8c7d3126425e3f379287f49cb","0d46a412875f6ee5411ab978ba57a899eca32af8740118ae48f690b08c9a2c81"],
   ["src/components/AuthLayout.jsx","27191e5279ab7a6d30609f7954c64edf586ce11817ca50ca63ed03bd432629ce","1a00c2d0dc971d701fcacdbfb5a75b91195e9f90be34c7232d2c40802142d8e0"],
-  ["src/components/CommandPalette.jsx","88241e59bee3f66bbf282426f3b0f590a053433f8bb39a1d3a9ef6690fb8b572","ef3802f219a890430056a90aacb7bb871ee29b66ffff3bc1d938150942d77d5a"],
+  ["src/components/CommandPalette.jsx","88241e59bee3f66bbf282426f3b0f590a053433f8bb39a1d3a9ef6690fb8b572","504371c1afb9fded1d4ef68ff5667058b2dc59835b9c35ec0641aef96b4c9a8e"],
   ["src/components/PageHeader.jsx","7b762ca26b5367d1fe49802cbc0343388085e07ecc64a3467b3c59f5cbaade67","40c6fe78513f68bd84a2b27e9d3df46d0c6b40e84a5f448b2d47e284d984cf92"],
   ["src/components/QuickActionsMenu.jsx","a7fb0664f86d81c154fddefbf029a487dbe7d9e56d40617cddf0b9383b0e4c7b","a3e493ec56e833c0a546a5e81cd01245954a3a718f13ed1b605538317f1d9dfc"],
   ["src/components/StatusBadge.jsx","d8ebe31fa60f891916debfb59a96f53de0e16ad798d3734541b1873b6d1a1c87","64e3c347bf2e6693db4dc96ad7f4ea81a9c48991514edd43c4218778a4be66e9"],
@@ -17,7 +17,7 @@
   ["src/components/ui/label.jsx","37c6425d2a5c798ade4e60f89f86054d703433a8977e12d796de2b5bb4e3d0b7","f3397d28aaf175f3a785d4385523cf2b7e23834026c8eb71dbb5d5a808576f16"],
   ["src/lib/AuthContext.jsx","2ac2133bc9448d8e8c0f12d3ccef7287f20efddfe0f4c90d0b517bbdc25c0fc0","84ec6163be92e00d8288078ce1d6745fd8f2a6ba56cf67f2b03058f67b591a10"],
   ["src/lib/audit.js","2677e06059170609d9aa2eecd753e989ed0397e4df7bfd90290ceba10993a9f2","77144b4d639a0c882c2cd4811e994c2db6a2d87f7a11c04edad8b0c2e0a1a301"],
-  ["src/lib/problems.js","0d306a8ddf767369c720aebce03b687d3e9de2cb90c3b7162342518dfeb36ca8","3a25f2f3bdb5010634ae283c79cee56d9bbcea1ed0619f1547ace87ae4e8b2e8"],
+  ["src/lib/problems.js","0d306a8ddf767369c720aebce03b687d3e9de2cb90c3b7162342518dfeb36ca8","db2d57c774023502b316ca3d411788339287ea65a04c327a3f5d171dcd1464bd"],
   ["src/pages/Configurations.jsx","fabde59742d9ad40d6574b8e3154e909306729fbcd78dfe2b8849a7f2b7f798d","150eefab8c4a8347b91bcf0860e20c54a7c28a093e4d78921670273b045fc6f0"],
   ["src/pages/Home.jsx","360b1a7ee27858978972a375110da00b6177c2511706f6f5fadc136ad71f2910","eead080250b6e61dc52bc8e8e0ff0541332b92bd0f4b32876a4023456c5f0953"],
   ["src/pages/Incidents.jsx","172014914358d9de0b190d7bf988fa38867de9bb73588dec9e207049312a3ad9","a1b148f52172ba5950fc1543a3cb4082af3699acb35f7aa0f4f553b3e0d2ab09"],
@@ -42,6 +42,10 @@
   ["src/components/operations/NewOperationDialog.jsx","33f8ce4ea587b9e497a3a82fd208838aa6a721e776fe3d3b699285f840178bed","adc56139c5b7ab8a065b6cb72c349c543f47bae7bf564c90a0c80a087f3879d6"],
   ["src/components/configurations/NewConfigurationDialog.jsx","4bfbb24d4a8d2286495ac0eda3103f79e5e62e92bea52b811568a1adf2cd175f","14a4cb6bbdcda02572051a1b9809a29dae06e4930f017e5e3ae8a1fa77486e1f"],
   ["src/pages/ApiGuides.jsx","d286aab8ccb2bbe59bcd834a818b3691ad20cb3087489434eb61de0a17ccf03a","335cc7ea2cd76da7cd3cec5c8bafad2c476da3d06b60388fff6ce49a5fe4bed5"],
-  ["src/pages/AuditLog.jsx","dc283d5ce5649514866e61d2d43032a15833544162f0f673bdb59d71eb984702","6119331e617f46ff68d07e54923de857ef2f17ab183fe221ec2899c8e737198d"]
+  ["src/pages/AuditLog.jsx","dc283d5ce5649514866e61d2d43032a15833544162f0f673bdb59d71eb984702","6119331e617f46ff68d07e54923de857ef2f17ab183fe221ec2899c8e737198d"],
+  ["src/pages/ResolutionCenter.jsx","b5158862b76e6efc7e30fbc1623df53781c478543a591ec02001f6a39d416678","75b600adf4c8bb0605be92ad4febfb4f352c619832082b077621b282ffe74971"],
+  ["src/components/resolution/ResolutionActions.jsx","55a706d53f11027fbed1d836d648f9adefe231a8ed26d1e81abde10bcec45996","44ee33de17a6469f66249165b7d257baaf3ac6c52eba3e4b612437c9c44131c2"],
+  ["src/components/resolution/ProblemCard.jsx","241d14f5bfaececa14db54ca762fd87000e721fb9d6a5f3070b2b38cc5f8588d","89e385f822096c94bf893565fee0f0b14bf198e969946ff24a83dc292288f35e"],
+  ["src/api/base44Client.js","ac90e3b11d391f5ed5d365053acd2d2d30f1f43c06f81d9cfd235c15548a88d9","b7381d99cd0f623f45209f281b4ee17fb35de1aca74444323024fcf51a898230"]
   ]
 }

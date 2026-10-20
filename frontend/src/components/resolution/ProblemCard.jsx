@@ -6,6 +6,7 @@ import {
   INCIDENT_STATUS,
   OP_STATUS,
   HEALTH,
+  SAAS_STATUS,
   fmtDate,
   toneClass,
 } from "@/lib/adminHelpers";
@@ -16,7 +17,9 @@ import { cn } from "@/lib/utils";
 
 const TYPE_ICON = { incident: AlertTriangle, command: TerminalSquare, saas: Boxes, config: Settings2 };
 const SEV_TONE = { critical: "rose", high: "amber", medium: "sky", low: "slate" };
-const STATUS_MAP = { incident: INCIDENT_STATUS, command: OP_STATUS, saas: HEALTH };
+// SaaS problems are keyed by health when known, otherwise by connection status.
+const SAAS_PROBLEM_STATUS = { ...SAAS_STATUS, ...HEALTH, not_connected: { label: "Não conectado", tone: "slate" } };
+const STATUS_MAP = { incident: INCIDENT_STATUS, command: OP_STATUS, saas: SAAS_PROBLEM_STATUS };
 
 export default function ProblemCard({ problem, onMutated, navigate }) {
   const [open, setOpen] = useState(false);

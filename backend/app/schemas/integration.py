@@ -3,13 +3,17 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.services.connectors.factory import CREDENTIAL_REF_PATTERN
+
 
 class ConnectionCreate(BaseModel):
     saas_product_id: str = Field(min_length=1, max_length=36)
     name: str = Field(min_length=1, max_length=200)
     environment: str = Field(pattern=r"^(local|development|staging|production)$")
-    base_url: str = Field(pattern=r"^https?://", max_length=500)
-    credential_ref: str = Field(pattern=r"^[A-Z][A-Z0-9_]{2,199}$")
+    base_url: str = Field(pattern=r"^https?://[^\s/?#@]+(/[^\s?#]*)?$", max_length=500)
+    # Must name a dedicated connector token (e.g. MEDIAMIND_HUB_ADMIN_TOKEN), never an
+    # arbitrary backend setting: the value is sent as a Bearer token to base_url.
+    credential_ref: str = Field(pattern=CREDENTIAL_REF_PATTERN, max_length=200)
     freshness_ttl_seconds: int = Field(default=90, ge=15, le=86400)
 
 

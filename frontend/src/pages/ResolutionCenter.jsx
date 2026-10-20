@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { listConfigurations, listSaas } from "@/api/saasRegistry";
+import { listOperations } from "@/api/operations";
 import PageHeader from "@/components/PageHeader";
 import { Card, EmptyState, ErrorState, KpiCard } from "@/components/ui-primitives";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,6 @@ import { cn } from "@/lib/utils";
 
 const TYPE_FILTERS = [
   { key: "all", label: "Tudo" },
-  { key: "incident", label: "Incidentes" },
   { key: "command", label: "Operações" },
   { key: "saas", label: "SaaS" },
   { key: "config", label: "Configs" },
@@ -30,14 +30,15 @@ export default function ResolutionCenter() {
     setLoading(true);
     setError(false);
     try {
-      const safe = (p) => p.then((r) => r || []).catch(() => []);
-      const [incidents, commands, saas, configs] = await Promise.all([
-        safe(base44.entities.Incident.list("-opened_at", 100)),
-        safe(base44.entities.AdminCommand.list("-created_date", 100)),
-        safe(base44.entities.Saas.list("-updated_date", 100)),
-        safe(base44.entities.Configuration.list("-created_date", 100)),
+      // Native Central sources only. A failing source is an error, never an empty "all clear".
+      const [operations, saas, configurations] = await Promise.all([
+        listOperations(),
+        listSaas(),
+        listConfigurations(),
       ]);
-      setProblems(buildProblems({ incidents, commands, saas, configs }));
+      const commands = (operations || []).map((o) => ({ ...o, tenant: o.product_tenant, created_date: o.created_at }));
+      const configs = (configurations || []).map((c) => ({ ...c, saas_id: c.scope_key, created_date: c.created_at }));
+      setProblems(buildProblems({ commands, saas: saas || [], configs }));
     } catch {
       setError(true);
     } finally {
@@ -82,6 +83,11 @@ export default function ResolutionCenter() {
           </Button>
         }
       />
+
+      <div role="note" className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        Esta visão cobre SaaS, operações e configurações da Central. Incidentes ainda não foram migrados para a
+        Central nativa e não aparecem aqui.
+      </div>
 
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <KpiCard label="Problemas ativos" value={kpis.total} icon={AlertTriangle} tone="rose" />
@@ -143,8 +149,8 @@ export default function ResolutionCenter() {
         <Card>
           <EmptyState
             icon={ShieldCheck}
-            title="Tudo limpo"
-            description="Nenhum problema ativo no ecossistema. Incidentes resolvidos, operações concluídas e SaaS saudáveis."
+            title={problems.length ? "Nenhum problema neste filtro" : "Nenhum problema nas fontes verificadas"}
+            description="SaaS, operações e configurações da Central não têm pendências agora."
           />
         </Card>
       ) : (

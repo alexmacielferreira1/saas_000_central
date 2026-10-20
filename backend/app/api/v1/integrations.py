@@ -15,7 +15,7 @@ from app.schemas.integration import (
     ConnectionResponse,
     ObservationResponse,
 )
-from app.services.connectors import connector_for
+from app.services.connectors import connector_for, is_allowed_credential_ref
 from app.tenancy.context import CurrentSession, get_current_session
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy import select
@@ -40,6 +40,51 @@ def classify_observation(observed_at: datetime, ttl_seconds: int, now: datetime)
     observed = aware_utc(observed_at)
     reference = aware_utc(now)
     return "confirmed" if reference - observed <= timedelta(seconds=ttl_seconds) else "stale"
+
+
+# Probe result -> (SaaS status, SaaS health). "not_configured" says nothing about the SaaS.
+PRODUCT_STATE_BY_PROBE = {
+    "healthy": ("connected", "healthy"),
+    "degraded": ("connected", "degraded"),
+    "unavailable": ("unavailable", "down"),
+    "incompatible": ("incompatible", "unknown"),
+}
+
+
+def _text(value) -> str | None:
+    return value.strip()[:50] if isinstance(value, str) and value.strip() else None
+
+
+def apply_probe_to_product(
+    product: SaasProduct, status: str, evidence: dict, observed_at: datetime
+) -> dict | None:
+    """Keep the SaaS inventory in sync with what the Central actually observed."""
+    state = PRODUCT_STATE_BY_PROBE.get(status)
+    if state is None:
+        return None
+    product.status, product.health = state
+    if status in {"healthy", "degraded"}:
+        product.last_handshake = observed_at
+        contract = evidence.get("contract")
+        if contract == "admin":
+            product.compatibility = "supported"
+        elif contract == "public":
+            product.compatibility = "limited"
+    for source, key in (("version", "version"), ("manifest", "version")):
+        data = evidence.get(source)
+        version = _text(data.get(key)) if isinstance(data, dict) else None
+        if version:
+            product.version = version
+            break
+    manifest = evidence.get("manifest")
+    if isinstance(manifest, dict) and _text(manifest.get("admin_api_version")):
+        product.admin_api_version = _text(manifest["admin_api_version"])
+    return {
+        "status": product.status,
+        "health": product.health,
+        "version": product.version,
+        "compatibility": product.compatibility,
+    }
 
 
 def serialize_connection(
@@ -225,25 +270,36 @@ def probe_connection(
         return error_response(request, 404, "INTEGRATION_NOT_FOUND", "Integracao nao encontrada.")
 
     connection, environment, product = row
-    token = os.getenv(connection.credential_ref)
+    credential_allowed = is_allowed_credential_ref(connection.credential_ref)
+    token = os.getenv(connection.credential_ref) if credential_allowed else None
     observed_at = datetime.now(UTC)
     status = "unavailable"
     failure_code = None
     evidence: dict = {"product": product.slug, "environment": environment.name}
 
-    if not token:
+    if not credential_allowed:
+        # Legacy rows created before the pattern was enforced must not leak other settings.
         status = "not_configured"
-        failure_code = "CREDENTIAL_REFERENCE_UNAVAILABLE"
-        evidence["message"] = "Configure a credencial no ambiente do backend da Central."
-    else:
+        failure_code = "CREDENTIAL_REFERENCE_NOT_ALLOWED"
+        evidence["message"] = (
+            "A referência de credencial precisa terminar em _HUB_TOKEN ou _HUB_ADMIN_TOKEN."
+        )
+    latency_ms = 0
+    if credential_allowed:
+        # Without the token only the public HUB contract (/ready, /version) is checked.
+        if not token:
+            evidence["credential"] = "missing"
+            evidence["message"] = (
+                "Credencial ausente no backend da Central: verificação básica, sem contrato admin."
+            )
         result = connector_for(product.slug, environment.base_url, token).probe(
             request.state.correlation_id
         )
         status = result.status
         failure_code = result.failure_code
+        latency_ms = result.latency_ms
         evidence.update(result.evidence)
 
-    latency_ms = 0 if not token else result.latency_ms
     observation = IntegrationObservation(
         tenant_id=tenant_id,
         connection_id=connection.id,
@@ -256,6 +312,7 @@ def probe_connection(
         observed_at=observed_at,
     )
     connection.status = status
+    product_state = apply_probe_to_product(product, status, evidence, observed_at)
     session.add(observation)
     session.flush()
     append_audit(
@@ -267,7 +324,12 @@ def probe_connection(
         resource_type="saas_connection",
         resource_id=connection.id,
         correlation_id=request.state.correlation_id,
-        after_data={"status": status, "failure_code": failure_code, "latency_ms": latency_ms},
+        after_data={
+            "status": status,
+            "failure_code": failure_code,
+            "latency_ms": latency_ms,
+            "product": product_state,
+        },
     )
     session.commit()
     session.refresh(observation)

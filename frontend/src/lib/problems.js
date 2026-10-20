@@ -82,9 +82,11 @@ export function buildProblems({ incidents = [], commands = [], saas = [], config
     else if (s.health === "degraded")
       guide = "SaaS degradado. Verifique last_handshake e health endpoints no detalhe. Abra um incidente se a degradação persistir.";
     else
-      guide = "SaaS não conectado/integrado. Exponha o admin-manifest e os endpoints de admin; faça handshake para subir o nível de integração.";
-    const statusLabel =
-      s.health && s.health !== "unknown" ? labelOf(HEALTH, s.health) : labelOf(SAAS_STATUS, s.status);
+      guide = "SaaS ainda não conectado à Central. Cadastre a conexão em Integrações (URL do backend e token *_HUB_TOKEN) e use \"Verificar agora\"; sem contrato admin, a Central monitora /ready e /version.";
+    const neverConnected = s.status === "unavailable" && (!s.health || s.health === "unknown") && !s.last_handshake;
+    const statusLabel = neverConnected
+      ? "Não conectado"
+      : s.health && s.health !== "unknown" ? labelOf(HEALTH, s.health) : labelOf(SAAS_STATUS, s.status);
     problems.push({
       id: `saas:${s.id}`,
       type: "saas",
@@ -92,7 +94,7 @@ export function buildProblems({ incidents = [], commands = [], saas = [], config
       title: s.name,
       saas: s.name,
       severity,
-      statusKey: (s.health && s.health !== "unknown" && s.health) || s.status,
+      statusKey: neverConnected ? "not_connected" : (s.health && s.health !== "unknown" && s.health) || s.status,
       statusLabel,
       createdAt: s.last_handshake || s.updated_date,
       summary: s.capabilities_summary || s.description || "Integração com problema.",

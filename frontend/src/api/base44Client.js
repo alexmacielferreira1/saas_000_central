@@ -8,5 +8,7 @@ export const base44 = createClient({
   token,
   functionsVersion,
   serverUrl: '',
-  appBaseUrl
+  appBaseUrl,
+  // Without a Base44 App ID the tracker only produces 404s against /api/apps//analytics.
+  analytics: { enabled: Boolean(appId) },
 });

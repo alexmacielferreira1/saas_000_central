@@ -3,6 +3,9 @@ from sqlalchemy.orm import Session
 
 from app.models.saas import SaasProduct
 
+# Identity only. Operational state (status, health, version, counts, URLs) is never
+# seeded: it must come from a real connection probe so the Central never shows
+# invented data.
 DEFAULT_PRODUCTS = [
     {
         "name": "ClinicaFit",
@@ -45,69 +48,30 @@ DEFAULT_PRODUCTS = [
         "slug": "medicina",
         "description": "Prontuário e agendamento clínico.",
         "color": "#0ea5e9",
-        "version": "3.1.2",
-        "base_url": "https://api.medicina.app",
-        "status": "limited",
-        "health": "healthy",
-        "compatibility": "limited",
-        "integration_level": "read",
-        "tenant_count": 8,
-        "user_count": 56,
-        "admin_api_version": "1",
     },
     {
         "name": "MediaMind AI",
         "slug": "mediamind-ai",
         "description": "Mídia e analytics com IA para campanhas.",
         "color": "#8b5cf6",
-        "version": "1.8.0",
-        "base_url": "https://mediamindai-backend.onrender.com",
-        "status": "connected",
-        "health": "degraded",
-        "compatibility": "supported",
-        "integration_level": "users_config",
-        "tenant_count": 5,
-        "user_count": 34,
-        "admin_api_version": "1",
     },
     {
         "name": "RH2",
         "slug": "rh2",
         "description": "Recrutamento e onboarding de talentos.",
         "color": "#ec4899",
-        "version": "1.2.0",
-        "compatibility": "incompatible",
-        "admin_api_version": "0",
     },
     {
         "name": "LojaFácil360",
         "slug": "lojafacil360",
         "description": "Plataforma de varejo e gestão de lojas multi-tenant.",
         "color": "#f59e0b",
-        "version": "2.4.1",
-        "base_url": "https://api.lojafacil360.app",
-        "status": "connected",
-        "health": "healthy",
-        "compatibility": "supported",
-        "integration_level": "write_controlled",
-        "tenant_count": 12,
-        "user_count": 87,
-        "admin_api_version": "1",
     },
     {
         "name": "RH",
         "slug": "rh",
         "description": "Folha, ponto e gestão de pessoas.",
         "color": "#10b981",
-        "version": "2.0.7",
-        "base_url": "https://api.rh.app",
-        "status": "connected",
-        "health": "healthy",
-        "compatibility": "supported",
-        "integration_level": "domain_resources",
-        "tenant_count": 6,
-        "user_count": 42,
-        "admin_api_version": "1",
     },
 ]
 

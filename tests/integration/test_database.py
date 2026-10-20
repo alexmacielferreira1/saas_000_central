@@ -1,6 +1,9 @@
 import os
+from pathlib import Path
 
 import pytest
+from alembic.config import Config
+from alembic.script import ScriptDirectory
 from app.db.session import engine
 from sqlalchemy import text
 
@@ -13,12 +16,18 @@ pytestmark = [
 ]
 
 
+def alembic_head() -> str:
+    root = Path(__file__).resolve().parents[2]
+    config = Config(str(root / "alembic.ini"))
+    config.set_main_option("script_location", str(root / "alembic"))
+    return ScriptDirectory.from_config(config).get_current_head()
+
+
 def test_database_and_migration_revision():
     with engine.connect() as connection:
         assert connection.scalar(text("select 1")) == 1
-        assert (
-            connection.scalar(text("select version_num from alembic_version"))
-            == "0010_integration_observations"
+        assert connection.scalar(text("select version_num from alembic_version")) == (
+            alembic_head()
         )
         tables = set(
             connection.scalars(text("select tablename from pg_tables where schemaname = 'public'"))

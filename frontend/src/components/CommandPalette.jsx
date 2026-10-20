@@ -2,12 +2,14 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Command as CommandPrimitive } from "cmdk";
-import { base44 } from "@/api/base44Client";
+import { listConfigurations, listProductUsers, listSaas } from "@/api/saasRegistry";
+import { listOperations } from "@/api/operations";
+import { listManagers } from "@/api/access";
 import { useTenant } from "@/lib/TenantContext";
 import { tokenize, rankItems } from "@/lib/searchUtils";
 import { ACTIONS, CREATE_SYNONYMS, ENTITY_KEYWORDS, runAction } from "@/lib/quickActions";
 import { usePermissions } from "@/hooks/usePermissions";
-import { buildProblems, PROBLEM_TYPE, SEVERITY_LABEL } from "@/lib/problems";
+import { buildProblems, PROBLEM_TYPE } from "@/lib/problems";
 import Highlight from "@/components/Highlight";
 import {
   Boxes, Users, User, AlertTriangle, Settings2, TerminalSquare, ScrollText,
@@ -40,15 +42,9 @@ const DATA_SOURCES = [
     to: (r) => `/saas/${r.id}`,
   },
   {
-    key: "Incident", heading: "Incidentes", tint: "rose", icon: AlertTriangle,
-    fields: (r) => [{ text: r.title, weight: 3 }, { text: r.saas || "", weight: 2 }, { text: ENTITY_KEYWORDS.Incident, weight: 1 }],
-    label: (r) => r.title, sub: (r) => `${r.saas || "—"} · ${SEVERITY_LABEL[r.severity] || r.severity || ""}`,
-    to: () => "/incidents",
-  },
-  {
     key: "Configuration", heading: "Configurações", tint: "violet", icon: Settings2,
-    fields: (r) => [{ text: r.key, weight: 3 }, { text: r.saas_id || "", weight: 2 }, { text: ENTITY_KEYWORDS.Configuration, weight: 1 }],
-    label: (r) => r.key, sub: (r) => `${r.saas_id || "central"} · ${r.environment || ""}`,
+    fields: (r) => [{ text: r.key, weight: 3 }, { text: r.scope_key || "", weight: 2 }, { text: ENTITY_KEYWORDS.Configuration, weight: 1 }],
+    label: (r) => r.key, sub: (r) => `${r.scope_key || "central"} · ${r.environment || ""}`,
     to: () => "/configurations",
   },
   {
@@ -65,8 +61,8 @@ const DATA_SOURCES = [
   },
   {
     key: "ProductUser", heading: "Usuários SaaS", tint: "teal", icon: User,
-    fields: (r) => [{ text: r.full_name || r.email, weight: 3 }, { text: `${r.saas_id || ""} ${r.role || ""}`, weight: 2 }, { text: ENTITY_KEYWORDS.ProductUser, weight: 1 }],
-    label: (r) => r.full_name || r.email, sub: (r) => `${r.saas_id || "—"} · ${r.role || "—"}`,
+    fields: (r) => [{ text: r.full_name || r.email, weight: 3 }, { text: `${r.product_tenant || ""} ${r.role || ""}`, weight: 2 }, { text: ENTITY_KEYWORDS.ProductUser, weight: 1 }],
+    label: (r) => r.full_name || r.email, sub: (r) => `${r.product_tenant || "—"} · ${r.role || "—"}`,
     to: () => "/users",
   },
 ];
@@ -82,16 +78,15 @@ export default function CommandPalette({ open, onOpenChange }) {
   const [loaded, setLoaded] = useState(false);
 
   const load = useCallback(async () => {
-    const filter = { organization_id: orgId };
-    const [saas, incidents, configs, ops, managers, productUsers] = await Promise.all([
-      safe(base44.entities.Saas.filter(filter, "-updated_date", 200)),
-      safe(base44.entities.Incident.filter(filter, "-opened_at", 200)),
-      safe(base44.entities.Configuration.filter(filter, "-updated_date", 200)),
-      safe(base44.entities.AdminCommand.filter(filter, "-created_date", 200)),
-      safe(base44.entities.Manager.filter(filter, "-updated_date", 200)),
-      safe(base44.entities.ProductUser.filter(filter, "-last_sync", 200)),
+    // Native Central APIs, scoped to the selected organization by the server session.
+    const [saas, configs, ops, managers, productUsers] = await Promise.all([
+      safe(listSaas()),
+      safe(listConfigurations()),
+      safe(listOperations()),
+      safe(listManagers()),
+      safe(listProductUsers()),
     ]);
-    setData({ Saas: saas, Incident: incidents, Configuration: configs, AdminCommand: ops, Manager: managers, ProductUser: productUsers });
+    setData({ Saas: saas, Configuration: configs, AdminCommand: ops, Manager: managers, ProductUser: productUsers });
     setLoaded(true);
   }, [orgId]);
 
@@ -155,7 +150,6 @@ export default function CommandPalette({ open, onOpenChange }) {
   const pendItems = useMemo(() => {
     if (!loaded) return [];
     const problems = buildProblems({
-      incidents: data.Incident || [],
       commands: data.AdminCommand || [],
       saas: data.Saas || [],
       configs: data.Configuration || [],

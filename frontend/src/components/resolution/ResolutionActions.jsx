@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { updateOperationStatus } from "@/api/operations";
+import { listConnections, probeConnection } from "@/api/integrations";
 import { Button } from "@/components/ui/button";
 import { writeAudit } from "@/lib/audit";
-import { Check, X, Loader2, ExternalLink, AlertTriangle } from "lucide-react";
+import { Check, X, Loader2, ExternalLink, RefreshCw, Plug } from "lucide-react";
 
 // Context-dependent quick actions rendered inside an expanded ProblemCard.
 // Each branch performs a real entity mutation + audit, then calls onMutated to reload.
@@ -112,19 +114,7 @@ export default function ResolutionActions({ problem, onMutated, navigate, resolu
               className="h-8 gap-1.5 border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
               disabled={busy}
               onClick={() =>
-                run(
-                  () => base44.entities.AdminCommand.update(raw.id, { status: "queued" }),
-                  {
-                    action: "operation.approve",
-                    saas: raw.saas,
-                    tenant: raw.tenant,
-                    entity: "AdminCommand",
-                    entityId: raw.id,
-                    before: JSON.stringify({ status: raw.status }),
-                    after: JSON.stringify({ status: "queued" }),
-                    reason: "Aprovado via Central de Resolução",
-                  }
-                )
+                run(() => updateOperationStatus(raw.id, "queued", "Aprovado via Central de Resolução"))
               }
             >
               {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />} Aprovar
@@ -135,19 +125,7 @@ export default function ResolutionActions({ problem, onMutated, navigate, resolu
               className="h-8 gap-1.5 border-rose-200 text-rose-700 hover:bg-rose-50"
               disabled={busy}
               onClick={() =>
-                run(
-                  () => base44.entities.AdminCommand.update(raw.id, { status: "cancelled" }),
-                  {
-                    action: "operation.reject",
-                    saas: raw.saas,
-                    tenant: raw.tenant,
-                    entity: "AdminCommand",
-                    entityId: raw.id,
-                    before: JSON.stringify({ status: raw.status }),
-                    after: JSON.stringify({ status: "cancelled" }),
-                    reason: "Rejeitado via Central de Resolução",
-                  }
-                )
+                run(() => updateOperationStatus(raw.id, "cancelled", "Rejeitado via Central de Resolução"))
               }
             >
               <X className="h-3.5 w-3.5" /> Rejeitar
@@ -161,34 +139,10 @@ export default function ResolutionActions({ problem, onMutated, navigate, resolu
       );
     }
     return (
-      <div className="space-y-2">
-        <div className="flex flex-wrap gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-8 gap-1.5 border-rose-200 text-rose-700 hover:bg-rose-50"
-            disabled={busy}
-            onClick={() =>
-              run(
-                () => base44.entities.AdminCommand.update(raw.id, { status: "cancelled" }),
-                {
-                  action: "operation.cancel",
-                  saas: raw.saas,
-                  entity: "AdminCommand",
-                  entityId: raw.id,
-                  before: JSON.stringify({ status: raw.status }),
-                  after: JSON.stringify({ status: "cancelled" }),
-                }
-              )
-            }
-          >
-            <X className="h-3.5 w-3.5" /> Cancelar operação
-          </Button>
-          <Button size="sm" variant="ghost" className="h-8" onClick={() => navigate("/operations")}>
-            Ver no Operation Center
-          </Button>
-        </div>
-        {err && <p className="text-xs text-rose-600">{err}</p>}
+      <div className="flex flex-wrap gap-2">
+        <Button size="sm" variant="outline" className="h-8" onClick={() => navigate("/operations")}>
+          Ver no Operation Center
+        </Button>
       </div>
     );
   }
@@ -196,94 +150,30 @@ export default function ResolutionActions({ problem, onMutated, navigate, resolu
   if (type === "config") {
     return (
       <div className="space-y-2">
-        <div className="flex flex-wrap gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-8 gap-1.5 border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-            disabled={busy}
-            onClick={() =>
-              run(
-                () =>
-                  base44.entities.Configuration.update(raw.id, { approval_status: "approved", enabled: true }),
-                {
-                  action: "config.approve",
-                  saas: raw.saas_id || "central",
-                  entity: "Configuration",
-                  entityId: raw.id,
-                  before: JSON.stringify({ approval_status: "pending" }),
-                  after: JSON.stringify({ approval_status: "approved", enabled: true }),
-                  reason: "Aprovado via Central de Resolução",
-                }
-              )
-            }
-          >
-            {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />} Aprovar
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-8 gap-1.5 border-rose-200 text-rose-700 hover:bg-rose-50"
-            disabled={busy}
-            onClick={() =>
-              run(
-                () => base44.entities.Configuration.update(raw.id, { approval_status: "rejected" }),
-                {
-                  action: "config.reject",
-                  saas: raw.saas_id || "central",
-                  entity: "Configuration",
-                  entityId: raw.id,
-                  before: JSON.stringify({ approval_status: "pending" }),
-                  after: JSON.stringify({ approval_status: "rejected" }),
-                  reason: "Rejeitado via Central de Resolução",
-                }
-              )
-            }
-          >
-            <X className="h-3.5 w-3.5" /> Rejeitar
-          </Button>
-          <Button size="sm" variant="ghost" className="h-8" onClick={() => navigate("/configurations")}>
-            Ver configs
-          </Button>
-        </div>
-        {err && <p className="text-xs text-rose-600">{err}</p>}
+        <p className="text-xs text-slate-500">A aprovação de configurações ainda não tem endpoint nativo; revise na tela de Configurações.</p>
+        <Button size="sm" variant="outline" className="h-8" onClick={() => navigate("/configurations")}>
+          Ver configs
+        </Button>
       </div>
     );
   }
 
   if (type === "saas") {
-    const sev =
-      raw.health === "down" ? "critical" : raw.status === "auth_failed" ? "high" : raw.health === "degraded" ? "medium" : "low";
+    const verify = () =>
+      run(async () => {
+        const connection = (await listConnections()).find((c) => c.product?.id === raw.id);
+        if (!connection) throw new Error("Este SaaS ainda não tem conexão. Cadastre-a em Integrações.");
+        const result = await probeConnection(connection.id);
+        if (result.failure_code) throw new Error(`Verificação: ${result.status} (${result.failure_code}).`);
+      });
     return (
       <div className="space-y-2">
         <div className="flex flex-wrap gap-2">
-          <Button
-            size="sm"
-            className="h-8 gap-1.5"
-            disabled={busy}
-            onClick={() =>
-              run(
-                async () => {
-                  await base44.entities.Incident.create({
-                    saas: raw.name,
-                    title: `${raw.name} — ${raw.health || raw.status}`,
-                    severity: sev,
-                    status: "open",
-                    opened_at: new Date().toISOString(),
-                    description: `Incidente aberto via Central de Resolução. Health: ${raw.health || "?"} · Status: ${raw.status || "?"}.`,
-                  });
-                },
-                {
-                  action: "incident.create",
-                  saas: raw.name,
-                  entity: "Incident",
-                  reason: `Aberto a partir de SaaS ${raw.name} degradado`,
-                  origin: "ui",
-                }
-              )
-            }
-          >
-            {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <AlertTriangle className="h-3.5 w-3.5" />} Abrir incidente
+          <Button size="sm" className="h-8 gap-1.5" disabled={busy} onClick={verify}>
+            {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />} Verificar agora
+          </Button>
+          <Button size="sm" variant="outline" className="h-8 gap-1.5" onClick={() => navigate("/integrations")}>
+            <Plug className="h-3.5 w-3.5" /> Conexões
           </Button>
           <Button size="sm" variant="outline" className="h-8 gap-1.5" onClick={() => navigate(`/saas/${raw.id}`)}>
             <ExternalLink className="h-3.5 w-3.5" /> Ver detalhes

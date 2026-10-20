@@ -97,9 +97,7 @@ class OrganizationUnit(Base):
 
 class UserAccessAssignment(Base):
     __tablename__ = "user_access_assignments"
-    __table_args__ = (
-        UniqueConstraint("tenant_id", "user_id", name="uq_assignment_tenant_user"),
-    )
+    __table_args__ = (UniqueConstraint("tenant_id", "user_id", name="uq_assignment_tenant_user"),)
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
     tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id", ondelete="CASCADE"), index=True)
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
