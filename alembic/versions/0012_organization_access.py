@@ -3,6 +3,7 @@
 from collections.abc import Sequence
 
 import sqlalchemy as sa
+
 from alembic import op
 
 revision: str = "0012_organization_access"
@@ -30,7 +31,9 @@ def upgrade() -> None:
     op.create_index("ix_organization_units_tenant_id", "organization_units", ["tenant_id"])
     op.create_index("ix_organization_units_kind", "organization_units", ["kind"])
     op.create_index("ix_organization_units_parent_id", "organization_units", ["parent_id"])
-    op.create_index("ix_organization_units_manager_user_id", "organization_units", ["manager_user_id"])
+    op.create_index(
+        "ix_organization_units_manager_user_id", "organization_units", ["manager_user_id"]
+    )
     op.create_table(
         "user_access_assignments",
         sa.Column("id", sa.String(36), nullable=False),
@@ -47,7 +50,9 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["tenant_id"], ["tenants.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["profile_id"], ["access_profiles.id"], ondelete="SET NULL"),
-        sa.ForeignKeyConstraint(["organization_unit_id"], ["organization_units.id"], ondelete="SET NULL"),
+        sa.ForeignKeyConstraint(
+            ["organization_unit_id"], ["organization_units.id"], ondelete="SET NULL"
+        ),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("tenant_id", "user_id", name="uq_assignment_tenant_user"),
     )

@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     database_url: SecretStr = SecretStr(
         f"postgresql+psycopg://{PRODUCT}:local_dev_only@127.0.0.1:{DEFAULT_DB_PORT}/{PRODUCT}"
     )
-    api_port: int = Field(default=8001 if PRODUCT == "central" else 8000, ge=1024, le=65535)
+    api_port: int = Field(default=8011 if PRODUCT == "central" else 8000, ge=1024, le=65535)
     frontend_port: int = Field(default=5174 if PRODUCT == "central" else 5173, ge=1024, le=65535)
     frontend_url: str = "http://127.0.0.1:5174"
     session_hours: int = Field(default=8, ge=1, le=168)

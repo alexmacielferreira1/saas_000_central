@@ -83,13 +83,25 @@
 
 ```python
 def test_user_email_and_membership_are_unique(session):
-    user = User(email="Alex@Example.com", email_normalized="alex@example.com", password_hash="hash", full_name="Alex")
+    user = User(
+        email="Alex@Example.com",
+        email_normalized="alex@example.com",
+        password_hash="hash",
+        full_name="Alex",
+    )
     tenant = Tenant(name="Central", slug="central")
     session.add_all([user, tenant])
     session.flush()
     session.add(Membership(user_id=user.id, tenant_id=tenant.id, role="superadmin"))
     session.commit()
-    session.add(User(email="alex@example.com", email_normalized="alex@example.com", password_hash="other", full_name="Other"))
+    session.add(
+        User(
+            email="alex@example.com",
+            email_normalized="alex@example.com",
+            password_hash="other",
+            full_name="Other",
+        )
+    )
     with pytest.raises(IntegrityError):
         session.commit()
 ```
@@ -171,6 +183,7 @@ def test_authenticate_normalizes_email_and_creates_hashed_session(db_session):
     assert result.token not in db_session.scalars(select(AuthSession.token_hash)).all()
     assert hash_session_token(result.token) == result.auth_session.token_hash
 
+
 def test_user_without_active_membership_gets_no_session(db_session):
     user = seed_user_without_membership(db_session)
     with pytest.raises(AccountNotAllowed):
@@ -192,8 +205,10 @@ Add `pwdlib[argon2]>=0.3,<1` to project dependencies. Regenerate `requirements.l
 ```python
 password_hash = PasswordHash.recommended()
 
+
 def hash_password(password: str) -> str:
     return password_hash.hash(password)
+
 
 def verify_password(password: str, encoded: str) -> bool:
     return password_hash.verify(password, encoded)
@@ -246,12 +261,15 @@ git commit -m "feat(auth): add password and session services"
 
 ```python
 def test_login_sets_central_http_only_cookie_and_returns_superadmin(auth_client):
-    response = auth_client.post("/api/v1/auth/login", json={"email": "alex@example.com", "password": PASSWORD})
+    response = auth_client.post(
+        "/api/v1/auth/login", json={"email": "alex@example.com", "password": PASSWORD}
+    )
     assert response.status_code == 200
     assert response.json()["memberships"][0]["role"] == "superadmin"
     assert "central_session=" in response.headers["set-cookie"]
     assert "HttpOnly" in response.headers["set-cookie"]
     assert PASSWORD not in response.text
+
 
 def test_production_rejects_insecure_cookie(monkeypatch):
     monkeypatch.setenv("ENVIRONMENT", "production")
@@ -322,13 +340,23 @@ git commit -m "feat(auth): expose Central session API"
 - [ ] **Step 1: Write failing OAuth tests**
 
 ```python
-def test_google_callback_creates_session_only_for_existing_authorized_user(auth_client, monkeypatch):
+def test_google_callback_creates_session_only_for_existing_authorized_user(
+    auth_client, monkeypatch
+):
     start = auth_client.get("/api/v1/auth/google/start", follow_redirects=False)
     state = parse_qs(urlparse(start.headers["location"]).query)["state"][0]
-    monkeypatch.setattr("app.api.v1.auth.exchange_google_code", AsyncMock(return_value={
-        "email": "alexmacielferreira@gmail.com", "email_verified": True,
-    }))
-    response = auth_client.get(f"/api/v1/auth/google/callback?code=abc&state={state}", follow_redirects=False)
+    monkeypatch.setattr(
+        "app.api.v1.auth.exchange_google_code",
+        AsyncMock(
+            return_value={
+                "email": "alexmacielferreira@gmail.com",
+                "email_verified": True,
+            }
+        ),
+    )
+    response = auth_client.get(
+        f"/api/v1/auth/google/callback?code=abc&state={state}", follow_redirects=False
+    )
     assert response.status_code == 307
     assert response.headers["location"] == "http://127.0.0.1:5174/"
     assert "central_session=" in response.headers["set-cookie"]
@@ -394,6 +422,7 @@ def test_bootstrap_creates_alex_superadmin_once(db_session, settings):
     assert second.status == "already_configured"
     assert db_session.scalar(select(func.count(User.id))) == 1
     assert db_session.scalar(select(Membership.role)) == "superadmin"
+
 
 def test_bootstrap_does_not_promote_or_reset_existing_user(db_session, settings):
     existing = seed_viewer(db_session, email=settings.bootstrap_admin_email)

@@ -114,10 +114,13 @@ def test_superadmin_updates_and_suspends_administrator(access_client):
     )
     assert reactivated.status_code == 200
     assert reactivated.json()["status"] == "active"
-    assert access_client.post(
-        "/api/v1/auth/login",
-        json={"email": "gestora@example.com", "password": "Senha-temporaria-2026!"},
-    ).status_code == 200
+    assert (
+        access_client.post(
+            "/api/v1/auth/login",
+            json={"email": "gestora@example.com", "password": "Senha-temporaria-2026!"},
+        ).status_code
+        == 200
+    )
 
 
 def test_superadmin_creates_permission_and_versioned_profile(access_client):

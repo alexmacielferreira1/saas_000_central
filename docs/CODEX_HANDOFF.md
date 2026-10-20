@@ -1,5 +1,18 @@
 # Handoff da Central
 
+## Continuação — 04/10/2026 — estabilização da ponte
+
+- Branch local: `codex/stabilize-central-mediamind-bridge`; nenhum commit ou push desta rodada.
+- O conector MediaMind usa o Capability Manifest real, identidade de serviço e descobre por ele os endpoints `health`, `readiness`, `version` e `commands` publicados pelo produto.
+- A primeira operação remota somente leitura está ligada à persistência da Central, com ID/resultado remoto, replay sem novo despacho e timeout/falha de conexão explícitos.
+- A Central de Resolução não converte mais falha parcial em `Tudo limpo`.
+- Porta local padrão alinhada para 8011 e Vitest adicionado ao workflow.
+- Migration nova: `0013_operation_remote_result`.
+- Prova viva concluída com MediaMind + PostgreSQL temporários: probe saudável, replay com mesmo UUID, token 401, audiência/escopo 403 e readiness 503 com banco parado.
+- Gates locais completos: backend Ruff/format, `87 passed, 1 skipped`; frontend `111` testes, lint, typecheck e build; migration `0013` aplicada até `head` em PostgreSQL 16 temporário.
+- Pendências prioritárias: automatizar contrato vivo na CI; worker/reconciliador durável; allowlist de destino contra SSRF; escopos fixos por credencial; migração nativa de Incidentes/Resolução.
+- Evidência detalhada: `../../_documentacao/RODADA_ESTABILIZACAO_PONTE_2026-10-04.md` no checkout HUB.
+
 ## Atualização 27/09/2026 — operação no mesmo contexto
 
 - Os onze centros de capacidade deixaram de repetir conteúdo genérico e agora possuem formulários e indicadores do próprio domínio.
@@ -143,3 +156,20 @@
 - A conta administrativa agora pode ter nome/papel editados e ser suspensa/reativada na própria página; suspensão bloqueia autenticação e a mutação gera `manager.update` na auditoria.
 - A continuidade obrigatória está em `CENTRAL_NEXT_SESSIONS_CHECKLIST.md`. A próxima fatia funcional é convite, validade, sessões/MFA e exceções temporárias; depois Form Builder e Import Engine persistente estilo PowerQuery.
 - Verificação fresca desta sessão: 79 testes backend, 110 frontend, lint, typecheck e build aprovados. Nenhum Render/Neon foi alterado.
+
+## Consolidação dos anexos do Codex em 29/09/2026
+
+- Os 90 textos de `C:\Users\Alex\.codex\attachments` foram deduplicados em 58 conteúdos únicos e todos possuem linha no manifesto do HUB.
+- Requisitos específicos da Central foram ligados às trilhas do checklist em `CODEX_ATTACHMENTS_REQUIREMENTS.md`.
+- A fonte completa e a classificação por SHA-256 estão em `../../_documentacao/CODEX_ATTACHMENTS_REQUIREMENTS_CONSOLIDATED_2026-09-29.md` e `../../_documentacao/CODEX_ATTACHMENTS_SOURCE_MANIFEST_2026-09-29.md`.
+- Este bloco foi somente documental: não altera migrations, API, banco, produção ou o estado funcional das telas.
+
+## Primeiro lote Adm 1 / Adm 2 em 04/10/2026
+
+- O menu global foi reduzido para Home, `Adm 1 — Atual` e `Adm 2 — Evolução`; nenhuma URL administrativa anterior foi removida.
+- `/adm1` reúne o acesso às telas existentes sem duplicar implementação.
+- `/adm2`, `/adm2/home`, `/adm2/panorama` e `/adm2/saas` formam o primeiro laboratório isolado.
+- O Adm 2 usa somente `getHomeSummary` e `listSaas`; ausência ou falha é exibida como indisponibilidade, nunca como zero ou dado demonstrativo.
+- A criação, edição e detalhe continuam nas telas canônicas atuais até cada migração ter autorização, persistência, auditoria, testes e rollback comprovados.
+- Evidência: 97 testes direcionados e, após a revisão final, 142 testes frontend completos, lint, typecheck e build aprovados. Nenhum backend, banco ou ambiente remoto foi alterado.
+- Próximo lote seguro: inventariar tela por tela as ações do Adm 1 e classificar `frontend somente`, `backend real`, `parcial` ou `bloqueada` antes de promover qualquer função.

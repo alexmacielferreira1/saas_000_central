@@ -21,25 +21,30 @@ export default function ResolutionCenter() {
   const navigate = useNavigate();
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [failedSources, setFailedSources] = useState([]);
   const [q, setQ] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [sevFilter, setSevFilter] = useState("all");
 
   const load = useCallback(async () => {
     setLoading(true);
-    setError(false);
+    setFailedSources([]);
     try {
-      const safe = (p) => p.then((r) => r || []).catch(() => []);
-      const [incidents, commands, saas, configs] = await Promise.all([
-        safe(base44.entities.Incident.list("-opened_at", 100)),
-        safe(base44.entities.AdminCommand.list("-created_date", 100)),
-        safe(base44.entities.Saas.list("-updated_date", 100)),
-        safe(base44.entities.Configuration.list("-created_date", 100)),
+      const names = ["incidentes", "operações", "SaaS", "configurações"];
+      const results = await Promise.allSettled([
+        base44.entities.Incident.list("-opened_at", 100),
+        base44.entities.AdminCommand.list("-created_date", 100),
+        base44.entities.Saas.list("-updated_date", 100),
+        base44.entities.Configuration.list("-created_date", 100),
       ]);
+      const values = results.map((result) => (result.status === "fulfilled" ? result.value || [] : []));
+      setFailedSources(
+        results.flatMap((result, index) => (result.status === "rejected" ? [names[index]] : []))
+      );
+      const [incidents, commands, saas, configs] = values;
       setProblems(buildProblems({ incidents, commands, saas, configs }));
     } catch {
-      setError(true);
+      setFailedSources(["todas as fontes"]);
     } finally {
       setLoading(false);
     }
@@ -135,9 +140,13 @@ export default function ResolutionCenter() {
             <div key={i} className="h-16 animate-pulse rounded-xl bg-slate-100" />
           ))}
         </div>
-      ) : error ? (
+      ) : failedSources.length > 0 ? (
         <Card>
-          <ErrorState onRetry={load} description="Não foi possível carregar os problemas do ecossistema." />
+          <ErrorState
+            title="Dados incompletos"
+            onRetry={load}
+            description={`Não foi possível consultar: ${failedSources.join(", ")}. O estado do ecossistema não pode ser considerado saudável.`}
+          />
         </Card>
       ) : filtered.length === 0 ? (
         <Card>
