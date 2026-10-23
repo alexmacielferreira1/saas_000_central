@@ -17,7 +17,7 @@ geral (avaliação das skills, curadoria, kit) está em
 
 ## 2. Commits
 
-Branch `qualidade/kit-revisao-2026-10-23` (publicada no GitHub, ainda **sem PR e sem merge**).
+Branch `qualidade/kit-revisao-2026-10-23` (publicada no GitHub; PR aberto em https://github.com/alexmacielferreira1/saas_000_central/pull/2, ainda **sem merge**).
 
 | Commit | O quê |
 |---|---|
