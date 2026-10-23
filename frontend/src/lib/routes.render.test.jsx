@@ -101,6 +101,7 @@ vi.mock('@/api/access', () => ({
 
 vi.mock('@/api/operations', () => ({
   listOperations: vi.fn().mockResolvedValue([]),
+  getOperationPolicy: vi.fn().mockResolvedValue({ sensitive_terms: ['delete'] }),
   createOperation: vi.fn(),
   updateOperationStatus: vi.fn(),
 }));
