@@ -58,9 +58,9 @@ def create(
     item = AdminOperation(
         tenant_id=tenant_id,
         status="awaiting_confirmation" if sensitive else "queued",
-        requested_by=body.requested_by or current.user.email,
+        requested_by=current.user.email,
         requested_by_user_id=current.user.id,
-        **body.model_dump(exclude={"requested_by"}),
+        **body.model_dump(),
     )
     session.add(item)
     session.flush()

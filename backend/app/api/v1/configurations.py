@@ -58,9 +58,9 @@ def create(
     config = Configuration(
         tenant_id=tenant_id,
         scope_key=scope_key,
-        author=body.author or current.user.email,
+        author=current.user.email,
         approval_status="auto",
-        **body.model_dump(exclude={"author"}),
+        **body.model_dump(),
     )
     session.add(config)
     session.flush()

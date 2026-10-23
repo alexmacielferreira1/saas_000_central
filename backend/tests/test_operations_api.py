@@ -120,3 +120,23 @@ def test_configuration_approval_status_is_not_client_controlled(access_client_fi
 
     assert response.status_code == 201
     assert response.json()["approval_status"] == "auto"
+
+
+def test_operation_requester_comes_from_session(access_client_fixture):
+    response = access_client_fixture.post(
+        "/api/v1/operations",
+        json={"saas": "Central", "action": "sync users", "requested_by": "ceo@empresa.com"},
+    )
+
+    assert response.status_code == 201
+    assert response.json()["requested_by"] == "alex@example.com"
+
+
+def test_configuration_author_comes_from_session(access_client_fixture):
+    response = access_client_fixture.post(
+        "/api/v1/configurations",
+        json={"key": "feature.y", "value": "on", "author": "ceo@empresa.com"},
+    )
+
+    assert response.status_code == 201
+    assert response.json()["author"] == "alex@example.com"
