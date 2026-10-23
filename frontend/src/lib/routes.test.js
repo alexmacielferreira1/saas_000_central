@@ -53,3 +53,14 @@ describe('route contract', () => {
     ])
   })
 })
+
+describe('route code splitting', () => {
+  it('loads every administrative page on demand', () => {
+    expect(ADMIN_ROUTES.filter((route) => route.Component.lazyRoute !== true)).toEqual([])
+  })
+
+  it('keeps the login page in the initial bundle', () => {
+    const login = PUBLIC_ROUTES.find((route) => route.path === '/login')
+    expect(login.Component.lazyRoute).toBeUndefined()
+  })
+})

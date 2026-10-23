@@ -1,21 +1,55 @@
-import ApiGuides from '@/pages/ApiGuides'
-import AuditLog from '@/pages/AuditLog'
-import Configurations from '@/pages/Configurations'
-import ForgotPassword from '@/pages/ForgotPassword'
-import Home from '@/pages/Home'
-import Incidents from '@/pages/Incidents'
-import Integrations from '@/pages/Integrations'
+import { Suspense, createElement, lazy } from 'react'
 import Login from '@/pages/Login'
-import OperationCenter from '@/pages/OperationCenter'
-import Register from '@/pages/Register'
-import ResetPassword from '@/pages/ResetPassword'
-import ResolutionCenter from '@/pages/ResolutionCenter'
-import SaasDetail from '@/pages/SaasDetail'
-import SaasList from '@/pages/SaasList'
-import UsersAccess from '@/pages/UsersAccess'
-import ImportWorkbench from '@/pages/ImportWorkbench'
-import { AdministrationOverview, EcosystemMap, ErrorCenter, HealthCenter, JobsCenter } from '@/pages/ControlSurfaces'
-import { AiGovernance, CommercialCenter, ContinuityCenter, DocumentationCenter, FeatureCenter, PrivacyCenter, ReleaseCenter, ScreenGovernance, SecurityCenter, StorageCenter, UsageCostCenter } from '@/pages/CapabilityCenters'
+
+// Cada página administrativa vira um chunk próprio, carregado sob demanda. O Suspense
+// fica dentro do componente da rota para manter o contrato { path, Component } intacto.
+function lazyPage(loader, exportName = 'default') {
+  const Page = lazy(() => loader().then((module) => ({ default: module[exportName] })))
+  function LazyRoute(props) {
+    return createElement(
+      Suspense,
+      { fallback: createElement('div', { className: 'h-64 animate-pulse rounded-xl bg-slate-100' }) },
+      createElement(Page, props),
+    )
+  }
+  LazyRoute.lazyRoute = true
+  return LazyRoute
+}
+
+const controlSurfaces = () => import('@/pages/ControlSurfaces')
+const capabilityCenters = () => import('@/pages/CapabilityCenters')
+
+const ApiGuides = lazyPage(() => import('@/pages/ApiGuides'))
+const AuditLog = lazyPage(() => import('@/pages/AuditLog'))
+const Configurations = lazyPage(() => import('@/pages/Configurations'))
+const ForgotPassword = lazyPage(() => import('@/pages/ForgotPassword'))
+const Home = lazyPage(() => import('@/pages/Home'))
+const Incidents = lazyPage(() => import('@/pages/Incidents'))
+const Integrations = lazyPage(() => import('@/pages/Integrations'))
+const OperationCenter = lazyPage(() => import('@/pages/OperationCenter'))
+const Register = lazyPage(() => import('@/pages/Register'))
+const ResetPassword = lazyPage(() => import('@/pages/ResetPassword'))
+const ResolutionCenter = lazyPage(() => import('@/pages/ResolutionCenter'))
+const SaasDetail = lazyPage(() => import('@/pages/SaasDetail'))
+const SaasList = lazyPage(() => import('@/pages/SaasList'))
+const UsersAccess = lazyPage(() => import('@/pages/UsersAccess'))
+const ImportWorkbench = lazyPage(() => import('@/pages/ImportWorkbench'))
+const AdministrationOverview = lazyPage(controlSurfaces, 'AdministrationOverview')
+const EcosystemMap = lazyPage(controlSurfaces, 'EcosystemMap')
+const ErrorCenter = lazyPage(controlSurfaces, 'ErrorCenter')
+const HealthCenter = lazyPage(controlSurfaces, 'HealthCenter')
+const JobsCenter = lazyPage(controlSurfaces, 'JobsCenter')
+const AiGovernance = lazyPage(capabilityCenters, 'AiGovernance')
+const CommercialCenter = lazyPage(capabilityCenters, 'CommercialCenter')
+const ContinuityCenter = lazyPage(capabilityCenters, 'ContinuityCenter')
+const DocumentationCenter = lazyPage(capabilityCenters, 'DocumentationCenter')
+const FeatureCenter = lazyPage(capabilityCenters, 'FeatureCenter')
+const PrivacyCenter = lazyPage(capabilityCenters, 'PrivacyCenter')
+const ReleaseCenter = lazyPage(capabilityCenters, 'ReleaseCenter')
+const ScreenGovernance = lazyPage(capabilityCenters, 'ScreenGovernance')
+const SecurityCenter = lazyPage(capabilityCenters, 'SecurityCenter')
+const StorageCenter = lazyPage(capabilityCenters, 'StorageCenter')
+const UsageCostCenter = lazyPage(capabilityCenters, 'UsageCostCenter')
 
 export const PUBLIC_ROUTES = [
   { path: '/login', Component: Login },
