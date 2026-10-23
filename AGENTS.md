@@ -12,3 +12,9 @@ Sem secrets versionados. GitHub/Render/Neon só podem ser configurados com autor
 Não apagar arquivos do usuário. Originais na pasta do HUB são somente referência.
 Testar mudanças relevantes, registrar dependências e evidências reais. Não declarar paridade pela presença de telas.
 Documentos históricos e AGENTS do export descrevem a origem; o roteiro atual é FastAPI/PostgreSQL local.
+
+## Revisão de qualidade e segurança
+
+- Roteiro padrão do HUB: `docs/REVISAO_QUALIDADE.md`. Rodar antes de publicar, ao fechar marco e após blocos que mexam em auth, permissões, dados de empresas, uploads, integrações, IA ou cobrança.
+- Skills do projeto em `.claude/skills/`; plugins de segurança (Trail of Bits) declarados em `.claude/settings.json`. Outros agentes seguem o mesmo roteiro pelo documento.
+- Relatórios de auditoria ficam em `docs/AUDITORIA_QUALIDADE_<data>.md`. Correções seguem a rotina de testes deste arquivo: teste que falha, correção, teste que passa, um item por vez.
