@@ -1,3 +1,4 @@
+# ruff: noqa: F811
 from datetime import UTC, datetime, timedelta
 
 from backend.tests.test_saas_registry_api import (  # noqa: F401
@@ -99,9 +100,7 @@ def test_connections_are_isolated_by_selected_organization(registry_client):  # 
         other_tenant = Tenant(name="Outra organização", slug="outra")
         session.add_all([other_user, other_tenant])
         session.flush()
-        session.add(
-            Membership(user_id=other_user.id, tenant_id=other_tenant.id, role="superadmin")
-        )
+        session.add(Membership(user_id=other_user.id, tenant_id=other_tenant.id, role="superadmin"))
         session.commit()
 
     client.post("/api/v1/auth/logout")
@@ -118,7 +117,7 @@ def test_connections_are_isolated_by_selected_organization(registry_client):  # 
         json=connection_payload(
             other_product["id"],
             name="Outro Admin API",
-            credential_ref="OTHER_HUB_TOKEN",
+            credential_ref="OTHER_HUB_ADMIN_TOKEN",
         ),
     )
     assert other_connection.status_code == 201
@@ -183,7 +182,8 @@ def test_observation_freshness_distinguishes_confirmed_and_stale_naive_timestamp
 
 
 def test_probe_persists_actionable_failure_when_credential_is_not_configured(
-    registry_client, monkeypatch,  # noqa: F811
+    registry_client,
+    monkeypatch,  # noqa: F811
 ):
     client, _ = registry_client
     login(client)
@@ -208,7 +208,8 @@ def test_probe_persists_actionable_failure_when_credential_is_not_configured(
 
 
 def test_probe_uses_connector_and_persists_manifest_and_health(
-    registry_client, monkeypatch,  # noqa: F811
+    registry_client,
+    monkeypatch,  # noqa: F811
 ):
     client, _ = registry_client
     login(client)

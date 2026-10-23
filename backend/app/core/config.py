@@ -33,6 +33,8 @@ class Settings(BaseSettings):
     bootstrap_admin_name: str | None = None
     bootstrap_tenant_name: str = "Central SaaS"
     bootstrap_tenant_slug: str = "central"
+    # JSON {"<REF>_HUB_ADMIN_TOKEN": ["host"]}; vazio fora de local/test bloqueia o probe.
+    integration_credential_hosts: str = ""
 
     @model_validator(mode="after")
     def validate_production_auth(self):

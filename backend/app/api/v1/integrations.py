@@ -3,6 +3,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
 from app.api.v1.saas import can_write_saas, selected_tenant
+from app.core.config import get_settings
 from app.core.errors import error_response
 from app.db.session import get_session
 from app.models.integration import IntegrationObservation, SaasConnection, SaasEnvironment
@@ -16,6 +17,12 @@ from app.schemas.integration import (
     ObservationResponse,
 )
 from app.services.connectors import connector_for
+from app.services.connectors.outbound import (
+    OutboundPolicyError,
+    bound_evidence,
+    parse_credential_bindings,
+    validate_target,
+)
 from app.tenancy.context import CurrentSession, get_current_session
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy import select
@@ -24,6 +31,16 @@ from sqlalchemy.orm import Session
 router = APIRouter(prefix="/integrations", tags=["integrations"])
 DbSession = Annotated[Session, Depends(get_session)]
 Authenticated = Annotated[CurrentSession, Depends(get_current_session)]
+
+
+def outbound_context() -> tuple[str, dict[str, list[str]]]:
+    settings = get_settings()
+    return settings.environment, parse_credential_bindings(settings.integration_credential_hosts)
+
+
+def check_outbound(base_url: str, credential_ref: str) -> None:
+    environment, bindings = outbound_context()
+    validate_target(base_url, credential_ref, environment=environment, bindings=bindings)
 
 
 def mask_credential_ref(value: str) -> str:
@@ -113,6 +130,10 @@ def create_connection(
             "INTEGRATION_ALREADY_EXISTS",
             "Este SaaS já possui uma conexão administrativa.",
         )
+    try:
+        check_outbound(body.base_url.rstrip("/"), body.credential_ref)
+    except OutboundPolicyError as exc:
+        return error_response(request, 422, exc.code, exc.message)
 
     connection = SaasConnection(
         tenant_id=tenant_id,
@@ -225,31 +246,49 @@ def probe_connection(
         return error_response(request, 404, "INTEGRATION_NOT_FOUND", "Integracao nao encontrada.")
 
     connection, environment, product = row
-    token = os.getenv(connection.credential_ref)
+    connection_id, environment_id = connection.id, environment.id
+    base_url, credential_ref = environment.base_url, connection.credential_ref
+    product_slug, environment_name = product.slug, environment.name
+    correlation_id = request.state.correlation_id
     observed_at = datetime.now(UTC)
-    status = "unavailable"
-    failure_code = None
-    evidence: dict = {"product": product.slug, "environment": environment.name}
+    latency_ms = 0
+    evidence: dict = {"product": product_slug, "environment": environment_name}
 
-    if not token:
-        status = "not_configured"
-        failure_code = "CREDENTIAL_REFERENCE_UNAVAILABLE"
-        evidence["message"] = "Configure a credencial no ambiente do backend da Central."
+    try:
+        check_outbound(base_url, credential_ref)
+        token = os.getenv(credential_ref)
+    except OutboundPolicyError as exc:
+        token = None
+        status, failure_code = "not_configured", exc.code
+        evidence["message"] = exc.message
     else:
-        result = connector_for(product.slug, environment.base_url, token).probe(
-            request.state.correlation_id
-        )
-        status = result.status
-        failure_code = result.failure_code
-        evidence.update(result.evidence)
+        status, failure_code = "not_configured", "CREDENTIAL_REFERENCE_UNAVAILABLE"
+        evidence["message"] = "Configure a credencial no ambiente do backend da Central."
 
-    latency_ms = 0 if not token else result.latency_ms
+    if token:
+        # Libera a conexao do pool antes da chamada externa (ate 2 x 5 s).
+        session.commit()
+        result = connector_for(product_slug, base_url, token).probe(correlation_id)
+        status, failure_code, latency_ms = result.status, result.failure_code, result.latency_ms
+        evidence.pop("message", None)
+        evidence.update(result.evidence)
+        evidence = bound_evidence(evidence)
+        connection = session.scalar(
+            select(SaasConnection).where(
+                SaasConnection.id == connection_id, SaasConnection.tenant_id == tenant_id
+            )
+        )
+        if connection is None:
+            return error_response(
+                request, 404, "INTEGRATION_NOT_FOUND", "Integracao nao encontrada."
+            )
+
     observation = IntegrationObservation(
         tenant_id=tenant_id,
-        connection_id=connection.id,
-        environment_id=environment.id,
+        connection_id=connection_id,
+        environment_id=environment_id,
         status=status,
-        source=f"central-probe:{product.slug}",
+        source=f"central-probe:{product_slug}",
         evidence=evidence,
         latency_ms=latency_ms,
         failure_code=failure_code,
@@ -265,8 +304,8 @@ def probe_connection(
         actor_email=current.user.email,
         action="integration.connection.probe",
         resource_type="saas_connection",
-        resource_id=connection.id,
-        correlation_id=request.state.correlation_id,
+        resource_id=connection_id,
+        correlation_id=correlation_id,
         after_data={"status": status, "failure_code": failure_code, "latency_ms": latency_ms},
     )
     session.commit()
@@ -275,7 +314,7 @@ def probe_connection(
         id=observation.id,
         connection_id=observation.connection_id,
         environment_id=observation.environment_id,
-        environment=environment.name,
+        environment=environment_name,
         status=observation.status,
         freshness="confirmed",
         source=observation.source,
