@@ -24,9 +24,7 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(["tenant_id"], ["tenants.id"], ondelete="CASCADE"),
-        sa.ForeignKeyConstraint(
-            ["saas_product_id"], ["saas_products.id"], ondelete="CASCADE"
-        ),
+        sa.ForeignKeyConstraint(["saas_product_id"], ["saas_products.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint(
             "tenant_id",
@@ -35,9 +33,7 @@ def upgrade() -> None:
         ),
     )
     op.create_index("ix_saas_connections_tenant_id", "saas_connections", ["tenant_id"])
-    op.create_index(
-        "ix_saas_connections_saas_product_id", "saas_connections", ["saas_product_id"]
-    )
+    op.create_index("ix_saas_connections_saas_product_id", "saas_connections", ["saas_product_id"])
     op.create_table(
         "saas_environments",
         sa.Column("id", sa.String(36), nullable=False),
@@ -50,9 +46,7 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(["tenant_id"], ["tenants.id"], ondelete="CASCADE"),
-        sa.ForeignKeyConstraint(
-            ["connection_id"], ["saas_connections.id"], ondelete="CASCADE"
-        ),
+        sa.ForeignKeyConstraint(["connection_id"], ["saas_connections.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint(
             "tenant_id",
@@ -62,9 +56,7 @@ def upgrade() -> None:
         ),
     )
     op.create_index("ix_saas_environments_tenant_id", "saas_environments", ["tenant_id"])
-    op.create_index(
-        "ix_saas_environments_connection_id", "saas_environments", ["connection_id"]
-    )
+    op.create_index("ix_saas_environments_connection_id", "saas_environments", ["connection_id"])
     op.create_table(
         "integration_observations",
         sa.Column("id", sa.String(36), nullable=False),
@@ -79,12 +71,8 @@ def upgrade() -> None:
         sa.Column("observed_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(["tenant_id"], ["tenants.id"], ondelete="CASCADE"),
-        sa.ForeignKeyConstraint(
-            ["connection_id"], ["saas_connections.id"], ondelete="CASCADE"
-        ),
-        sa.ForeignKeyConstraint(
-            ["environment_id"], ["saas_environments.id"], ondelete="CASCADE"
-        ),
+        sa.ForeignKeyConstraint(["connection_id"], ["saas_connections.id"], ondelete="CASCADE"),
+        sa.ForeignKeyConstraint(["environment_id"], ["saas_environments.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
@@ -100,9 +88,7 @@ def upgrade() -> None:
         "integration_observations",
         ["environment_id"],
     )
-    op.create_index(
-        "ix_integration_observations_status", "integration_observations", ["status"]
-    )
+    op.create_index("ix_integration_observations_status", "integration_observations", ["status"])
 
 
 def downgrade() -> None:
