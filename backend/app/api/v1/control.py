@@ -11,7 +11,7 @@ from app.schemas.control import (
     ControlResourceResponse,
     ControlResourceUpdate,
 )
-from app.tenancy.context import CurrentSession, get_current_session
+from app.tenancy.context import TenantContext, get_tenant_context
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -21,7 +21,7 @@ router = APIRouter(prefix="/control-resources", tags=["control-resources"])
 
 @router.get("", response_model=list[ControlResourceResponse])
 def list_resources(
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
     kind: Annotated[str | None, Query(max_length=80)] = None,
 ):
@@ -35,7 +35,7 @@ def list_resources(
 def create_resource(
     body: ControlResourceCreate,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     selected = tenant_id(current)
@@ -82,7 +82,7 @@ def update_resource(
     resource_id: str,
     body: ControlResourceUpdate,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     selected = tenant_id(current)

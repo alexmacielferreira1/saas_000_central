@@ -7,7 +7,7 @@ from app.repositories.audit import append_audit
 from app.repositories.manifest import get_manifest, list_manifests, upsert_manifest
 from app.repositories.saas import get_product
 from app.schemas.manifest import CapabilityManifestResponse, CapabilityManifestUpsert
-from app.tenancy.context import CurrentSession, get_current_session
+from app.tenancy.context import TenantContext, get_tenant_context
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 
@@ -32,7 +32,7 @@ def snapshot(manifest) -> dict[str, Any]:
 
 @router.get("", response_model=list[CapabilityManifestResponse])
 def index(
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     return list_manifests(session, selected_tenant(current))
@@ -42,7 +42,7 @@ def index(
 def show(
     product_id: str,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     manifest = get_manifest(session, selected_tenant(current), product_id)
@@ -58,7 +58,7 @@ def upsert(
     product_id: str,
     body: CapabilityManifestUpsert,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     tenant_id = selected_tenant(current)

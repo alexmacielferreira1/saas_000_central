@@ -12,9 +12,7 @@ class ConfigurationCreate(BaseModel):
     )
     type: str = Field(default="setting", pattern=r"^(setting|feature_flag|limit)$")
     enabled: bool = True
-    author: str = Field(default="", max_length=320)
     reason: str = Field(default="", max_length=2000)
-    approval_status: str = Field(default="auto", pattern=r"^(auto|pending|approved|rejected)$")
 
     @field_validator("key")
     @classmethod

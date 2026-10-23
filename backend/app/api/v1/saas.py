@@ -2,7 +2,6 @@ from typing import Annotated
 
 from app.core.errors import error_response
 from app.db.session import get_session
-from app.models.identity import Membership
 from app.repositories.audit import append_audit
 from app.repositories.saas import (
     create_product,
@@ -12,9 +11,8 @@ from app.repositories.saas import (
     update_product,
 )
 from app.schemas.saas import SaasCreate, SaasResponse, SaasUpdate
-from app.tenancy.context import CurrentSession, get_current_session
+from app.tenancy.context import WRITE_ROLES, TenantContext, get_tenant_context
 from fastapi import APIRouter, Depends, Request
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/saas", tags=["saas"])
@@ -38,27 +36,17 @@ def audit_snapshot(product) -> dict:
     return {field: getattr(product, field) for field in AUDITABLE_FIELDS}
 
 
-def selected_tenant(current: CurrentSession) -> str:
-    tenant_id = current.auth_session.selected_tenant_id
-    if not tenant_id:
-        raise ValueError("authenticated session has no selected tenant")
-    return tenant_id
+def selected_tenant(current: TenantContext) -> str:
+    return current.tenant_id
 
 
-def can_write_saas(session: Session, current: CurrentSession, tenant_id: str) -> bool:
-    role = session.scalar(
-        select(Membership.role).where(
-            Membership.user_id == current.user.id,
-            Membership.tenant_id == tenant_id,
-            Membership.is_active.is_(True),
-        )
-    )
-    return role in {"superadmin", "admin"}
+def can_write_saas(session: Session, current: TenantContext, tenant_id: str) -> bool:
+    return tenant_id == current.tenant_id and current.role in WRITE_ROLES
 
 
 @router.get("", response_model=list[SaasResponse])
 def index(
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     return list_products(session, selected_tenant(current))
@@ -68,7 +56,7 @@ def index(
 def create(
     body: SaasCreate,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     tenant_id = selected_tenant(current)
@@ -97,7 +85,7 @@ def create(
 def show(
     product_id: str,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     product = get_product(session, selected_tenant(current), product_id)
@@ -111,7 +99,7 @@ def update(
     product_id: str,
     body: SaasUpdate,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     tenant_id = selected_tenant(current)

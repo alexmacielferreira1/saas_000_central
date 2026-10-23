@@ -8,7 +8,6 @@ class OperationCreate(BaseModel):
     product_tenant: str = Field(default="", max_length=200)
     resource: str = Field(default="", max_length=300)
     action: str = Field(min_length=1, max_length=200)
-    requested_by: str = Field(default="", max_length=320)
     reason: str = Field(default="", max_length=2000)
     dry_run: bool = False
 
@@ -32,3 +31,7 @@ class OperationResponse(BaseModel):
     retry_count: int
     created_at: datetime
     updated_at: datetime
+
+
+class OperationPolicyResponse(BaseModel):
+    sensitive_terms: list[str]

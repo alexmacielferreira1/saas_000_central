@@ -7,7 +7,7 @@ from app.models.saas import Configuration
 from app.repositories.audit import append_audit
 from app.repositories.saas import get_product
 from app.schemas.configuration import ConfigurationCreate, ConfigurationResponse
-from app.tenancy.context import CurrentSession, get_current_session
+from app.tenancy.context import TenantContext, get_tenant_context
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -17,7 +17,7 @@ router = APIRouter(prefix="/configurations", tags=["configurations"])
 
 @router.get("", response_model=list[ConfigurationResponse])
 def index(
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
     saas_product_id: Annotated[str | None, Query(max_length=36)] = None,
 ):
@@ -31,7 +31,7 @@ def index(
 def create(
     body: ConfigurationCreate,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     tenant_id = selected_tenant(current)
@@ -58,8 +58,9 @@ def create(
     config = Configuration(
         tenant_id=tenant_id,
         scope_key=scope_key,
-        author=body.author or current.user.email,
-        **body.model_dump(exclude={"author"}),
+        author=current.user.email,
+        approval_status="auto",
+        **body.model_dump(),
     )
     session.add(config)
     session.flush()

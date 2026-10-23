@@ -17,6 +17,9 @@ class AdminOperation(Base):
     resource: Mapped[str] = mapped_column(String(300), default="", nullable=False)
     action: Mapped[str] = mapped_column(String(200), nullable=False)
     requested_by: Mapped[str] = mapped_column(String(320), nullable=False)
+    requested_by_user_id: Mapped[str | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), index=True
+    )
     reason: Mapped[str] = mapped_column(Text, default="", nullable=False)
     dry_run: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     status: Mapped[str] = mapped_column(String(50), nullable=False)

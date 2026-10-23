@@ -7,16 +7,23 @@ from app.services.connectors.base import ProbeResult
 
 
 class MediaMindConnector:
-    def __init__(self, base_url: str, token: str):
+    def __init__(self, base_url: str, token: str, transport: httpx.BaseTransport | None = None):
         self.base_url = base_url.rstrip("/")
         self.headers = {"Authorization": f"Bearer {token}"}
+        self.transport = transport
 
     def probe(self, correlation_id: str) -> ProbeResult:
         started = perf_counter()
         headers = {**self.headers, "X-Correlation-ID": correlation_id}
         evidence: dict[str, Any] = {}
         try:
-            with httpx.Client(timeout=5.0, headers=headers) as client:
+            with httpx.Client(
+                timeout=5.0,
+                headers=headers,
+                follow_redirects=False,
+                trust_env=False,
+                transport=self.transport,
+            ) as client:
                 health = client.get(f"{self.base_url}/api/v1/admin/health")
                 manifest = client.get(f"{self.base_url}/api/v1/admin/manifest")
             evidence.update(

@@ -5,19 +5,36 @@ from app.core.errors import error_response
 from app.db.session import get_session
 from app.models.operation import AdminOperation
 from app.repositories.audit import append_audit
-from app.schemas.operation import OperationCreate, OperationResponse, OperationStatusUpdate
-from app.tenancy.context import CurrentSession, get_current_session
+from app.schemas.operation import (
+    OperationCreate,
+    OperationPolicyResponse,
+    OperationResponse,
+    OperationStatusUpdate,
+)
+from app.services.operation_policy import SENSITIVE_ACTION_TERMS, is_sensitive_action
+from app.tenancy.context import TenantContext, get_tenant_context
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/operations", tags=["operations"])
-SENSITIVE_ACTIONS = ("delete", "remove", "suspend", "reset", "rotate", "revoke", "close")
+
+
+def is_requester(item: AdminOperation, current: TenantContext) -> bool:
+    if item.requested_by_user_id is not None:
+        return item.requested_by_user_id == current.user.id
+    # Operações anteriores à 0013 só guardam o e-mail informado: compara de forma conservadora.
+    return item.requested_by.strip().casefold() == current.user.email.strip().casefold()
+
+
+@router.get("/policy", response_model=OperationPolicyResponse)
+def policy(current: Annotated[TenantContext, Depends(get_tenant_context)]):
+    return OperationPolicyResponse(sensitive_terms=list(SENSITIVE_ACTION_TERMS))
 
 
 @router.get("", response_model=list[OperationResponse])
 def index(
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
     saas: Annotated[str | None, Query(max_length=200)] = None,
 ):
@@ -31,18 +48,19 @@ def index(
 def create(
     body: OperationCreate,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     tenant_id = selected_tenant(current)
     if not can_write_saas(session, current, tenant_id):
         return error_response(request, 403, "OPERATION_WRITE_FORBIDDEN", "Ação não autorizada.")
-    sensitive = any(term in body.action.lower() for term in SENSITIVE_ACTIONS)
+    sensitive = is_sensitive_action(body.action)
     item = AdminOperation(
         tenant_id=tenant_id,
         status="awaiting_confirmation" if sensitive else "queued",
-        requested_by=body.requested_by or current.user.email,
-        **body.model_dump(exclude={"requested_by"}),
+        requested_by=current.user.email,
+        requested_by_user_id=current.user.id,
+        **body.model_dump(),
     )
     session.add(item)
     session.flush()
@@ -73,7 +91,7 @@ def update_status(
     operation_id: str,
     body: OperationStatusUpdate,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     tenant_id = selected_tenant(current)
@@ -89,6 +107,13 @@ def update_status(
     if item.status not in {"draft", "awaiting_confirmation"}:
         return error_response(
             request, 409, "OPERATION_NOT_PENDING", "A operação não aguarda decisão."
+        )
+    if body.status == "queued" and is_requester(item, current):
+        return error_response(
+            request,
+            403,
+            "OPERATION_SELF_APPROVAL_FORBIDDEN",
+            "Quem solicitou a operação não pode aprová-la.",
         )
     before = item.status
     item.status = body.status

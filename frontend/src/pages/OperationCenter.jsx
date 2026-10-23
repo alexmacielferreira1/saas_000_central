@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { listOperations, updateOperationStatus } from "@/api/operations";
+import { getOperationPolicy, listOperations, updateOperationStatus } from "@/api/operations";
 import { useSearchParams } from "react-router-dom";
 import PageHeader from "@/components/PageHeader";
 import { Card, EmptyState, ErrorState } from "@/components/ui-primitives";
 import StatusBadge from "@/components/StatusBadge";
-import { OP_STATUS, fmtDate, isSensitiveAction } from "@/lib/adminHelpers";
+import { OP_STATUS, applyOperationPolicy, fmtDate, isSensitiveAction } from "@/lib/adminHelpers";
 import { TerminalSquare, Plus, Search, ShieldAlert, Check, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import NewOperationDialog from "@/components/operations/NewOperationDialog";
@@ -26,7 +26,10 @@ export default function OperationCenter() {
     try {
       setError(false);
       setLoading(true);
-      const data = await listOperations();
+      const [data] = await Promise.all([
+        listOperations(),
+        getOperationPolicy().then(applyOperationPolicy).catch(() => null),
+      ]);
       setItems(data || []);
     } catch { setError(true); } finally { setLoading(false); }
   };

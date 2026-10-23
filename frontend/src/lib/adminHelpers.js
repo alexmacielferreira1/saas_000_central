@@ -94,17 +94,32 @@ export function pick(map, key) {
   return map[key] || { label: key || "—", tone: "slate" };
 }
 
-// Ações consideradas sensíveis — exigem confirmação manual antes de processar.
-const SENSITIVE_KEYWORDS = [
-  "delete", "remove", "drop", "purge", "destroy",
-  "suspend", "disable", "revoke", "block",
-  "rotate", "reset", "force", "elevate", "downgrade", "grant",
-  "provision", "decommission", "migrate",
+// Ações sensíveis exigem aprovação manual antes de processar. A fonte de verdade é o
+// backend (GET /api/v1/operations/policy); este fallback deve ser idêntico à lista de
+// backend/app/services/operation_policy.py (há teste de paridade no backend).
+export const SENSITIVE_KEYWORDS_FALLBACK = [
+  "delete", "remove", "drop", "purge", "destroy", "suspend",
+  "disable", "revoke", "block", "rotate", "reset", "force",
+  "elevate", "downgrade", "grant", "provision", "decommission", "migrate",
+  "close", "excluir", "exclusão", "apagar", "remover", "remoção",
+  "suspender", "suspensão", "desativar", "desabilitar", "bloquear", "revogar",
+  "redefinir", "rotacionar", "conceder", "elevar", "rebaixar", "provisionar",
+  "descomissionar", "migrar", "encerrar", "fechar",
 ];
+
+let sensitiveKeywords = SENSITIVE_KEYWORDS_FALLBACK;
+
+export function applyOperationPolicy(policy) {
+  const terms = policy?.sensitive_terms;
+  if (Array.isArray(terms) && terms.length > 0 && terms.every((t) => typeof t === "string" && t)) {
+    sensitiveKeywords = terms.map((t) => t.toLowerCase());
+  }
+  return sensitiveKeywords;
+}
 
 export function isSensitiveAction(action) {
   const a = (action || "").toLowerCase();
-  return SENSITIVE_KEYWORDS.some((kw) => a.includes(kw));
+  return sensitiveKeywords.some((kw) => a.includes(kw));
 }
 
 export function fmtDate(value) {

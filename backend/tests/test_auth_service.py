@@ -66,26 +66,29 @@ def test_inactive_user_cannot_authenticate(db_session):
     assert authenticate(db_session, "alex@example.com", "secret-value", session_hours=8) is None
 
 
-def test_failed_attempts_lock_account(db_session):
+def test_failed_attempts_throttle_the_same_account_and_origin(db_session):
     user = seed_user(db_session)
     now = datetime.now(UTC)
-    authenticate(
-        db_session,
-        user.email,
-        "wrong",
-        session_hours=8,
-        max_attempts=2,
-        lockout_minutes=15,
-        now=now,
-    )
-    authenticate(
-        db_session,
-        user.email,
-        "wrong",
-        session_hours=8,
-        max_attempts=2,
-        lockout_minutes=15,
-        now=now,
-    )
-    assert user.locked_until == now + timedelta(minutes=15)
+    for _ in range(2):
+        authenticate(
+            db_session,
+            user.email,
+            "wrong",
+            session_hours=8,
+            max_attempts=2,
+            lockout_minutes=15,
+            now=now,
+        )
+    db_session.refresh(user)
+    assert user.failed_login_attempts == 2
     assert authenticate(db_session, user.email, "secret-value", session_hours=8, now=now) is None
+    assert (
+        authenticate(
+            db_session,
+            user.email,
+            "secret-value",
+            session_hours=8,
+            now=now + timedelta(minutes=16),
+        )
+        is not None
+    )

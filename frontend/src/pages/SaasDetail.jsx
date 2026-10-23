@@ -32,17 +32,19 @@ export default function SaasDetail() {
   const load = async () => {
     try {
       setLoading(true); setError(false);
-      const s = await getSaas(id);
-      setSaas(s);
-      const [m, u, c, o] = await Promise.all([
+      // Só as operações dependem do produto (filtradas por nome); o resto sai em paralelo.
+      const saasRequest = getSaas(id);
+      const [s, m, u, c, o] = await Promise.all([
+        saasRequest,
         getCapabilityManifest(id).catch((err) => {
           if (err?.status === 404) return null;
           throw err;
         }),
         listProductUsers(id),
         listConfigurations(id),
-        listOperations(s?.name).catch(() => []),
+        saasRequest.then((item) => listOperations(item?.name)).catch(() => []),
       ]);
+      setSaas(s);
       setManifest(m || null);
       setUsers(u || []);
       setConfigs(c || []);

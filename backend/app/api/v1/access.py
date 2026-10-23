@@ -29,7 +29,7 @@ from app.schemas.access import (
 )
 from app.security.passwords import hash_password
 from app.services.auth import normalize_email
-from app.tenancy.context import CurrentSession, get_current_session
+from app.tenancy.context import TenantContext, get_tenant_context, revoke_user_sessions
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -37,21 +37,12 @@ from sqlalchemy.orm import Session
 router = APIRouter(prefix="/access", tags=["access"])
 
 
-def tenant_id(current: CurrentSession) -> str:
-    selected = current.auth_session.selected_tenant_id
-    if not selected:
-        raise ValueError("authenticated session has no selected tenant")
-    return selected
+def tenant_id(current: TenantContext) -> str:
+    return current.tenant_id
 
 
-def role_for(session: Session, current: CurrentSession) -> str | None:
-    return session.scalar(
-        select(Membership.role).where(
-            Membership.user_id == current.user.id,
-            Membership.tenant_id == tenant_id(current),
-            Membership.is_active.is_(True),
-        )
-    )
+def role_for(session: Session, current: TenantContext) -> str:
+    return current.role
 
 
 def response_for(user: User, membership: Membership) -> ManagerResponse:
@@ -66,7 +57,7 @@ def response_for(user: User, membership: Membership) -> ManagerResponse:
 
 @router.get("/managers", response_model=list[ManagerResponse])
 def managers(
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     rows = session.execute(
@@ -82,7 +73,7 @@ def managers(
 def create_manager(
     body: ManagerCreate,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     if role_for(session, current) != "superadmin":
@@ -100,8 +91,38 @@ def create_manager(
     session.flush()
     membership = Membership(user_id=user.id, tenant_id=tenant_id(current), role=body.role)
     session.add(membership)
+    session.flush()
+    created = response_for(user, membership)
+    append_audit(
+        session,
+        tenant_id=tenant_id(current),
+        actor_user_id=current.user.id,
+        actor_email=current.user.email,
+        action="manager.create",
+        resource_type="manager",
+        resource_id=user.id,
+        correlation_id=request.state.correlation_id,
+        after_data=created.model_dump(),
+    )
     session.commit()
-    return response_for(user, membership)
+    return created
+
+
+def other_active_superadmins(session: Session, selected: str, membership_id: str) -> int:
+    """Conta os demais superadmins ativos, travando as linhas para evitar corrida."""
+    rows = session.scalars(
+        select(Membership.id)
+        .join(User, User.id == Membership.user_id)
+        .where(
+            Membership.tenant_id == selected,
+            Membership.role == "superadmin",
+            Membership.is_active.is_(True),
+            User.is_active.is_(True),
+        )
+        .order_by(Membership.id)
+        .with_for_update(of=Membership)
+    ).all()
+    return sum(1 for item in rows if item != membership_id)
 
 
 @router.patch("/managers/{user_id}", response_model=ManagerResponse)
@@ -109,7 +130,7 @@ def update_manager(
     user_id: str,
     body: ManagerUpdate,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     selected = tenant_id(current)
@@ -125,6 +146,21 @@ def update_manager(
     user, membership = row
     changes = body.model_dump(exclude_unset=True)
     before = response_for(user, membership).model_dump()
+    loses_superadmin = (
+        membership.is_active
+        and membership.role == "superadmin"
+        and (
+            changes.get("role", "superadmin") != "superadmin"
+            or changes.get("status", "active") == "suspended"
+        )
+    )
+    if loses_superadmin and not other_active_superadmins(session, selected, membership.id):
+        return error_response(
+            request,
+            409,
+            "LAST_SUPERADMIN",
+            "A organização precisa manter ao menos um superadmin ativo.",
+        )
     if "full_name" in changes:
         user.full_name = changes["full_name"].strip()
     if "role" in changes:
@@ -138,6 +174,8 @@ def update_manager(
                 "Não é possível suspender a própria conta.",
             )
         membership.is_active = changes["status"] == "active"
+        if not membership.is_active:
+            revoke_user_sessions(session, user_id=user.id, tenant_id=selected)
     session.flush()
     after = response_for(user, membership)
     append_audit(
@@ -158,7 +196,7 @@ def update_manager(
 
 @router.get("/permissions", response_model=list[PermissionResponse])
 def permissions(
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     return list(
@@ -174,7 +212,7 @@ def permissions(
 def create_permission(
     body: PermissionCreate,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     selected = tenant_id(current)
@@ -206,7 +244,7 @@ def create_permission(
 
 @router.get("/profiles", response_model=list[ProfileResponse])
 def profiles(
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     return list(
@@ -222,7 +260,7 @@ def profiles(
 def create_profile(
     body: ProfileCreate,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     selected = tenant_id(current)
@@ -261,7 +299,7 @@ def create_profile(
 
 @router.get("/organization-units", response_model=list[OrganizationUnitResponse])
 def organization_units(
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     return list(
@@ -277,7 +315,7 @@ def organization_units(
 def create_organization_unit(
     body: OrganizationUnitCreate,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     selected = tenant_id(current)
@@ -323,7 +361,7 @@ def create_organization_unit(
 
 @router.get("/assignments", response_model=list[UserAccessAssignmentResponse])
 def assignments(
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     return list(
@@ -340,7 +378,7 @@ def assign_user_access(
     user_id: str,
     body: UserAccessAssignmentUpdate,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     selected = tenant_id(current)
@@ -421,7 +459,7 @@ def organization_path(session: Session, unit: OrganizationUnit | None, selected:
 def effective_access(
     user_id: str,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     selected = tenant_id(current)
