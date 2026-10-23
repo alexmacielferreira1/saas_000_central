@@ -8,6 +8,7 @@ from app.models import (  # noqa: F401
     CapabilityManifest,
     Configuration,
     IntegrationObservation,
+    LoginThrottle,
     Membership,
     PermissionDefinition,
     ProductUser,

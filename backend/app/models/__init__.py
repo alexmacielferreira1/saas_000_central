@@ -3,6 +3,7 @@ from app.models.control import ControlResource
 from app.models.identity import (
     AccessProfile,
     AuthSession,
+    LoginThrottle,
     Membership,
     OrganizationUnit,
     PermissionDefinition,
@@ -23,6 +24,7 @@ __all__ = [
     "Configuration",
     "ControlResource",
     "IntegrationObservation",
+    "LoginThrottle",
     "ProductUser",
     "Membership",
     "OrganizationUnit",

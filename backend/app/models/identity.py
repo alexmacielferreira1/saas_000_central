@@ -97,9 +97,7 @@ class OrganizationUnit(Base):
 
 class UserAccessAssignment(Base):
     __tablename__ = "user_access_assignments"
-    __table_args__ = (
-        UniqueConstraint("tenant_id", "user_id", name="uq_assignment_tenant_user"),
-    )
+    __table_args__ = (UniqueConstraint("tenant_id", "user_id", name="uq_assignment_tenant_user"),)
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
     tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id", ondelete="CASCADE"), index=True)
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
@@ -115,3 +113,15 @@ class UserAccessAssignment(Base):
     allow_permissions: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
     deny_permissions: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+
+class LoginThrottle(Base):
+    """Falhas de login por par conta + endereço de origem (chave = SHA-256, sem PII)."""
+
+    __tablename__ = "login_throttles"
+    key_hash: Mapped[str] = mapped_column(String(64), primary_key=True)
+    failures: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    locked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, index=True
+    )

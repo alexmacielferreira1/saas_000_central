@@ -72,6 +72,7 @@ def login(
         session_hours=settings.session_hours,
         max_attempts=settings.login_max_attempts,
         lockout_minutes=settings.login_lockout_minutes,
+        client_ip=request.client.host if request.client else None,
     )
     if result is None:
         return error_response(request, 401, "INVALID_CREDENTIALS", "E-mail ou senha inválidos.")
