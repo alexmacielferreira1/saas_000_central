@@ -143,3 +143,61 @@ Toda rota de `/api/v1` (fora de `/auth`) usa `Depends(get_current_session)`. Nã
 6. **Configurações podem guardar segredos?** Recomendação: não no campo `value`. Criar o tipo `secret` com referência a cofre e mascarar sempre.
 7. **Retenção da auditoria e exclusão de tenant:** a trilha deve sobreviver à exclusão da organização? Recomendação: sim, com prazo legal definido (ex.: 5 anos), tenant com soft-delete e PII pseudonimizada no audit.
 8. **Política anti-brute-force:** é aceitável que 5 erros travem a conta do superadmin por 15 min? Recomendação: não. Rate limit por IP + backoff, MFA obrigatório para superadmin e lockout que não impeça o login via Google.
+
+---
+
+## 7. Correções aplicadas em 2026-10-23
+
+Branch `qualidade/kit-revisao-2026-10-23`, commits locais (sem push nem deploy). Rotina: teste que falha, correção, teste que passa, um item por commit.
+
+| Achado | Commit | Testes que cobrem |
+|---|---|---|
+| #1 Crítico (probe exfiltra env / SSRF) + #12 (conexão presa no probe) | `d91b357` | `backend/tests/test_integration_outbound_policy.py` (denylist e namespace `*_HUB_ADMIN_TOKEN`, https, IPs privado/loopback/link-local/CGNAT/IPv6 após DNS, host vinculado, sem redirect, evidência ≤ 16 kB, conexão legada falha fechada sem ler o env, conexão do pool liberada antes do HTTP) |
+| #2 Suspensão não corta acesso + #17 (500 sem tenant) + refatoração A (parcial) | `67ab4a0` | `backend/tests/test_tenant_access.py` (15 GETs × membership inativa, 15 GETs × tenant inativo, escrita com tenant inativo, `TENANT_NOT_SELECTED`, sessões revogadas na suspensão, teste estrutural: toda rota fora de `/auth` usa `get_tenant_context`) |
+| #4 Autoaprovação e `approval_status` do cliente | `96d0043` (migration `0013_operation_requester`) | `backend/tests/test_operations_api.py` |
+| #3 Lista de ações sensíveis divergente + refatoração B (parcial) | `0dca8ed` | `backend/tests/test_operation_policy.py` (união revisada, paridade com o fallback JS, `GET /operations/policy`), `frontend/src/lib/adminHelpers.test.js` |
+| #5 Lockout com corrida e DoS do superadmin | `5f2fb09` (migration `0014_login_throttles`) | `backend/tests/test_login_throttle.py`, `backend/tests/test_auth_service.py` (teste antigo ajustado à nova política) |
+| #6 `create_manager` sem auditoria | `6e00846` | `test_creating_administrator_is_audited_without_password` |
+| #13 Observações sem limite | `b866e58` | `test_observations_are_bounded_and_paginated` |
+| #11 `requested_by`/`author` forjáveis | `f70c559` | `test_operation_requester_comes_from_session`, `test_configuration_author_comes_from_session` |
+| #8 Último superadmin | `90f1da4` | `test_last_active_superadmin_cannot_be_demoted`, `test_superadmin_can_be_demoted_or_suspended_while_another_remains` |
+| #19 Cascata no Detalhe do SaaS | `7b1f831` | `frontend/src/pages/SaasDetail.test.jsx` |
+| #18 Sem code splitting | `fc69df1` | `frontend/src/lib/routes.test.js` + testes de renderização de todas as rotas |
+
+Resultados medidos:
+
+- Backend: 79 → 179 testes passando (`pytest backend/tests`). `ruff check backend` limpo. Formatação: os 31 arquivos Python tocados estão formatados; resta 1 arquivo antigo não tocado (`backend/app/schemas/control.py`), eram 4 no início.
+- Frontend: vitest 110 → 117 passando, `npm run lint` limpo, `npm run typecheck` sem erros, `npm run build` ok.
+- Migrations 0013 e 0014: `upgrade head` → `downgrade -1` → `upgrade head` e `alembic check` ("No new upgrade operations detected") em PostgreSQL 16 local, com banco descartável.
+- Throttling no PostgreSQL: 40 falhas concorrentes (16 threads) resultaram em contador exatamente 40. O par bloqueado não impede o login de outro endereço e libera após expirar.
+- Bundle (com `VITE_API_URL` definida; sem ela o `httpClient` lança no topo do módulo e o bundler descarta o app inteiro, o que torna inválida qualquer medição feita sem a variável): JS inicial 1.199.639 B (347.055 B gzip) → 525.748 B (170.422 B gzip). O total sobe para 1.210.870 B (371.029 B gzip) em 34 chunks.
+
+### Decisões de implementação
+
+- `credential_ref` precisa terminar em `_HUB_ADMIN_TOKEN` (compatível com `MEDIAMIND_HUB_ADMIN_TOKEN` e com o padrão da tela, `SAAS_HUB_ADMIN_TOKEN`), além de passar por uma denylist explícita dos segredos centrais. Fora de `local`/`test`, o probe também exige https, um IP público após DNS e o host vinculado à credencial na nova variável **opcional** `INTEGRATION_CREDENTIAL_HOSTS` (JSON `{"MEDIAMIND_HUB_ADMIN_TOKEN": ["host"]}`). Sem ela, o boot funciona normalmente, mas a criação de conexão e o probe em produção respondem `INTEGRATION_TARGET_NOT_ALLOWED`. É o comportamento seguro por padrão.
+- Login: o throttling é feito por par conta + endereço, com backoff de 15/30/60 min… até 24 h. A conta inteira só é bloqueada após `LOGIN_MAX_ATTEMPTS × 10` falhas, e esse contador recomeça a cada bloqueio. O login pelo Google não passa por esse bloqueio.
+- Os conjuntos de papéis (`superadmin/admin` escrevem, `+delegated_admin` lê a auditoria) **não mudaram**. Só passaram a ser lidos do contexto único.
+- `approval_status` de configuração é sempre `"auto"` no servidor, porque ainda não existe fluxo de aprovação de configuração.
+
+### O que não foi feito e por quê
+
+- **Registro das mudanças de frontend em `docs/history/frontend-approved-changes.json`**: `OperationCenter.jsx`, `adminHelpers.js` e `SaasDetail.jsx` são arquivos originais do Base44. Atualizar os hashes aprovados é uma decisão humana e a tentativa foi bloqueada como alteração de gate. O gate `original_frontend_integrity` já falhava antes destas correções (`AdminLayout.jsx`, `Integrations.jsx` e `UsersAccess.jsx` sem aprovação) e agora também acusa esses três arquivos.
+- A UI de Nova configuração ainda exibe os campos "Autor" e "Status de aprovação", e a de Nova operação o campo de solicitante. O backend ignora esses campos. Removê-los é mudança visual em arquivos Base44, então ficou para aprovação.
+- #7 (matriz de papéis), #9, #10, #14, #15, #16 e #20: fora do escopo deste bloco ou dependentes das perguntas de negócio 1–8, que não foram alteradas.
+- #19: as operações continuam filtradas pelo **nome** do produto, porque `admin_operations` não guarda `saas_product_id`.
+- #18: as dependências mortas (`three`, `jspdf`, `html2canvas`, `react-leaflet`, `@stripe/*`) não foram removidas.
+- `tests/integration/test_database.py` espera a revisão `0010` e já estava desatualizado antes (head era `0012`). Não foi executado nem corrigido.
+
+### Decisões necessárias do Alex
+
+1. Configurar `INTEGRATION_CREDENTIAL_HOSTS` no Render com o host real da Admin API do MediaMind, para que o probe volte a funcionar em produção.
+2. Configurar `FORWARDED_ALLOW_IPS` (uvicorn) no Render para que `request.client.host` seja o IP real do cliente. Sem isso, todos os logins parecem vir do proxy, o throttling por par degrada para "por conta" (equivalente ao comportamento anterior, mas com backoff) e a conta pode voltar a ser travada por terceiros. Validar o formato de `X-Forwarded-For` do Render antes de definir.
+3. Aprovar (ou pedir ajuste de) os arquivos Base44 alterados no registro de mudanças aprovadas.
+4. Com quatro olhos obrigatório, uma organização com um único superadmin não consegue mais aprovar operações sensíveis. Definir o papel aprovador (pergunta de negócio 3).
+5. MFA para superadmin e política final anti-brute-force (pergunta de negócio 8).
+
+### Não verificado
+
+- Nenhum teste foi feito contra Render, Neon ou serviços reais. A política de saída foi testada com resolvedor DNS simulado e `httpx.MockTransport`.
+- Proteção contra DNS rebinding: a validação ocorre imediatamente antes da chamada, mas o IP não é fixado na conexão. Em produção, o vínculo de host configurado pelo operador limita esse risco.
+- Revisão `/security-review` completa do bloco não executada nesta sessão.
