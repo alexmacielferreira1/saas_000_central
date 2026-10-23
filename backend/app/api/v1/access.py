@@ -108,6 +108,23 @@ def create_manager(
     return created
 
 
+def other_active_superadmins(session: Session, selected: str, membership_id: str) -> int:
+    """Conta os demais superadmins ativos, travando as linhas para evitar corrida."""
+    rows = session.scalars(
+        select(Membership.id)
+        .join(User, User.id == Membership.user_id)
+        .where(
+            Membership.tenant_id == selected,
+            Membership.role == "superadmin",
+            Membership.is_active.is_(True),
+            User.is_active.is_(True),
+        )
+        .order_by(Membership.id)
+        .with_for_update(of=Membership)
+    ).all()
+    return sum(1 for item in rows if item != membership_id)
+
+
 @router.patch("/managers/{user_id}", response_model=ManagerResponse)
 def update_manager(
     user_id: str,
@@ -129,6 +146,21 @@ def update_manager(
     user, membership = row
     changes = body.model_dump(exclude_unset=True)
     before = response_for(user, membership).model_dump()
+    loses_superadmin = (
+        membership.is_active
+        and membership.role == "superadmin"
+        and (
+            changes.get("role", "superadmin") != "superadmin"
+            or changes.get("status", "active") == "suspended"
+        )
+    )
+    if loses_superadmin and not other_active_superadmins(session, selected, membership.id):
+        return error_response(
+            request,
+            409,
+            "LAST_SUPERADMIN",
+            "A organização precisa manter ao menos um superadmin ativo.",
+        )
     if "full_name" in changes:
         user.full_name = changes["full_name"].strip()
     if "role" in changes:

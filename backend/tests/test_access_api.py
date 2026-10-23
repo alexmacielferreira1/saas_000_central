@@ -237,3 +237,50 @@ def test_creating_administrator_is_audited_without_password(access_client):
     assert events[0]["after_data"]["email"] == "gestora@example.com"
     assert events[0]["after_data"]["role"] == "superadmin"
     assert "Senha-temporaria" not in str(events[0])
+
+
+def test_last_active_superadmin_cannot_be_demoted(access_client):
+    me = access_client.get("/api/v1/access/managers").json()[0]
+
+    response = access_client.patch(f"/api/v1/access/managers/{me['id']}", json={"role": "viewer"})
+
+    assert response.status_code == 409
+    assert response.json()["error_code"] == "LAST_SUPERADMIN"
+    assert access_client.get("/api/v1/access/managers").json()[0]["role"] == "superadmin"
+
+
+def test_superadmin_can_be_demoted_or_suspended_while_another_remains(access_client):
+    other = access_client.post(
+        "/api/v1/access/managers",
+        json={
+            "full_name": "Outra",
+            "email": "outra@example.com",
+            "role": "superadmin",
+            "password": "Senha-temporaria-2026!",
+        },
+    ).json()
+
+    assert (
+        access_client.patch(
+            f"/api/v1/access/managers/{other['id']}", json={"status": "suspended"}
+        ).status_code
+        == 200
+    )
+    me = next(
+        item
+        for item in access_client.get("/api/v1/access/managers").json()
+        if item["email"] == "alex@example.com"
+    )
+    blocked = access_client.patch(f"/api/v1/access/managers/{me['id']}", json={"role": "viewer"})
+    assert blocked.status_code == 409
+
+    assert (
+        access_client.patch(
+            f"/api/v1/access/managers/{other['id']}", json={"status": "active"}
+        ).status_code
+        == 200
+    )
+    demoted = access_client.patch(
+        f"/api/v1/access/managers/{other['id']}", json={"role": "operator"}
+    )
+    assert demoted.status_code == 200
