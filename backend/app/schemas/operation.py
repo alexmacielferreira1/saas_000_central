@@ -32,3 +32,7 @@ class OperationResponse(BaseModel):
     retry_count: int
     created_at: datetime
     updated_at: datetime
+
+
+class OperationPolicyResponse(BaseModel):
+    sensitive_terms: list[str]

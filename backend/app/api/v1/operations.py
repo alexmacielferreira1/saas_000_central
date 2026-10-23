@@ -5,14 +5,19 @@ from app.core.errors import error_response
 from app.db.session import get_session
 from app.models.operation import AdminOperation
 from app.repositories.audit import append_audit
-from app.schemas.operation import OperationCreate, OperationResponse, OperationStatusUpdate
+from app.schemas.operation import (
+    OperationCreate,
+    OperationPolicyResponse,
+    OperationResponse,
+    OperationStatusUpdate,
+)
+from app.services.operation_policy import SENSITIVE_ACTION_TERMS, is_sensitive_action
 from app.tenancy.context import TenantContext, get_tenant_context
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/operations", tags=["operations"])
-SENSITIVE_ACTIONS = ("delete", "remove", "suspend", "reset", "rotate", "revoke", "close")
 
 
 def is_requester(item: AdminOperation, current: TenantContext) -> bool:
@@ -20,6 +25,11 @@ def is_requester(item: AdminOperation, current: TenantContext) -> bool:
         return item.requested_by_user_id == current.user.id
     # Operações anteriores à 0013 só guardam o e-mail informado: compara de forma conservadora.
     return item.requested_by.strip().casefold() == current.user.email.strip().casefold()
+
+
+@router.get("/policy", response_model=OperationPolicyResponse)
+def policy(current: Annotated[TenantContext, Depends(get_tenant_context)]):
+    return OperationPolicyResponse(sensitive_terms=list(SENSITIVE_ACTION_TERMS))
 
 
 @router.get("", response_model=list[OperationResponse])
@@ -44,7 +54,7 @@ def create(
     tenant_id = selected_tenant(current)
     if not can_write_saas(session, current, tenant_id):
         return error_response(request, 403, "OPERATION_WRITE_FORBIDDEN", "Ação não autorizada.")
-    sensitive = any(term in body.action.lower() for term in SENSITIVE_ACTIONS)
+    sensitive = is_sensitive_action(body.action)
     item = AdminOperation(
         tenant_id=tenant_id,
         status="awaiting_confirmation" if sensitive else "queued",

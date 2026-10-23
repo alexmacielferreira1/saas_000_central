@@ -12,3 +12,7 @@ export function createOperation(values) {
 export function updateOperationStatus(id, status, reason = '') {
   return request(`/operations/${id}/status`, { method: 'PATCH', body: { status, reason } });
 }
+
+export function getOperationPolicy() {
+  return request('/operations/policy');
+}
