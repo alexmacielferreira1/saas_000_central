@@ -114,10 +114,13 @@ def test_superadmin_updates_and_suspends_administrator(access_client):
     )
     assert reactivated.status_code == 200
     assert reactivated.json()["status"] == "active"
-    assert access_client.post(
-        "/api/v1/auth/login",
-        json={"email": "gestora@example.com", "password": "Senha-temporaria-2026!"},
-    ).status_code == 200
+    assert (
+        access_client.post(
+            "/api/v1/auth/login",
+            json={"email": "gestora@example.com", "password": "Senha-temporaria-2026!"},
+        ).status_code
+        == 200
+    )
 
 
 def test_superadmin_creates_permission_and_versioned_profile(access_client):
@@ -213,3 +216,24 @@ def test_organization_parent_must_belong_to_selected_tenant(access_client):
     )
     assert response.status_code == 422
     assert response.json()["error_code"] == "ORGANIZATION_PARENT_INVALID"
+
+
+def test_creating_administrator_is_audited_without_password(access_client):
+    created = access_client.post(
+        "/api/v1/access/managers",
+        json={
+            "full_name": "Gestora Central",
+            "email": "Gestora@Example.com",
+            "role": "superadmin",
+            "password": "Senha-temporaria-2026!",
+        },
+    )
+    assert created.status_code == 201
+
+    events = access_client.get("/api/v1/audit", params={"q": "manager.create"}).json()
+    assert len(events) == 1
+    assert events[0]["actor_email"] == "alex@example.com"
+    assert events[0]["resource_id"] == created.json()["id"]
+    assert events[0]["after_data"]["email"] == "gestora@example.com"
+    assert events[0]["after_data"]["role"] == "superadmin"
+    assert "Senha-temporaria" not in str(events[0])

@@ -91,8 +91,21 @@ def create_manager(
     session.flush()
     membership = Membership(user_id=user.id, tenant_id=tenant_id(current), role=body.role)
     session.add(membership)
+    session.flush()
+    created = response_for(user, membership)
+    append_audit(
+        session,
+        tenant_id=tenant_id(current),
+        actor_user_id=current.user.id,
+        actor_email=current.user.email,
+        action="manager.create",
+        resource_type="manager",
+        resource_id=user.id,
+        correlation_id=request.state.correlation_id,
+        after_data=created.model_dump(),
+    )
     session.commit()
-    return response_for(user, membership)
+    return created
 
 
 @router.patch("/managers/{user_id}", response_model=ManagerResponse)
