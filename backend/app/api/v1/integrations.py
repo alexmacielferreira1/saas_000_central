@@ -179,7 +179,10 @@ def list_observations(
     current: Authenticated,
     session: DbSession,
     connection_id: Annotated[str | None, Query(max_length=36)] = None,
+    before: Annotated[datetime | None, Query()] = None,
+    limit: Annotated[int, Query(ge=1, le=500)] = 100,
 ):
+    """Lista observações mais recentes primeiro; use ``before`` para a página seguinte."""
     tenant_id = selected_tenant(current)
     statement = (
         select(IntegrationObservation, SaasEnvironment)
@@ -191,7 +194,13 @@ def list_observations(
     )
     if connection_id:
         statement = statement.where(IntegrationObservation.connection_id == connection_id)
-    rows = session.execute(statement.order_by(IntegrationObservation.observed_at.desc())).all()
+    if before is not None:
+        statement = statement.where(IntegrationObservation.observed_at < aware_utc(before))
+    rows = session.execute(
+        statement.order_by(
+            IntegrationObservation.observed_at.desc(), IntegrationObservation.id.desc()
+        ).limit(limit)
+    ).all()
     now = datetime.now(UTC)
     return [
         ObservationResponse(

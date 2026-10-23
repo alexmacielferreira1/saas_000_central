@@ -243,3 +243,45 @@ def test_probe_uses_connector_and_persists_manifest_and_health(
     assert response.json()["status"] == "healthy"
     assert response.json()["latency_ms"] == 12
     assert response.json()["evidence"]["manifest"]["admin_api_version"] == "v1"
+
+
+def test_observations_are_bounded_and_paginated(registry_client):
+    client, factory = registry_client
+    login(client)
+    product = create_product(client)
+    connection = client.post(
+        "/api/v1/integrations/connections", json=connection_payload(product["id"])
+    ).json()
+
+    from app.models.integration import IntegrationObservation, SaasEnvironment
+
+    base = datetime.now(UTC)
+    with factory() as session:
+        environment = session.query(SaasEnvironment).one()
+        session.add_all(
+            [
+                IntegrationObservation(
+                    tenant_id=environment.tenant_id,
+                    connection_id=connection["id"],
+                    environment_id=environment.id,
+                    status="healthy",
+                    source="test",
+                    evidence={"n": index},
+                    observed_at=base - timedelta(minutes=index),
+                )
+                for index in range(130)
+            ]
+        )
+        session.commit()
+
+    first = client.get("/api/v1/integrations/observations").json()
+    assert len(first) == 100
+    assert first[0]["evidence"]["n"] == 0
+
+    older = client.get(
+        "/api/v1/integrations/observations",
+        params={"before": first[-1]["observed_at"], "limit": 50},
+    ).json()
+    assert [item["evidence"]["n"] for item in older] == list(range(100, 130))
+
+    assert client.get("/api/v1/integrations/observations", params={"limit": 501}).status_code == 422
