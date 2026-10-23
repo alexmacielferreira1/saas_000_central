@@ -15,6 +15,13 @@ router = APIRouter(prefix="/operations", tags=["operations"])
 SENSITIVE_ACTIONS = ("delete", "remove", "suspend", "reset", "rotate", "revoke", "close")
 
 
+def is_requester(item: AdminOperation, current: TenantContext) -> bool:
+    if item.requested_by_user_id is not None:
+        return item.requested_by_user_id == current.user.id
+    # Operações anteriores à 0013 só guardam o e-mail informado: compara de forma conservadora.
+    return item.requested_by.strip().casefold() == current.user.email.strip().casefold()
+
+
 @router.get("", response_model=list[OperationResponse])
 def index(
     current: Annotated[TenantContext, Depends(get_tenant_context)],
@@ -42,6 +49,7 @@ def create(
         tenant_id=tenant_id,
         status="awaiting_confirmation" if sensitive else "queued",
         requested_by=body.requested_by or current.user.email,
+        requested_by_user_id=current.user.id,
         **body.model_dump(exclude={"requested_by"}),
     )
     session.add(item)
@@ -89,6 +97,13 @@ def update_status(
     if item.status not in {"draft", "awaiting_confirmation"}:
         return error_response(
             request, 409, "OPERATION_NOT_PENDING", "A operação não aguarda decisão."
+        )
+    if body.status == "queued" and is_requester(item, current):
+        return error_response(
+            request,
+            403,
+            "OPERATION_SELF_APPROVAL_FORBIDDEN",
+            "Quem solicitou a operação não pode aprová-la.",
         )
     before = item.status
     item.status = body.status

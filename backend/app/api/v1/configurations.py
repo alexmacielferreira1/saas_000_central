@@ -59,6 +59,7 @@ def create(
         tenant_id=tenant_id,
         scope_key=scope_key,
         author=body.author or current.user.email,
+        approval_status="auto",
         **body.model_dump(exclude={"author"}),
     )
     session.add(config)
