@@ -6,7 +6,7 @@ from app.db.session import get_session
 from app.models.operation import AdminOperation
 from app.repositories.audit import append_audit
 from app.schemas.operation import OperationCreate, OperationResponse, OperationStatusUpdate
-from app.tenancy.context import CurrentSession, get_current_session
+from app.tenancy.context import TenantContext, get_tenant_context
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -17,7 +17,7 @@ SENSITIVE_ACTIONS = ("delete", "remove", "suspend", "reset", "rotate", "revoke",
 
 @router.get("", response_model=list[OperationResponse])
 def index(
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
     saas: Annotated[str | None, Query(max_length=200)] = None,
 ):
@@ -31,7 +31,7 @@ def index(
 def create(
     body: OperationCreate,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     tenant_id = selected_tenant(current)
@@ -73,7 +73,7 @@ def update_status(
     operation_id: str,
     body: OperationStatusUpdate,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     tenant_id = selected_tenant(current)

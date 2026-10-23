@@ -23,14 +23,14 @@ from app.services.connectors.outbound import (
     parse_credential_bindings,
     validate_target,
 )
-from app.tenancy.context import CurrentSession, get_current_session
+from app.tenancy.context import TenantContext, get_tenant_context
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/integrations", tags=["integrations"])
 DbSession = Annotated[Session, Depends(get_session)]
-Authenticated = Annotated[CurrentSession, Depends(get_current_session)]
+Authenticated = Annotated[TenantContext, Depends(get_tenant_context)]
 
 
 def outbound_context() -> tuple[str, dict[str, list[str]]]:

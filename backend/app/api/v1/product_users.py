@@ -12,7 +12,7 @@ from app.repositories.product_user import (
 )
 from app.repositories.saas import get_product
 from app.schemas.product_user import ProductUserCreate, ProductUserResponse
-from app.tenancy.context import CurrentSession, get_current_session
+from app.tenancy.context import TenantContext, get_tenant_context
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.orm import Session
 
@@ -21,7 +21,7 @@ router = APIRouter(prefix="/product-users", tags=["product-users"])
 
 @router.get("", response_model=list[ProductUserResponse])
 def index(
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
     saas_product_id: Annotated[str | None, Query(max_length=36)] = None,
 ):
@@ -35,7 +35,7 @@ def index(
 def create(
     body: ProductUserCreate,
     request: Request,
-    current: Annotated[CurrentSession, Depends(get_current_session)],
+    current: Annotated[TenantContext, Depends(get_tenant_context)],
     session: Annotated[Session, Depends(get_session)],
 ):
     tenant_id = selected_tenant(current)

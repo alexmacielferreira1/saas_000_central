@@ -13,6 +13,7 @@ from app.core.config import get_settings
 from app.core.errors import error_response
 from app.db.session import database_available, engine
 from app.observability.logging import configure_logging
+from app.tenancy.context import TenantAccessDenied
 
 SAFE_CORRELATION_ID = re.compile(r"[A-Za-z0-9._-]{1,128}")
 
@@ -88,6 +89,10 @@ def create_app() -> FastAPI:
             "Requisição não permitida ou recurso indisponível.",
             headers=exc.headers,
         )
+
+    @app.exception_handler(TenantAccessDenied)
+    async def tenant_access_denied(request: Request, exc: TenantAccessDenied):
+        return error_response(request, 403, exc.code, exc.message)
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request: Request, exc: RequestValidationError):
